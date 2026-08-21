@@ -383,15 +383,26 @@ void vlx_bus_survey_observe(vlx_bus_survey_t *s, const vlx_frame_t *f)
     }
 }
 
-uint8_t vlx_bus_survey_pick_address(const vlx_bus_survey_t *s)
+bool vlx_bus_survey_address_in_use(const vlx_bus_survey_t *s, uint8_t addr)
 {
-    for (unsigned i = 0; i <= VLX_ADDR_PANEL_LAST - VLX_ADDR_PANEL_FIRST; i++) {
-        const unsigned addr = VLX_ADDR_PANEL_LAST - i;
+    if (!vlx_addr_is_panel(addr)) {
+        return false;
+    }
+    return (s->panel_seen & (uint16_t)(1u << (addr - VLX_ADDR_PANEL_FIRST))) != 0u;
+}
+
+uint8_t vlx_bus_survey_other_controller(const vlx_bus_survey_t *s, uint8_t mine)
+{
+    for (unsigned addr = VLX_ADDR_PANEL_FIRST; addr <= VLX_ADDR_PANEL_LAST; addr++) {
+        if (addr == mine) {
+            continue;
+        }
+        // The LON gateway is not a controller and does not compete for the
+        // panel role, so it is not a reason to stay silent.
         if (addr == VLX_ADDR_LON) {
             continue;
         }
-        const unsigned bit = 1u << (addr - VLX_ADDR_PANEL_FIRST);
-        if ((s->panel_seen & bit) == 0u) {
+        if ((s->panel_seen & (uint16_t)(1u << (addr - VLX_ADDR_PANEL_FIRST))) != 0u) {
             return (uint8_t)addr;
         }
     }

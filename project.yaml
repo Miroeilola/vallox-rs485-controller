@@ -7,10 +7,12 @@ created: 2026-08-21
 designer: Miro Eilola / Mironet
 
 description: |
-  Replacement bus controller for legacy Vallox ventilation units. Joins the Vallox
-  DIGIT RS-485 panel bus as an additional client, powered from the panel connector,
-  and exposes temperatures, fan speed and machine status over Wi-Fi to Home
-  Assistant or MQTT. The factory control panel stays in place.
+  Replacement control panel for legacy Vallox ventilation units. Takes the place of
+  the original DIGIT SE panel on the same five terminals, speaks the Vallox DIGIT
+  RS-485 protocol, is powered from the panel connector, and exposes temperatures,
+  fan speed and machine status over Wi-Fi to Home Assistant or MQTT. The bus does
+  not tolerate a second controller, so this replaces the panel rather than joining
+  it.
 
 platform:
   mcu: ESP32-S3                     # under review, see hardware/docs/decisions.md
@@ -18,14 +20,23 @@ platform:
 
 # Electrical envelope. Fill from datasheets and measurements — never from memory.
 electrical:
-  # Nothing here is measured yet. The supply figure is the manufacturer's nominal
-  # value from the Vallox Digit2 SE manual; the range is not known until M1.
-  supply_voltage: null              # manual states "n. 21 VDC" at the panel terminal
+  # 22 V measured at the panel terminal 2026-08-21, load state and instrument not
+  # recorded. The range still needs the no-load and full-load ends before it can
+  # become a specification. Manufacturer states "n. 21 VDC".
+  supply_voltage: null              # 22 V measured, range not established
   current_idle: null
   current_peak: null
   interfaces:
     - "RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol"
     - "Wi-Fi 2.4 GHz"
+
+# The device this one replaces. Its characteristics are requirements, not trivia.
+replaces:
+  device: Vallox DIGIT SE LED control panel
+  bus_transceiver: MAX487            # 1/4 unit load, slew-rate limited, 48k input
+  logic_supply: linear regulator, TO-220 on a folded heatsink
+  terminal: 5-pole screw, "+ - A B M"
+  outline_mm: [90, 110, 23]          # manufacturer drawing, not measured here
 
 mechanical:
   enclosure_master: fusion          # fusion | code — see .claude/rules/mekaniikka.md

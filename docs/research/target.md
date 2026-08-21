@@ -36,25 +36,35 @@ Two qualifications that matter for the scope of this project:
 
 ### The unit this project is developed against
 
+Partly identified on 2026-08-21 — see
+[`../measurements/2026-08-21-panel-identification.md`](../measurements/2026-08-21-panel-identification.md).
+
 | | |
 |---|---|
-| Model | not determined |
+| Machine model | not determined — the model plate has not been photographed |
 | Year of manufacture | not determined |
 | Serial number | not determined |
-| Existing panel model | not determined |
-| Number of panels on the bus | not determined |
+| Existing panel | **Vallox DIGIT SE LED panel**, two 8-segment bar graphs, no LCD |
+| Panel bus transceiver | **MAX487**, 1/4 unit load, slew-rate limited |
+| Panel logic supply | linear regulator, TO-220 on a folded heatsink |
+| Panel controller | PLCC-44, part number hidden under a firmware label `00039C / 200298` |
+| Panels on the bus | one |
+| Supply at the terminal | **22 V DC measured**, load condition not recorded |
 | CO₂ sensors fitted | not determined |
 | %RH sensors fitted | not determined |
 | Fan type | not determined — AC (transformer-tapped) or DC (0xB0/0xB1 present) |
 | Heater type | not determined — electric or water coil |
 
-Filling this table is the first task of the next session and it needs physical
-access: the model plate, a photograph of the connection box, and a photograph of
-the panel's terminal block with the wires still attached.
+The remaining rows still need physical access: the model plate and the connection
+box. They are not decoration. The fan type decides whether registers 0xB0 and 0xB1
+exist, and the heater type decides whether the pre-heat and water-coil frost
+registers mean anything on this machine.
 
-The table is not decoration. The fan type decides whether registers 0xB0 and 0xB1
-exist; the heater type decides whether the pre-heat and water-coil frost registers
-mean anything; the panel count decides which bus address this board may take.
+![Vallox LED control panel](../images/panel-front-led.jpg)
+
+The panel being replaced. Power, CO₂, %RH and post-heating buttons on the left;
+fan speed 1…8 and a 10…27 °C scale as LED bar graphs on the right. Everything this
+panel can do, the replacement has to do or explicitly drop.
 
 ## The panel interface
 
@@ -62,13 +72,22 @@ From the Vallox Digit2 SE manual, section *Ohjainpaneelin asennus, irroitus ja
 johdotus*. This is a manufacturer source and is quoted here because everything in
 the electrical design hangs off it.
 
-| Terminal | Wire in NOMAK cable | Signal |
-|---|---|---|
-| 1 | orange 1 | **+** — approx. 21 VDC |
-| 2 | white 1 | **–** — return for the 21 V |
-| 3 | orange 2 | **A** — RS-485 |
-| 4 | white 2 | **B** — RS-485 |
-| 5 | metal screen | **M** — signal ground |
+| Terminal | Wire in NOMAK cable | Signal | Colour as actually installed |
+|---|---|---|---|
+| 1 | orange 1 | **+** — approx. 21 VDC, 22 V measured | red |
+| 2 | white 1 | **–** — return for the supply | blue |
+| 3 | orange 2 | **A** — RS-485 | green |
+| 4 | white 2 | **B** — RS-485 | yellow |
+| 5 | metal screen | **M** — signal ground | white |
+
+The right-hand column is from the machine this project is being built against, and
+it does not match the manufacturer's colour code at all. Every published guide for
+this bus describes the wiring by colour; in this house the colours are different.
+The replacement's silkscreen therefore labels by function and terminal position,
+and the installation instructions tell the reader to identify the terminals on
+their own machine rather than trust a colour.
+
+![Panel terminal block and MAX487](../images/panel-terminal-and-transceiver.jpg)
 
 Cable specified by the manufacturer: NOMAK 2 × 2 × 0.5 mm² + 0.5 mm², i.e. two
 twisted pairs plus a screen. The power pair and the data pair are separate twisted
@@ -109,34 +128,72 @@ scan of a wiring diagram and it must be confirmed by measurement before anything
 is connected**, because if it is wrong, the panel bus is mains-referenced and the
 entire design changes.
 
-## What the replacement must do
+## The replacement replaces the panel
 
-Must:
+The original panel comes off the wall and this device goes on in its place, wired
+to the same five terminals. It is not an additional client on the bus.
 
-- Read the four NTC temperatures, fan speed, and the status flags the panel shows.
-- Set fan speed, and set the four writable state bits of register 0xA3.
-- Sit on the bus without provoking a bus fault, alongside a factory panel if one
-  is present.
+That is not a preference, it is what the bus allows. The manufacturer's manual
+says up to three panels may share the bus, and three Vallox panels do work — but
+a client that polls on its own schedule does not coexist with a factory panel:
+**tested on this machine, two controllers override each other.** See the decision
+record in [`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md).
+
+### Must
+
+- Take the panel's place electrically: one device on the panel side of the bus,
+  at the address the panel used.
+- Read the four NTC temperatures, fan speed, and the status the panel displayed.
+- Write fan speed and the four writable bits of register 0xA3 — the machine has
+  no other user interface once the panel is gone.
+- Read and write the setpoints the panel could set: heating, bypass, pre-heat,
+  supply-fan stop, and the fan speed limits. **Every one of these was previously
+  reachable from the wall and must not silently become unreachable.**
 - Take its own power from the bus, with no separate supply.
-- Survive reversed 21 V wiring and a swapped A/B pair.
+- Survive reversed supply wiring and a swapped A/B pair.
+- Present a bus load no heavier than the MAX487 it replaces, with a slew-rate
+  limited driver, so the machine's driver sees the same bus or an easier one.
 
-Should:
+### Should
 
 - Read RH and CO₂ if the unit has those sensors.
-- Read and set the temperature setpoints (heating, bypass, defrost, pre-heat).
 - Trigger the fireplace/boost function and report its remaining time.
-- Report the filter service counter.
+- Report the filter service counter and the fault register.
 
-Will not:
+### Will not
 
-- Replace the panel's local user interface. This is a bus client with a network
-  interface, not a wall panel with buttons — the factory panel can stay.
 - Touch anything on the mains side of the machine.
 - Claim support for Vallox MV, or for Vallox 130 D, without a capture from one.
 
+### Open, and it decides the shape of the product
+
+**Does the replacement have local controls?**
+
+Removing the panel removes the only way to change fan speed without a network. A
+household that cannot turn up the ventilation because the Wi-Fi is down has been
+given a worse device than it had, and the person who notices will not be the one
+who built it.
+
+The options, with what each costs:
+
+| Option | Parts cost | What it gives up |
+|---|---|---|
+| No local controls, network only | 0 | Ventilation becomes unadjustable whenever the network is down |
+| Two buttons, speed up and down, and an 8-LED bar | under 1 € | No setpoint editing locally, but the daily action still works |
+| Rotary encoder and a small OLED | about 1.5 € | Nothing much — it can do everything the panel did |
+
+The recommendation is the **middle option at minimum**: speed up, speed down, and
+a visible indication of the current speed. It is the action people actually use on
+a ventilation panel, it costs under a euro, and it keeps the device from being a
+downgrade in the one situation where a downgrade matters.
+
+This is not settled here because it changes the enclosure and the board outline,
+and both of those are downstream of the electrical measurements that have not
+happened yet.
+
 ## What the user ends up with
 
-A small enclosure inside or next to the machine's connection box, wired to the
-panel terminal block with the manufacturer's own cable type, appearing in Home
-Assistant as a climate entity with temperatures, fan speed, humidity and service
-state — with no manufacturer cloud service involved and no gateway hardware.
+A device on the wall where the panel was, on the same five wires, appearing in
+Home Assistant as a climate entity with temperatures, fan speed, humidity and
+service state — with no manufacturer cloud service and no gateway hardware, and
+with the machine still controllable by hand when the network is not there.

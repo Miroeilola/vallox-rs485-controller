@@ -34,15 +34,20 @@ module choice and the number of distinct Extended parts.
 
 ## Architecture being costed
 
+The board takes the place of the panel on the same five wires. It is the only
+controller on the panel side of the bus.
+
 ```
- Vallox panel terminal          this board
- ┌───────────────────┐
- │ 1  +  ~21 VDC ────┼──▶ reverse-polarity block ──▶ buck 3.3 V ──┬──▶ ESP32-C3 module
- │ 2  −          ────┼──▶ return                                  │      │ UART + RTS
- │ 3  A          ────┼──▶ PPTC ─┬─▶ RS-485 transceiver ◀───────────┘      │
- │ 4  B          ────┼──▶ PPTC ─┤                                         │
- │ 5  M  signal gnd ─┼──────────┴─ TVS to bus ground                      │
- └───────────────────┘                                            USB-C (bench only)
+ the five wires that fed          this board, on the wall where the panel was
+ the original panel
+ ┌────────────────────┐
+ │ 1  +   22 V meas. ─┼──▶ reverse-polarity block ──▶ buck 3.3 V ──┬──▶ ESP32-C3
+ │ 2  −               ┼──▶ return                                  │     │ UART+RTS
+ │ 3  A               ┼──▶ PPTC ─┬─▶ RS-485, 1/8 UL, slew limited ◀─┘     │
+ │ 4  B               ┼──▶ PPTC ─┤                                        │
+ │ 5  M   signal gnd ─┼──────────┴─ TVS to bus ground                     │
+ └────────────────────┘                                    local controls ─┤
+                                                           USB-C (bench) ──┘
 ```
 
 Half duplex, one UART, driver enable from the UART's RTS pin so the direction
@@ -66,7 +71,7 @@ it would protect nothing during normal operation.
 |---|---|---|---|---|---|---|
 | U1 | MCU + radio | ESP32-C3-MINI-1-N4 | C2838502 | 16 416 | 2.790 | extended |
 | U2 | 21 V → 3.3 V buck | TPS54202DDCR | C191884 | 180 809 | 0.226 | extended |
-| U3 | RS-485 transceiver | SP3485EN-L/TR | C8963 | 327 071 | 0.176 | **basic** |
+| U3 | RS-485 transceiver | THVD1400DR | C3235232 | 93 954 | 0.320 | extended |
 | D1 | Reverse-polarity block | SS34 | C8678 | 3 557 042 | 0.030 | **basic** |
 | D2 | Bus transient clamp | PSM712-LF-T7 (SM712) | C32677 | 151 478 | 0.298 | **basic** |
 | F1, F2 | Bus overcurrent, 100 mA / 60 V | JK-mSMD010-60 | C1884489 | 74 360 | 0.035 | extended |
@@ -75,7 +80,8 @@ it would protect nothing during normal operation.
 | J1 | 5-pole field terminal | KF128 family, 3.81 or 5.08 mm | C474933 and family | — | ~0.30 | extended, through-hole |
 | — | Bulk, decoupling, dividers, LEDs, buttons | 0402/0603 basic parts | — | — | ~0.40 total | **basic** |
 
-Parts cost lands around **$4.50 per board**, with the module at $2.79 of it.
+Parts cost lands around **$4.65 per board**, with the module at $2.79 of it. Local
+controls, if fitted, add roughly $0.50 more.
 
 ### Why each of those
 
@@ -106,10 +112,32 @@ rail is unregulated or exceeds about 24 V at no load, this part is replaced** by
 MP2459GJ-Z-MS (C45367195, 14 102 in stock, $0.40), which takes 55 V and costs 730 µA
 of quiescent instead of 45 µA.
 
-**U3 — SP3485EN-L/TR.** A JLCPCB *Basic* 3.3 V half-duplex transceiver with 327 000
-in stock at $0.18. There is no reason to pay more here as long as the bus pins are
-protected, and they have to be protected regardless of which transceiver is fitted,
-because of the failure mode the manufacturer warns about.
+**U3 — THVD1400DR.** Chosen against the part it replaces rather than against the
+price list. The original panel's transceiver was read off the board in the
+photographs: a **MAX487**, which is 1/4 unit load, 48 kΩ receiver input impedance,
+slew-rate limited, specified to 250 kbps. Three requirements follow:
+
+- **Bus loading no heavier than the original.** The machine's driver was specified
+  against a 1/4-unit-load panel. THVD1400 is 1/8 unit load, so the machine sees an
+  easier bus after the swap, never a harder one.
+- **A slew-rate limited driver.** The original limits its slew rate at 9600 baud on
+  a cable that runs through a house. Fitting a 10 Mbps part instead would raise
+  emissions for no benefit whatsoever.
+- **Integrated fail-safe** on an open, short or idle bus. This removes two bias
+  resistors and, more usefully, removes a question: whether the machine biases the
+  bus stops mattering for the receiver's idle state.
+
+Datasheet figures from TI SLLSF78B: 3–5.5 V supply, bus pins −16 V to +16 V
+absolute maximum, ±12 kV IEC contact ESD, 700–900 µA quiescent while receiving.
+
+The cheaper option is SP3485EN-L/TR (C8963, 327 071 in stock, $0.176) and it is a
+JLCPCB *Basic* part, so it saves the feeder fee as well as the 14 cents. It is the
+fallback, not the default — and if it is ever substituted, it has to be checked
+against all three requirements above and not just against the pinout.
+
+Note what the transceiver choice does **not** do: its bus pins are rated to ±16 V,
+and a miswired supply would put 22 V on a data line. The fuse and the clamp below
+are what handle that. Picking a tougher transceiver is not a substitute for them.
 
 **D1 — SS34.** Reverse polarity on the 21 V pair is the failure the Vallox manual
 puts in bold. A series Schottky is the crude answer and, at this current, the right
@@ -136,11 +164,16 @@ one does. Decide at order time, from the actual quantity.
 package. Oversized for a 500 mA load on purpose: the margin is free at seven cents
 and the low DCR helps efficiency at the light loads this board actually runs at.
 
-**J1 — the field terminal.** It has to be a screw or pluggable terminal, because the
-installer is landing 0.5 mm² solid conductors from a NOMAK cable, and it has to be
-five poles in the manufacturer's order `+ − A B M` with the manufacturer's wire
-colours on the silkscreen next to it. The label on the board should match the cable
-in the installer's hand, not a datasheet.
+**J1 — the field terminal.** Five poles, screw or pluggable, in the manufacturer's
+order `+ − A B M`, because that is exactly what is on the original panel's board
+and the installer is transferring wires one at a time from one terminal to the
+other. Landing 0.5 mm² solid conductors rules out anything spring-loaded and fine.
+
+**The silkscreen labels by function, not by colour.** The manual's colour code is
+orange-and-white NOMAK; the cable actually installed on the target machine is red,
+blue, green, yellow and white. Every published guide for this bus describes the
+wiring by colour, and in this house the colours are wrong. Printing a colour on the
+board would be printing a mistake.
 
 It is also the one through-hole part. JLCPCB charges per through-hole joint, so five
 poles is a real line item, and the alternative — hand-soldering one connector — is
@@ -161,14 +194,51 @@ weaker than assumed, this number moves.
 
 ### Deliberately not fitted, but footprinted
 
-- **120 Ω bus termination**, behind a solder bridge, unfitted by default. This board
-  is one more device on an existing multidrop bus; adding a termination to a bus that
-  is already terminated loads the machine's driver. Whether it is needed at all is
-  answered by M1.
-- **Fail-safe bias resistors**, same reasoning — the machine probably biases the bus
-  already, and M1 will show it.
+- **120 Ω bus termination**, behind a solder bridge, unfitted by default. The
+  replacement should present the bus the panel presented, so the question is what
+  the original did as much as what the machine expects. Answered by M1 and by a
+  closer look at the original board now that it is coming off the wall.
+- **Fail-safe bias resistors.** Footprinted and unfitted. The chosen transceiver
+  biases itself, and adding external bias to a bus the machine may already bias is
+  a way to make things worse.
 - **Common-mode choke** on A/B. Cheap, helps conducted emissions, and easy to short
   out with two zero-ohm links if it turns out to be unnecessary.
+
+## The local controls question, and what it would cost
+
+Removing the panel removes the only way to change fan speed without a network.
+Whether the replacement gets buttons is written up in
+[target.md](target.md); here is what each answer costs in parts.
+
+| Option | Parts | Approx. cost |
+|---|---|---|
+| Network only | nothing | 0 |
+| Two tactile buttons and an 8-LED bar graph | 2 × SMD tact switch, 8 × 0603 LED, 8 × resistor or a shift register | under 0.50 € |
+| Rotary encoder and a 0.96" I²C OLED | encoder with switch, OLED module | about 1.50 € |
+
+The middle option is the recommendation and it is close to free against a 4.50 €
+board. The bar graph also has a second use: it mirrors what the original panel
+showed, so a household that has read fan speed off eight LEDs for twenty years
+keeps reading it off eight LEDs.
+
+Parts are not selected here. The board outline and the enclosure decide the
+switch and LED footprints, and both are downstream of measurements that have not
+happened.
+
+## The enclosure is now a wall panel
+
+This changed with the scope. The device is no longer a box beside the machine; it
+is the thing on the wall where the panel was, in a living space, replacing
+something that was designed to be looked at.
+
+The manufacturer's drawing gives the original as **90 × 110 × 23 mm**, surface
+mounted on a wall or over a one-gang box. Matching that footprint or covering it is
+worth doing: whatever was behind the old panel — paint edges, a wall box, screw
+holes — is what the new one has to hide.
+
+That is a mechanical decision and it belongs to `/kotelo`, but it belongs in the
+component list too, because it is what makes the through-hole terminal, the button
+footprints and the board outline a single problem rather than three.
 
 ## Variant B — isolated bus front end
 
@@ -202,6 +272,7 @@ Variant B is a contingency, not an upgrade.
 | Bare ESP32-C3 chip with a PCB antenna | Saves about $1.50 and costs radio certification. Wrong trade for a design other people are told to build |
 | TPS5430 (the Basic wide-input buck) | 4.4 mA quiescent, about 90 mW at 21 V doing nothing, on the one rail that cannot spare it |
 | MAX485 and its clones | 5 V part; the whole board is 3.3 V |
+| SP3485EN-L/TR as the default transceiver | Cheaper and a Basic part, so it saves the feeder fee too. Kept as the fallback, not the default: the original panel uses a 1/4-unit-load slew-limited MAX487, and matching that is worth 14 cents |
 | RS-485 module with an automatic direction timer | The reported cause of `Väylävika` reports is direction timing, and the ESP32 UART already does it in hardware and exactly. Buying a module to solve a problem the MCU does not have is backwards |
 | Ideal-diode controller for reverse polarity | Correct at amperes. At ten milliamps a three-cent Schottky is the same answer for less money and fewer parts |
 | Barrel jack and an external supply | Removes the reason this device is better than a development board taped inside the machine |
@@ -210,6 +281,10 @@ Variant B is a contingency, not an upgrade.
 
 1. **M1 and M2.** The rail's isolation and its current capability. Variant A or B,
    TPS54202 or MP2459, and the bulk capacitor all hang on these.
+1b. **Local controls: yes or no, and which.** It changes the board outline, the
+   enclosure and about half a euro of parts. The recommendation is speed up, speed
+   down and an eight-LED bar; the reasoning is in [target.md](target.md) and in
+   risk R10.
 2. **The through-hole terminal.** Cost per joint at the intended batch size decides
    whether it is assembled or shipped loose.
 3. **Basic versus Extended for the SM712.** Decided by batch size at order time.

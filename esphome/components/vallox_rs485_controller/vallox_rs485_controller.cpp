@@ -56,8 +56,13 @@ void ValloxRs485Controller::dump_config() {
   ESP_LOGCONFIG(TAG, "  frames ok: %u, checksum rejects: %u, bytes discarded: %u",
                 this->parser_.stats.frames_ok, this->parser_.stats.checksum_rejects,
                 this->parser_.stats.bytes_discarded);
-  ESP_LOGCONFIG(TAG, "  free panel address: 0x%02X",
-                vlx_bus_survey_pick_address(&this->survey_));
+  const uint8_t other = vlx_bus_survey_other_controller(&this->survey_, 0);
+  if (other != 0) {
+    ESP_LOGW(TAG, "  another controller is on the bus at 0x%02X - two controllers "
+                  "override each other, so this device must stay silent", other);
+  } else {
+    ESP_LOGCONFIG(TAG, "  panel side of the bus is clear");
+  }
   this->check_uart_settings(9600);
 }
 

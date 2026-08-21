@@ -10,10 +10,11 @@ Replacement bus controller for legacy Vallox ventilation units.
 ![license](https://img.shields.io/badge/license-MIT%20%2F%20CERN--OHL--S%20%2F%20CC--BY--SA-green)
 
 > **Status: research.** No board exists yet. The bus protocol has been compiled from
-> the manufacturer's manual and four independent implementations, and the parts have
-> been costed, but nothing has been measured on a machine. What is known, what is
-> only reported, and what has to be measured before a schematic is drawn is written
-> down in [`docs/research/`](docs/research/).
+> the manufacturer's manual and four independent implementations, the target panel
+> has been identified and photographed, and the parts have been costed. Two
+> electrical measurements still gate the schematic. What is known, what is only
+> reported, and what has to be measured is written down in
+> [`docs/research/`](docs/research/).
 
 ## What this replaces
 
@@ -23,15 +24,26 @@ houses. The machine outlives its control panel: the mechanics and the heat excha
 last decades, the panel's keypad and its electrolytics do not, and panels for the
 older models are no longer made.
 
-The machines already carry an RS-485 bus. The panel is a client on it, up to three
-panels are allowed, and everything the panel shows — four temperatures, fan speed,
-humidity, CO₂, fault and service state — travels over that bus in a six-byte
-telegram. This board joins that bus as one more client, takes its power from the
-same five terminals the panel uses, and puts the machine into Home Assistant or MQTT
-with no manufacturer cloud service and no gateway hardware.
+The machines already carry an RS-485 bus, and everything the panel shows — four
+temperatures, fan speed, humidity, CO₂, fault and service state — travels over it
+in a six-byte telegram. **This board takes the panel's place**: same five
+terminals, same wall, no other hardware, and the machine appears in Home Assistant
+or MQTT with no manufacturer cloud service in between.
 
-**The factory panel stays.** This is not a panel replacement. If this board fails,
-the machine keeps running and the household keeps its buttons.
+![The Vallox LED panel being replaced](docs/images/panel-front-led.jpg)
+
+It is a replacement rather than an addition because the bus does not allow the
+addition. The manual says up to three panels may share the bus, and three *Vallox*
+panels do — the mainboard keeps them in step. A client that polls on its own
+schedule does not join that: tested on the target machine, two controllers override
+each other. So the old panel comes off.
+
+That has a consequence worth stating up front, before anyone builds one: **once the
+panel is gone, this device is how the ventilation gets controlled.** The machine
+keeps running at its last setting if the device fails, and every safety function —
+frost protection, over-temperature, defrost — stays in the machine's own firmware
+where this device cannot reach it. But nothing changes the fan speed until the
+device is working again. Keep the original panel in a drawer.
 
 ### This is not the first attempt, and that is worth saying
 
@@ -57,7 +69,7 @@ out of source code, published measurements, an enclosure and a datasheet.
 | | |
 |---|---|
 | Microcontroller | not fixed — ESP32-C3 proposed, see `hardware/docs/decisions.md` |
-| Supply voltage | — (manufacturer states approx. 21 VDC at the panel terminal; range not measured) |
+| Supply voltage | 22 V DC measured at the panel terminal; range not yet measured |
 | Current consumption | — (measured, see `docs/measurements/`) |
 | Interfaces | RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol · Wi-Fi 2.4 GHz |
 | Dimensions | — |
@@ -115,11 +127,20 @@ Every claim in this repository is backed by a measurement in
 [`docs/measurements/`](docs/measurements/): current consumption per operating mode,
 rail voltages and ripple, bus signal integrity, and temperature under load.
 
+One report exists so far — the target panel identified and the bus supply measured
+at 22 V. It is published with its own gaps marked: the instrument was not recorded
+and the load state was not recorded, which is why the regulator's input range is
+still an open question rather than a specification.
+
 ## What this does not do
 
-- **It is not a control panel.** No display, no buttons. It needs Home Assistant or
-  an MQTT broker to be worth anything, and the factory panel has to stay for local
-  control.
+- **It replaces the panel, so the panel's local controls go with it.** Whether the
+  replacement has buttons of its own is an open design decision, written up in
+  [`docs/research/target.md`](docs/research/target.md). Until it is settled, assume
+  that controlling the ventilation needs the network.
+- **It is not a safety device and it is not in any safety path.** The machine's
+  frost protection, over-temperature thermostats and defrost cycle are in the
+  machine's own firmware. This device cannot reach them and cannot disable them.
 - **It does not support Vallox MV.** Those units use Modbus and have their own
   interface. This is for the legacy DIGIT RS-485 bus only.
 - **It does not support Vallox 130 D** without changes — that model is reported to
@@ -135,6 +156,23 @@ rail voltages and ripple, bus signal integrity, and temperature under load.
 - **It makes no safety or IP-rating claim.** Nothing has been tested for either.
 - **Connecting anything to the machine voids the manufacturer's warranty** and is
   your decision, not this project's.
+
+## The machine this was built against
+
+| | |
+|---|---|
+| Panel replaced | Vallox DIGIT SE LED panel, two 8-segment bar graphs, no LCD |
+| Panel bus transceiver | MAX487 — 1/4 unit load, slew-rate limited |
+| Terminal | 5-pole screw, `+ − A B M` |
+| Supply measured | 22 V DC |
+| Machine model | not yet recorded |
+
+Full write-up with photographs:
+[`docs/measurements/2026-08-21-panel-identification.md`](docs/measurements/2026-08-21-panel-identification.md).
+
+**Do not wire by colour.** The manufacturer's manual specifies an orange-and-white
+NOMAK cable. The machine this was built against has red, blue, green, yellow and
+white in those same five terminals. Identify the terminals on your own machine.
 
 ## Tools
 

@@ -92,13 +92,24 @@ Capture, with the factory panel connected and operating normally:
 1. Idle traffic, 30 minutes.
 2. The panel's start-up burst, from machine power-on.
 3. A fan speed change, each step 1→8 and back.
-4. Each panel button pressed once.
-5. If the unit has them: a CO₂ or RH sensor exchange, looking for 0x91 / 0x8F.
+4. Each panel button pressed once — power, CO₂, %RH, post-heating.
+5. The temperature scale moved across its full 10…27 °C range.
+6. If the unit has them: a CO₂ or RH sensor exchange, looking for 0x91 / 0x8F.
+
+Items 4 and 5 are what turn the capture into a specification. Every button on the
+panel maps to a register write, and this is the only chance to see which.
 
 **Verifies:** claims 1, 6, 7, 8, 9, 10, 11, 15, and which temperature register set
 this machine uses. From the oscilloscope trace: the bit period, the differential
 swing, the common-mode level, the rise time, and whether the idle state is properly
 biased.
+
+**This capture is also the specification for the replacement.** Because the panel
+is being removed rather than joined, whatever it says on this bus is what the
+replacement has to say in its place — which registers it polls, how often, and
+what it writes when a button is pressed. Capture it thoroughly while it is still
+on the wall, because afterwards it is a spare part in a drawer and the machine has
+nothing to compare against.
 
 **Result:** `docs/measurements/<date>-bus-capture.md` with the scope images, and a
 raw capture file kept in the repository — a decoded reference capture is something

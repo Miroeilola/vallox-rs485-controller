@@ -50,6 +50,11 @@ extern "C" {
 #define VLX_ADDR_PANEL_LAST   0x29u
 #define VLX_ADDR_LON          0x28u  // the optional LON gateway module
 
+// This device replaces the panel rather than joining it, so it takes the address
+// the panel had. The manufacturer's commissioning procedure ends with a single
+// panel at address 1, which is 0x21 on the wire.
+#define VLX_ADDR_PANEL_DEFAULT VLX_ADDR_PANEL_FIRST
+
 // ---------------------------------------------------------------------------
 // Registers. Grouped as in docs/research/protocol.md.
 // ---------------------------------------------------------------------------
@@ -296,9 +301,13 @@ const char *vlx_fault_name(uint8_t fault);
 // Bus survey
 // ---------------------------------------------------------------------------
 //
-// Existing implementations pick their bus address by convention and hope it is
-// free. Two clients on one address put the machine into a bus-fault state, so
-// this listens first and picks an address nobody is using.
+// Two controllers on this bus override each other — tested on real hardware, and
+// it is why this device replaces the panel instead of joining it. The survey is
+// therefore a safety check, not a convenience: listen first, and only transmit
+// once the panel side of the bus is confirmed silent.
+//
+// Getting this wrong does not produce an error message. It produces a machine in
+// a bus-fault state and a household without working ventilation.
 
 typedef struct {
     uint16_t panel_seen;   // bit n set means address 0x21+n has been heard
@@ -308,12 +317,16 @@ typedef struct {
 void vlx_bus_survey_init(vlx_bus_survey_t *s);
 void vlx_bus_survey_observe(vlx_bus_survey_t *s, const vlx_frame_t *f);
 
-// Highest unused panel address, so the pick lands away from the factory panels.
-// The manufacturer's commissioning procedure ends with the panels holding
-// addresses 1, 2 and 3, so they occupy the bottom of the range and the top is
-// where a fourth client belongs. Returns 0 when every address is taken. The LON
-// address is never picked.
-uint8_t vlx_bus_survey_pick_address(const vlx_bus_survey_t *s);
+// True when addr has been heard on the panel side, as a sender or as a receiver.
+// A panel that only ever answers still occupies its address.
+bool vlx_bus_survey_address_in_use(const vlx_bus_survey_t *s, uint8_t addr);
+
+// The lowest panel address heard that is not `mine`, or 0 when the panel side is
+// clear. **Non-zero means another controller is on the bus: do not transmit.**
+//
+// Pass mine = 0 during the initial silent listening window, when nothing on the
+// bus can be this device. Pass the device's own address afterwards.
+uint8_t vlx_bus_survey_other_controller(const vlx_bus_survey_t *s, uint8_t mine);
 
 #ifdef __cplusplus
 }

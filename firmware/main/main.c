@@ -70,8 +70,13 @@ void app_main(void)
     vlx_parser_init(&parser, on_frame, NULL);
 
     // Next, once measurements M1-M4 exist: a UART task in
-    // UART_MODE_RS485_HALF_DUPLEX feeding vlx_parser_feed_buffer(), calling
-    // vlx_parser_reset() on each idle gap, and running passively for long
-    // enough that vlx_bus_survey_pick_address() has something to say before
-    // anything is transmitted.
+    // UART_MODE_RS485_HALF_DUPLEX feeding vlx_parser_feed_buffer() and calling
+    // vlx_parser_reset() on each idle gap.
+    //
+    // Before that task is allowed to transmit anything, it listens. This device
+    // takes the original panel's place on the bus, and two controllers on this
+    // bus override each other - so vlx_bus_survey_other_controller() returning
+    // non-zero after the listening window means the old panel is still
+    // connected, and the correct response is to stay silent and say so, not to
+    // start talking anyway.
 }

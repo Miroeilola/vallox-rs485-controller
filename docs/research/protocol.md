@@ -28,6 +28,9 @@ it is rated accordingly.
 | 11 | A poll is a frame with byte 3 = 0x00 and byte 4 = the register wanted | All four implementations | `reverse-engineered` | Capture: panel startup burst, then reply correlation |
 | 12 | The bus has no arbitration; a client waits for ~100 ms of silence before transmitting | pvainio (implementation constant), inferred | `reverse-engineered` | Capture: measure the real inter-frame gap distribution before choosing this number |
 | 13 | Duplicate panel addresses put the machine into a bus-fault state | Vallox Digit2 SE manual | `manufacturer` | Not to be tested deliberately on the live machine |
+| 13b | Two controllers on this bus override each other, so a third-party client cannot coexist with a factory panel | Prior testing on the target machine | `measured, first-hand` | Established. It is why this device replaces the panel — see the decision record |
+| 20 | The supply pair carries 22 V on the target machine | Measured 2026-08-21, instrument and load state not recorded | `measured, conditions incomplete` | Repeat at no load and at full machine load, with the instrument recorded |
+| 21 | The original panel's transceiver is a MAX487: 1/4 unit load, 48 kΩ, slew-rate limited to 250 kbps | Read off the board, plus the Analog Devices datasheet | `manufacturer` | Established. The replacement matches or betters it |
 | 14 | Temperatures are NTC 5 kΩ raw counts mapped through a fixed 256-entry table | windkh, pvainio, Tom-Bom-badil (identical tables) | `reverse-engineered` | Compare a reported value against a calibrated reference thermometer in the same airflow |
 | 15 | Fan speed is a thermometer-coded bit mask, 1→0x01 … 8→0xFF | All four implementations | `reverse-engineered` | Capture while changing speed on the factory panel |
 | 16 | Relative humidity is `(x − 51) / 2.04` percent, valid from 0x33 | windkh, pvainio | `reverse-engineered` | Only if the target unit has an RH sensor |
@@ -80,14 +83,23 @@ hardware does.
 | 0x21…0x27, 0x29 | panels 1…8 |
 | 0x28 | LON gateway module |
 
-An extra bus client has to take an address in the panel range that no physical
-panel uses. Existing software picks its address by convention rather than by
-discovery — pvainio defaults to 0x27, kotope uses 0x22, Tom-Bom-badil uses 0x2E and
-0x2F, which are outside the documented panel range and appear to be tolerated.
+**This device replaces the panel rather than joining it**, so it takes the address
+the panel used — 0x21 on the target machine. It does not need to find a free slot,
+because there is no other panel to avoid.
 
-The safe behaviour, and what this firmware should do, is: **listen first, build the
-set of addresses actually in use, and only then choose.** That behaviour does not
-exist in any of the implementations read and is worth adding.
+That is not a preference. Coexistence was tested on the target machine and two
+controllers override each other; the manufacturer's "up to three panels" holds for
+three Vallox panels, which the mainboard keeps in step by broadcasting to the whole
+panel group, and not for a client that polls on its own schedule.
+
+Existing software picks an address by convention and hopes — pvainio defaults to
+0x27, kotope uses 0x22, Tom-Bom-badil uses 0x2E and 0x2F, outside the documented
+panel range. None of that applies here.
+
+What the firmware still does is **listen before it speaks**, but for a different
+reason: to confirm that nothing else is talking on the panel side. Two devices on
+one address put the machine into a bus-fault state, and finding that out by
+provoking it is the expensive way. The check is a precondition, not a convenience.
 
 ## Register map
 
@@ -248,20 +260,26 @@ pick the first raw value that reaches or exceeds the requested temperature.
 These are the items that no source answers and that decide the electrical design.
 They are the reason the schematic is not being drawn yet.
 
-1. **How much current the 21 V rail can supply.** Nothing states it. An ESP32-S3
-   transmitting on Wi-Fi is a several-hundred-milliamp load at 3.3 V, and the rail
-   was designed to run a panel with an LCD. This single number decides whether the
-   board can be bus-powered at all, and it sets the size of the bulk capacitor.
-2. **Whether the 21 V rail is really isolated from mains.** Claim 3 above.
-3. **The real voltage and its ripple.** 21 V nominal, 24 V reported by one user, and
-   an unregulated rectified supply could be well above both at no load.
-4. **Whether the bus is biased and terminated by the machine.** Whether this board
-   needs fail-safe biasing, and whether adding a 120 Ω termination would overload
-   the machine's driver.
-5. **The real inter-frame timing.** How long the gap between frames actually is, how
-   fast the machine answers a poll, and therefore how long this board may hold the
-   driver enabled without colliding.
-6. **What the factory panel's poll cycle looks like**, so that a second client can be
-   made genuinely passive by default.
-7. **Which temperature register set the target machine uses** — 0x32…0x35 or
-   0x58…0x5C.
+1. **How much current the supply rail can give.** Still no number. The original
+   panel runs from it through a linear regulator on a heatsink, so the rail was
+   built to source at least a panel's worth of current through a 17 V drop — that
+   is a good prior and not a measurement. It decides the bulk capacitor and it is
+   the last thing standing between this design and a schematic.
+2. **Whether the rail is really isolated from mains.** Claim 3. The original panel
+   is not isolated either, which says what has hung on this wall for two decades
+   but does not say what is safe to connect a laptop to.
+3. **The range, not the centre.** 22 V measured, with the load state unrecorded.
+   The regulator's input range needs the no-load and full-load ends.
+4. **Whether the machine terminates and biases the bus, and whether the original
+   panel did.** The replacement should present the same bus as the panel did, so
+   this is a question about the original as much as about the machine. Both
+   termination and bias are footprinted and unfitted until it is answered.
+5. **The real inter-frame timing.** How long the gap between frames is, how fast
+   the machine answers a poll, and therefore how long the driver may stay enabled
+   after the last stop bit.
+6. **What the factory panel's traffic looks like.** Now for a different reason
+   than before: this device has to take over that conversation, so the capture is
+   the specification for what it must say and how often.
+7. **Which temperature register set this machine uses** — 0x32…0x35 or 0x58…0x5C.
+8. **Which registers this machine actually answers**, since the replacement has to
+   provide every setting the panel could reach.

@@ -384,47 +384,82 @@ static void test_names(void)
     }
 }
 
-static void test_bus_survey_picks_a_free_address(void)
+static void test_bus_survey_starts_clear(void)
 {
     vlx_bus_survey_t s;
     vlx_bus_survey_init(&s);
-    CHECK(vlx_bus_survey_pick_address(&s) == 0x29);
-
-    // Commissioning leaves the factory panels at the bottom of the range, so a
-    // fourth client belongs at the top.
-    const vlx_frame_t p1 = {VLX_DOMAIN, 0x21, 0x11, 0x00, 0xA3, 0};
-    const vlx_frame_t p2 = {VLX_DOMAIN, 0x22, 0x11, 0x00, 0xA3, 0};
-    vlx_bus_survey_observe(&s, &p1);
-    vlx_bus_survey_observe(&s, &p2);
-    CHECK(s.frames_seen == 2);
-    CHECK(vlx_bus_survey_pick_address(&s) == 0x29);
-
-    // A panel that only ever answers still occupies its address.
-    const vlx_frame_t to_p9 = {VLX_DOMAIN, 0x11, 0x29, 0x32, 0x64, 0};
-    vlx_bus_survey_observe(&s, &to_p9);
-    CHECK(vlx_bus_survey_pick_address(&s) == 0x27);
+    CHECK(vlx_bus_survey_other_controller(&s, 0) == 0);
+    CHECK(!vlx_bus_survey_address_in_use(&s, VLX_ADDR_PANEL_DEFAULT));
 }
 
-static void test_bus_survey_never_picks_the_lon_address(void)
+static void test_bus_survey_detects_another_controller(void)
 {
+    // The reason this exists: two controllers on this bus override each other.
+    // Transmitting into that is how a household loses its ventilation, so the
+    // survey has to see a panel that is still connected before anything is sent.
     vlx_bus_survey_t s;
     vlx_bus_survey_init(&s);
-    // Occupy everything above the LON slot.
-    const vlx_frame_t seen29 = {VLX_DOMAIN, 0x29, 0x11, 0x00, 0xA3, 0};
-    vlx_bus_survey_observe(&s, &seen29);
-    // 0x28 is the LON gateway's address and is skipped even when it is silent.
-    CHECK(vlx_bus_survey_pick_address(&s) == 0x27);
+
+    const vlx_frame_t panel_polls = {VLX_DOMAIN, 0x21, 0x11, 0x00, 0xA3, 0};
+    vlx_bus_survey_observe(&s, &panel_polls);
+    CHECK(s.frames_seen == 1);
+    CHECK(vlx_bus_survey_address_in_use(&s, 0x21));
+
+    // During the silent window nothing on the bus can be us, so mine = 0.
+    CHECK(vlx_bus_survey_other_controller(&s, 0) == 0x21);
 }
 
-static void test_bus_survey_reports_exhaustion(void)
+static void test_bus_survey_counts_a_panel_that_only_answers(void)
 {
+    // A panel that never polls still occupies its address, and the machine
+    // addressing it is the only evidence there will be.
     vlx_bus_survey_t s;
     vlx_bus_survey_init(&s);
-    for (uint8_t a = VLX_ADDR_PANEL_FIRST; a <= VLX_ADDR_PANEL_LAST; a++) {
-        const vlx_frame_t f = {VLX_DOMAIN, a, 0x11, 0x00, 0xA3, 0};
-        vlx_bus_survey_observe(&s, &f);
-    }
-    CHECK(vlx_bus_survey_pick_address(&s) == 0);
+    const vlx_frame_t to_panel = {VLX_DOMAIN, 0x11, 0x23, 0x32, 0x64, 0};
+    vlx_bus_survey_observe(&s, &to_panel);
+    CHECK(vlx_bus_survey_address_in_use(&s, 0x23));
+    CHECK(vlx_bus_survey_other_controller(&s, 0) == 0x23);
+}
+
+static void test_bus_survey_ignores_our_own_address(void)
+{
+    // Once this device is talking, traffic to and from its own address is not
+    // evidence of a second controller.
+    vlx_bus_survey_t s;
+    vlx_bus_survey_init(&s);
+    const vlx_frame_t ours = {VLX_DOMAIN, VLX_ADDR_PANEL_DEFAULT, 0x11, 0x00, 0xA3, 0};
+    const vlx_frame_t answer = {VLX_DOMAIN, 0x11, VLX_ADDR_PANEL_DEFAULT, 0xA3, 0x01, 0};
+    vlx_bus_survey_observe(&s, &ours);
+    vlx_bus_survey_observe(&s, &answer);
+    CHECK(vlx_bus_survey_other_controller(&s, VLX_ADDR_PANEL_DEFAULT) == 0);
+
+    // But a second panel next to us still is.
+    const vlx_frame_t other = {VLX_DOMAIN, 0x22, 0x11, 0x00, 0x29, 0};
+    vlx_bus_survey_observe(&s, &other);
+    CHECK(vlx_bus_survey_other_controller(&s, VLX_ADDR_PANEL_DEFAULT) == 0x22);
+}
+
+static void test_bus_survey_ignores_the_lon_gateway(void)
+{
+    // The LON gateway is not a controller competing for the panel role, so its
+    // presence is not a reason to stay silent.
+    vlx_bus_survey_t s;
+    vlx_bus_survey_init(&s);
+    const vlx_frame_t lon = {VLX_DOMAIN, VLX_ADDR_LON, 0x11, 0x00, 0xA3, 0};
+    vlx_bus_survey_observe(&s, &lon);
+    CHECK(vlx_bus_survey_address_in_use(&s, VLX_ADDR_LON));
+    CHECK(vlx_bus_survey_other_controller(&s, 0) == 0);
+}
+
+static void test_bus_survey_ignores_broadcasts(void)
+{
+    // Mainboard-to-all-panels traffic is normal and says nothing about who else
+    // is connected.
+    vlx_bus_survey_t s;
+    vlx_bus_survey_init(&s);
+    const vlx_frame_t bcast = {VLX_DOMAIN, 0x11, VLX_ADDR_PANELS, 0x32, 0x64, 0};
+    vlx_bus_survey_observe(&s, &bcast);
+    CHECK(vlx_bus_survey_other_controller(&s, 0) == 0);
 }
 
 int main(void)
@@ -454,9 +489,12 @@ int main(void)
     test_write_allow_list_has_one_entry();
     test_value_range_checks();
 
-    test_bus_survey_picks_a_free_address();
-    test_bus_survey_never_picks_the_lon_address();
-    test_bus_survey_reports_exhaustion();
+    test_bus_survey_starts_clear();
+    test_bus_survey_detects_another_controller();
+    test_bus_survey_counts_a_panel_that_only_answers();
+    test_bus_survey_ignores_our_own_address();
+    test_bus_survey_ignores_the_lon_gateway();
+    test_bus_survey_ignores_broadcasts();
 
     printf("%d checks, %d failures\n", checks, failures);
     return failures == 0 ? 0 : 1;

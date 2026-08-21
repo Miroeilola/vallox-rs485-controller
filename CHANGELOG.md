@@ -18,18 +18,31 @@ combination is known to work together.
   live JLCPCB stock.
 - Firmware: `vallox_protocol` codec — frame encode and decode, resynchronising
   byte-stream parser, NTC temperature table, fan speed and humidity encodings, a
-  write allow-list, and a bus survey that picks a free panel address by listening
-  instead of by convention. 897 host-side assertions, no hardware required.
+  write allow-list, and a bus survey. 1420 host-side assertions, no hardware
+  required.
 - ESPHome: wrapper rebuilt on the shared codec, listening only.
 - Tools: `scripts/vlx-decode`, a capture analyser built from the same codec as
   the firmware. Decodes telegrams into engineering units and reports the address
-  and register census, which temperature register set a machine uses, and a free
-  panel address.
+  and register census, which temperature register set a machine uses, and who is
+  on the panel side of the bus.
 - Security position written before the firmware: threat model, OTA and rollback,
   signed images, and the reasoning for leaving secure boot and flash encryption
   off in the published build.
+- First measurement report: the target panel identified as a Vallox DIGIT SE LED
+  panel with photographs, its terminal block, its MAX487 transceiver and its
+  linear supply, and 22 V measured on the supply pair.
 
 ### Changed
+- **Scope: this replaces the original panel instead of joining the bus alongside
+  it.** Testing on the target machine shows two controllers override each other,
+  so coexistence is not available. The device is now load bearing, everything the
+  panel could set has to be settable here, and whether it needs local controls is
+  an open design decision.
+- Transceiver chosen against the part it replaces: the original panel uses a
+  MAX487, 1/4 unit load and slew-rate limited, so the replacement uses a 1/8 unit
+  load slew-limited part with integrated fail-safe rather than the cheapest one.
+- The bus survey in the firmware verifies that the panel side is silent before
+  transmitting, instead of picking a free address.
 - Hardware CI skips ERC and DRC until a KiCad project exists, instead of failing.
 
 ### Fixed

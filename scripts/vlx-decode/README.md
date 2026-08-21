@@ -26,8 +26,10 @@ cat capture.bin | ./vlx-decode -   # the same, from a pipe
 - Which addresses were on the bus and in which role, which registers appeared and
   how often, and therefore which of the two temperature register sets this
   particular machine uses — a per-machine fact, not a protocol constant.
-- A panel address that nothing used, so a fourth client can join without
-  colliding with a factory panel.
+- Who is on the panel side of the bus. This device replaces the original panel
+  rather than joining it — two controllers on this bus override each other — so
+  the useful question is not "which address is free" but "is anything else still
+  connected".
 
 ## What it cannot tell you
 

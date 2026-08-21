@@ -195,13 +195,29 @@ static void report(const census_t *c, const vlx_parser_t *p)
         printf("  0x32..0x35  %u frames\n  0x58..0x5C  %u frames\n", modern, legacy);
     }
 
-    const uint8_t pick = vlx_bus_survey_pick_address(&c->survey);
-    printf("\nfree panel address\n");
-    if (pick == 0) {
-        printf("  none - every panel address was in use in this capture\n");
+    // This device replaces the panel, so what matters is not finding a free
+    // address but knowing who is already on the panel side. Two controllers on
+    // this bus override each other.
+    printf("\npanel side of the bus\n");
+    unsigned controllers = 0;
+    for (unsigned a = VLX_ADDR_PANEL_FIRST; a <= VLX_ADDR_PANEL_LAST; a++) {
+        if (!vlx_bus_survey_address_in_use(&c->survey, (uint8_t)a)) {
+            continue;
+        }
+        const bool lon = (a == VLX_ADDR_LON);
+        if (!lon) {
+            controllers++;
+        }
+        printf("  0x%02X  heard%s\n", a, lon ? "   (LON gateway, not a controller)" : "");
+    }
+    if (controllers == 0) {
+        printf("  nothing heard - either the panel is already disconnected or the\n"
+               "  capture is too short to be trusted\n");
+    } else if (controllers == 1) {
+        printf("  one controller. The replacement takes this address.\n");
     } else {
-        printf("  0x%02X   (highest address not heard; longer captures are safer)\n",
-               pick);
+        printf("  %u controllers. Two controllers on this bus override each other.\n",
+               controllers);
     }
     printf("\nNo timing information: a byte dump carries no timestamps. The\n"
            "inter-frame gaps that measurement M4 needs come from the scope.\n");

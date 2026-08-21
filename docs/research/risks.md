@@ -97,21 +97,59 @@ different temperature register sets and calls one of them "the newer protocol".
 
 **Status:** open, managed by scope rather than solved.
 
-## R6 — A second client on the bus is not tolerated
+## R6 — A second client on the bus is not tolerated — CONFIRMED TRUE
 
-**If true:** the device can only work if the factory panel is removed, which changes
-the product from "adds a network interface" to "replaces the panel".
+**Established.** Prior testing on the target machine: with two controllers on the
+bus, they override each other. The manufacturer's "up to three panels" applies to
+three Vallox panels, which the mainboard keeps in step by broadcasting state to
+the whole panel group. A client that polls on its own schedule is not part of that.
 
-**Why it is plausible:** the bus has no arbitration. Three panels are allowed, but
-they are Vallox panels with Vallox timing. A fourth client that polls on its own
-schedule may collide often enough to raise a bus fault.
+**Consequence:** the product changed. It is now a panel replacement, not an
+addition. The decision record is in
+[`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md).
 
-**Way around:** be a passive listener by default. Almost everything worth publishing
-appears on the bus unasked, because the factory panel already polls for it. Polling
-is only needed for registers the panel never asks about, and those can be polled
-rarely and only in a measured quiet window.
+**Status:** closed, and it created R10 and R11 below.
 
-**Status:** open. Measurements M3–M5.
+## R10 — The device is now load bearing
+
+**If it fails:** nothing controls the ventilation. The machine keeps running at
+whatever it was last told, which is the difference between an inconvenience and a
+hazard — but nobody can change it until the device is fixed.
+
+This risk did not exist in the previous design. It arrived with R6 and it is the
+price of the only architecture the bus allows.
+
+**Way around:**
+
+- Local controls on the device, so that a network outage is not a loss of control.
+  The minimum that earns its cost is speed up, speed down, and a visible
+  indication of the current speed. Written up in [target.md](target.md).
+- The machine's own protections — frost protection, over-temperature thermostats,
+  the defrost cycle — live in the machine's firmware and this device cannot reach
+  them. Nothing this device does or fails to do turns into a safety problem, and
+  the README should say so plainly rather than leaving a reader to wonder.
+- A watchdog and a rollback on failed OTA, so that a bad update does not leave a
+  wall panel dead. Already in [../security.md](../security.md).
+- Keep the original panel. It is being removed, not destroyed, and a working
+  spare in a drawer is the cheapest possible recovery path.
+
+**Status:** open. It is the reason the local-controls question in
+[target.md](target.md) has to be answered before the enclosure is designed.
+
+## R11 — Every setting the panel could reach has to be reachable here
+
+**If missed:** the household quietly loses the ability to set the heating
+setpoint, the bypass temperature or the fan speed limits, and nobody finds out
+until the season changes.
+
+**Way around:** the register list in [protocol.md](protocol.md) is the checklist,
+and each writable register joins the firmware's allow-list only with a measurement
+report behind it. The gap between "what the panel could do" and "what the
+replacement can do" is tracked explicitly rather than discovered later.
+
+**Status:** open, and it conflicts productively with R3: R3 wants the write list
+short, R11 wants it complete. The resolution is that it grows one measured
+register at a time, never one guessed register at a time.
 
 ## R7 — Components are not available when the board is ordered
 

@@ -14,6 +14,18 @@ quoted only where a quotation is needed to make a claim checkable.
 | Vallox LON–RS485 gateway technical note (Finnish), referenced via docplayer | 2026-08-21 | Gateway operating voltage 21 VDC taken from the ventilation unit; 9600 bps, N, 8, 1 on a shielded twisted pair | `manufacturer` |
 | Vallox DIGIT väyläprotokolla (Finnish protocol description) and its English translation `Digit_protocol_english_RS485.pdf`, circulated via LoxWiki and FHEM | 2026-08-21 | Not obtained directly — `docplayer.fi` and `loxwiki.eu` were unreachable from this machine. The register semantics below match this document as quoted by three independent implementations, so the document is treated as the upstream origin but is **not** counted as a source that was read. | not read |
 
+## First-hand, from the machine itself
+
+The strongest sources in this project are not documents.
+
+| Source | Date | What it gave | Rating |
+|---|---|---|---|
+| The target panel, removed and photographed | 2026-08-21 | Panel identified as a Vallox DIGIT SE LED panel; terminal block `+ − A B M` confirmed on the hardware; installed wire colours, which do not match the manufacturer's colour code; MAX487 transceiver read off the board; linear supply on a heatsink. Report: [`../measurements/2026-08-21-panel-identification.md`](../measurements/2026-08-21-panel-identification.md) | `first-hand` |
+| Supply voltage at the terminal | 2026-08-21 | 22 V DC. Instrument and load state not recorded, so the figure confirms the order of magnitude and nothing more | `first-hand, conditions incomplete` |
+| Prior testing on the target machine | before 2026-08-21 | Two controllers on this bus override each other. This is why the project replaces the panel rather than joining the bus, and it contradicts the manufacturer's "up to three panels" for any client that is not a Vallox panel | `first-hand` |
+| [Analog Devices MAX481/483/485/487–491 datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX1487-MAX491.pdf) | 2026-08-21 | MAX487: 48 kΩ receiver input, 1/4 unit load, up to 128 nodes, slew-rate limited to 250 kbps — the characteristics the replacement has to match | `manufacturer` |
+| Texas Instruments THVD1400 datasheet SLLSF78B | 2026-08-21 | Candidate transceiver: 1/8 unit load, integrated open/short/idle fail-safe, 500 kbps slew-limited, bus pins −16 V to +16 V absolute maximum | `manufacturer` |
+
 ## Independent implementations
 
 These are separate code bases by separate authors. Where they agree on a register
