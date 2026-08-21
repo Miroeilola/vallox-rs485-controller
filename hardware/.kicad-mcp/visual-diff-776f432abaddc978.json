@@ -1,0 +1,22 @@
+{
+  "status": "ready",
+  "schematic_path": "/Users/miro/Development/mironet/hw/vallox-rs485-controller/hardware/vallox-rs485-controller.kicad_sch",
+  "before_snapshot": "/Users/miro/Development/mironet/hw/vallox-rs485-controller/hardware/.kicad-mcp/visual-diff-776f432abaddc978-before.kicad_sch",
+  "before_sha256": "a6fab9d90727bbe4804e0d9805d8f2450d369f4e471fb349146e546a4d747b57",
+  "after_sha256": "addb5ef42b4aadc88284124138a862f7a346c4a602b2595bbe29d630673158a9",
+  "changed_objects": [
+    {
+      "id": "document:title_block",
+      "kind": "document",
+      "change": "added",
+      "before": null,
+      "after": {
+        "kind": "document",
+        "name": "title_block",
+        "value": "(title_block\n\t\t(title \"Vallox RS-485 Controller\")\n\t\t(date \"2026-08-22\")\n\t\t(rev \"A (draft)\")\n\t\t(company \"Mironet\")\n\t\t(comment 1 \"Replacement panel for Vallox DIGIT SE, bus-powered, ESP32-C3\")\n\t\t(comment 2 \"github.com/Miroeilola/vallox-rs485-controller\")\n\t\t(comment 3 \"Designer: Miro Eilola\")\n\t\t(comment 4 \"Power stage provisional until measurements M1/M2a\")\n\t)"
+      }
+    }
+  ],
+  "changed_refs": [],
+  "changed_nets": []
+}
