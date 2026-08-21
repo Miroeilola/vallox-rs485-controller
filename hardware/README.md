@@ -2,10 +2,18 @@
 
 KiCad 10 project for Vallox RS-485 Controller.
 
+**There is no KiCad project here yet, and that is deliberate.** Two measurements
+decide the power stage and neither is answerable from a document: whether the
+panel's 21 V rail is isolated from mains, and how much current it can supply.
+Drawing a schematic before those exist would mean drawing it twice. The plan is
+[`../docs/research/measurement-plan.md`](../docs/research/measurement-plan.md);
+the parts that have been costed and the reasoning behind them are in
+[`../docs/research/component-candidates.md`](../docs/research/component-candidates.md).
+
 | | |
 |---|---|
 | Board size | — |
-| Layers | 2 |
+| Layers | 2 (assumed; not fixed until the placement is known) |
 | Copper | 1 oz |
 | Finish | HASL lead free (RoHS) |
 | Current revision | rev A |
