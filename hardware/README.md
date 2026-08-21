@@ -2,7 +2,7 @@
 
 KiCad 10 project for Vallox RS-485 Controller.
 
-**Status: rev A schematic drawn, ERC clean, no PCB yet.** The schematic was drawn
+**Status: rev A schematic drawn and ERC clean; rev A placement done, not routed.** The schematic was drawn
 on 2026-08-22 ahead of the power-rail measurements (M1, M2a) so that there is
 something concrete to review; the power stage is therefore **provisional** and is
 marked as such in the title block. What M1/M2a can change: the regulator part
@@ -20,8 +20,8 @@ connection. Power rails (+5V, +3V3, GND) use power symbols.
 
 | | |
 |---|---|
-| Board size | — |
-| Layers | 2 (assumed; not fixed until the placement is known) |
+| Board size | 104 × 66 mm, 2 mm corner radius, 4 × M3 (Ø3.2 mm NPTH) |
+| Layers | 2 |
 | Copper | 1 oz |
 | Finish | HASL lead free (RoHS) |
 | Current revision | rev A |
@@ -46,7 +46,7 @@ If symbols appear as missing, the submodule has not been initialised.
 | Check | Status | Evidence |
 |---|---|---|
 | ERC | 0 errors, 1 warning (`lib_symbol_mismatch` on Q1, cosmetic) — 2026-08-22, KiCad 10.0.2 | `output/erc_report.json` |
-| DRC (CLI) | not applicable — no layout yet | `output/drc_report.json` |
+| DRC (CLI) | 0 errors, 6 warnings (`silk_edge_clearance` on edge-mounted U1/J1/J2), 138 unconnected — placement only, not routed — 2026-08-22, KiCad 10.0.2 | `output/drc_report.json` |
 | DRC (GUI, custom rules) | — | run manually before ordering |
 | Board built and measured | — | `docs/measurements/` |
 

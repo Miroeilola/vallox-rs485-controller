@@ -69,3 +69,79 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   display shifted to IO0–IO3 and LED_PWR to IO5. The EN capacitor C13 now shares
   C11's ground point so that the RST capacitor C9 has room. Netlist re-checked
   pin by pin after the change.
+
+### 2026-08-22 — Rev A placement, first pass (no routing)
+
+- **Baseline.** Empty board file (59 bytes, 0 footprints). ERC unchanged from the
+  schematic session: 0 errors, 1 cosmetic warning. DRC: nothing to check.
+- **Changes.** The board was populated from the schematic netlist with KiCad's
+  bundled `pcbnew` Python (KiCad closed), not with the GUI *Update PCB from
+  Schematic*: the MCP server had no `pcb_write` tools this session (KiCad was not
+  open when it started, so IPC never came up) and the one MCP tool that does a
+  file-based transfer is the one the workspace rules forbid. Every footprint
+  carries its schematic symbol UUID as `path`, so a later F8 in the GUI should
+  reconcile to *no changes* beyond field text — that check is still to be run.
+  Outline 104 × 66 mm, 2 mm corner radius, four Ø3.2 mm NPTH at (3.5, 3.5),
+  (3.5, 62.5), (100.5, 62.5) and (70, 3.5). All 60 schematic parts placed on the
+  top side (single-sided assembly), 4 mounting holes added (H1–H4, no symbol).
+  Floor plan, left to right: display glass reserve 51.8 × 36.2 mm at
+  (8, 8)–(59.8, 44.2) with the four buttons centred under it (x = 14.5/27.5/40.5/
+  53.5, y = 52, 13 mm pitch, symmetric about the glass centre x = 33.9); the three
+  LEDs in a column right of the glass (x = 63.8, y = 10/14/18, PWR–BUS–FAULT);
+  J3 FPC connector at (67, 26.1) with its FPC entry facing the glass (lip at
+  x = 62.6, 2.8 mm from the glass edge); ESP32 module at (92, 7.1), antenna over
+  the top edge; USB-C flush with the right edge at y = 26; the 5-pole terminal at
+  the right edge with the wire-entry face flush with the edge (pins at x = 99.4,
+  y = 35.2…55.5, order from the top M B A − +); RS-485 front end between the
+  terminal and the module (fuses 3.5 mm from pins A/B, TVS next to pin M = GND);
+  buck in the bottom-right corner (input cap C2 pads 2.5 mm from U2 VIN/GND,
+  inductor pad 5.6 mm from the SW pin, bulk C1 beside them, D1 8 mm from J1 +).
+  Silkscreen: button legends, LED names, terminal pin names, board name, rev,
+  mironet.fi and the repo URL. Reference designators were auto-placed by a script
+  (0.8 mm, avoids pads, other courtyards, texts and the edge; rotated where a
+  column is dense) — 57/57 resolved, 47 without touching any courtyard.
+- **Measured.** Antenna placement follows the Espressif hardware design guide
+  (*Positioning a module on a base board*): the 6 mm antenna area hangs over the
+  board edge, feed point at the edge, the footprint's keep-out polygon lies
+  entirely off-board; the guide's 15 mm metal clearance is an enclosure input and
+  is written on Cmts.User next to the module. Nearest metal on the board: the
+  USB-C shell at ≥ 20 mm, the top-right mounting hole at (70, 3.5) is 13 mm from
+  the module body — use a plastic screw there if in doubt. Module thermal vias
+  changed on the board instance from Ø0.2 mm drill (library) to Ø0.3 mm drill /
+  Ø0.6 mm pad because the project rules set min hole 0.3 mm; hole-to-hole
+  0.48 mm, pad-to-pad 0.18 mm within the same GND paddle.
+- **Did not work.**
+  - `pcbnew.BOARD.GetDrawings()` is not iterable in KiCad 10.0.2's Python when the
+    board has content; the builder therefore always starts from the empty file.
+  - `PCB_TEXT.GetBoundingBox()` does not follow `SetTextAngleDegrees(90)` for
+    footprint reference fields in this binding — the reference placer computes
+    rotated boxes itself.
+  - The MCP placement gate FAILs on heuristics that do not hold here: it treats
+    U1's off-board antenna keep-out and J1/J2's edge-flush courtyards as "outside
+    board" and "overlap", measures decoupling distance to the module *centre*
+    (C10 is 3.0 mm from pin 1, 12.7 mm from the centre) and flags J3/JP1 for not
+    being at an edge. `kicad-cli pcb drc` is the authority, as the rules say.
+- **Result.** `kicad-cli pcb drc --severity-all --schematic-parity`: 0 errors,
+  7 warnings — 6 × `silk_edge_clearance` on U1/J1/J2 whose library silkscreen
+  crosses the edge by design, 1 × `lib_footprint_mismatch` on U1 (the thermal-via
+  change above); schematic parity: 0 mismatches, 4 extra footprints (H1–H4,
+  intentional); 138 unconnected items (not routed). The parity run caught two
+  things the first build got wrong: footprints written without their library
+  nickname (`CP_Elec_8x10.5` instead of `Capacitor_SMD:CP_Elec_8x10.5`) — every
+  part was reported as mismatched until the FPID was set — and TP1/TP2/JP1,
+  whose library footprints are *excluded from BOM* while the schematic symbols
+  were not; the symbols were set `in_bom no` (the right answer for test points and
+  a solder jumper) and ERC is unchanged at 0 errors, 1 cosmetic warning. Render and top-view SVG read
+  by eye: floor plan as intended. **CI will be red on this branch** until the
+  board is routed — the workflow's DRC step uses `--exit-code-violations`, which
+  returns 5 for unconnected items as well (verified locally).
+- **Open.**
+  - Display tail: exit edge and length assumed (short edge, toward J3); contact
+    side still open. If the tail exits elsewhere, only J3 moves.
+  - Run F8 in the GUI once (Update PCB from Schematic, *delete footprints with no
+    symbols* OFF) and confirm it reports no footprint add/remove.
+  - Routing; then GND pour both sides with stitching, and the 15 mm antenna
+    clearance into the enclosure brief.
+  - Module overhang means the panel needs a gap or cutout beside U1 — say so in
+    the PCBWay remarks.
+  - Logo (`mironet-mark-mono.svg`) not yet on the silkscreen; GUI image import.

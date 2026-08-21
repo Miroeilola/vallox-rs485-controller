@@ -878,3 +878,38 @@ J1 and U4 are mirrored (`mirror y`) so that field wiring enters from the left
 and bus pins face the terminal. The MCP's pin-position tool reports rotation 90
 mirrored relative to KiCad; the netlist, not the tool, is what was checked.
 Details in `layout-notes.md`.
+
+---
+
+### 2026-08-22 — Board floor plan: UI left, I/O right, antenna over the top edge
+
+**Context.** Placement had to start before the enclosure exists (Miro's order:
+parts → layout → enclosure), so the board itself fixes what the enclosure must
+respect: wire entry, display position, button row, antenna clearance.
+
+**Options.** Antenna flush with the edge on a copper-free area, or over the edge
+as Espressif prefers; terminal block on the bottom edge under the buttons or on
+the right edge; display glass resting on the board or held only by the front
+panel.
+
+**Decision.** 104 × 66 mm, single-sided assembly. Display glass area reserved on
+the top side (component-free, the glass may rest on the board), four buttons
+centred under it, LEDs beside it, FPC connector on the glass's short edge. The
+module sits top-right with its antenna 6 mm over the top edge. Terminal block and
+USB-C on the right edge, wire entry and plug from the right. Buck in the
+bottom-right corner, RS-485 front end between terminal and module.
+
+**Reasoning.** The Espressif hardware design guide marks the over-the-edge
+antenna as the strongly recommended position and asks for ≥ 15 mm to metal in
+the housing; putting the module in a corner with the display on the far side
+keeps the glass's metal frame and every connector ≥ 20 mm away. One edge for all
+field wiring keeps the enclosure's cable path to one wall and leaves the front
+free for the user interface only. Single-sided assembly is the cheaper PCBWay
+order and the board has the area for it; the original panel was 90 × 110 mm, so
+104 × 66 mm is no regression in size.
+
+**Consequences.** The enclosure brief inherits: display window centred on
+(33.9, 26.1) from the board's top-left corner, button centres at y = 52, LED
+column at x = 63.8, cable entry on the right wall, ≥ 15 mm of non-metal around
+the antenna above the top edge, and a panel gap beside U1 for assembly. If the
+display tail turns out to exit another edge, J3 moves and nothing else does.
