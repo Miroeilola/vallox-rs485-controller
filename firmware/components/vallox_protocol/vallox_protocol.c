@@ -286,6 +286,81 @@ bool vlx_value_is_valid_for(uint8_t reg, uint8_t value)
 }
 
 // ---------------------------------------------------------------------------
+// Names
+// ---------------------------------------------------------------------------
+
+const char *vlx_register_name(uint8_t reg)
+{
+    switch (reg) {
+    case VLX_POLL:                    return "poll";
+    case VLX_REG_IO_FAN_RELAYS:       return "io_fan_relays";
+    case VLX_REG_IO_MULTI_1:          return "io_multi_1";
+    case VLX_REG_IO_MULTI_2:          return "io_multi_2";
+    case VLX_REG_FAN_SPEED:           return "fan_speed";
+    case VLX_REG_RH_HIGHEST:          return "rh_highest";
+    case VLX_REG_CO2_HIGH:            return "co2_high";
+    case VLX_REG_CO2_LOW:             return "co2_low";
+    case VLX_REG_CO2_SENSORS_FITTED:  return "co2_sensors_fitted";
+    case VLX_REG_CURRENT_MA:          return "current_ma";
+    case VLX_REG_RH_SENSOR_1:         return "rh_sensor_1";
+    case VLX_REG_RH_SENSOR_2:         return "rh_sensor_2";
+    case VLX_REG_TEMP_OUTDOOR:        return "temp_outdoor";
+    case VLX_REG_TEMP_EXHAUST:        return "temp_exhaust";
+    case VLX_REG_TEMP_EXTRACT:        return "temp_extract";
+    case VLX_REG_TEMP_SUPPLY:         return "temp_supply";
+    case VLX_REG_FAULT:               return "fault";
+    case VLX_REG_POST_HEAT_ON_CNT:    return "post_heat_on_cnt";
+    case VLX_REG_POST_HEAT_OFF_CNT:   return "post_heat_off_cnt";
+    case VLX_REG_POST_HEAT_TARGET:    return "post_heat_target";
+    case VLX_REG_TEMP_OUTDOOR_LEGACY: return "temp_outdoor_legacy";
+    case VLX_REG_TEMP_EXTRACT_LEGACY: return "temp_extract_legacy";
+    case VLX_REG_TEMP_SUPPLY_LEGACY:  return "temp_supply_legacy";
+    case VLX_REG_TEMP_EXHAUST_LEGACY: return "temp_exhaust_legacy";
+    case VLX_REG_FLAGS_1:             return "flags_1";
+    case VLX_REG_FLAGS_2:             return "flags_2";
+    case VLX_REG_FLAGS_3:             return "flags_3";
+    case VLX_REG_FLAGS_4:             return "flags_4";
+    case VLX_REG_FLAGS_5:             return "flags_5";
+    case VLX_REG_FLAGS_6:             return "flags_6";
+    case VLX_REG_BOOST_MINUTES:       return "boost_minutes";
+    case VLX_REG_RESUME:              return "bus_resume";
+    case VLX_REG_SUSPEND:             return "bus_suspend";
+    case VLX_REG_STATUS:              return "status";
+    case VLX_REG_HEAT_SETPOINT:       return "heat_setpoint";
+    case VLX_REG_FAN_SPEED_MAX:       return "fan_speed_max";
+    case VLX_REG_SERVICE_INTERVAL:    return "service_interval";
+    case VLX_REG_PREHEAT_SETPOINT:    return "preheat_setpoint";
+    case VLX_REG_SUPPLY_FAN_STOP:     return "supply_fan_stop";
+    case VLX_REG_FAN_SPEED_DEFAULT:   return "fan_speed_default";
+    case VLX_REG_PROGRAM:             return "program";
+    case VLX_REG_SERVICE_MONTHS_LEFT: return "service_months_left";
+    case VLX_REG_RH_BASIC_LEVEL:      return "rh_basic_level";
+    case VLX_REG_BYPASS_SETPOINT:     return "bypass_setpoint";
+    case VLX_REG_DC_FAN_SUPPLY:       return "dc_fan_supply";
+    case VLX_REG_DC_FAN_EXHAUST:      return "dc_fan_exhaust";
+    case VLX_REG_DEFROST_HYSTERESIS:  return "defrost_hysteresis";
+    case VLX_REG_CO2_SETPOINT_HIGH:   return "co2_setpoint_high";
+    case VLX_REG_CO2_SETPOINT_LOW:    return "co2_setpoint_low";
+    case VLX_REG_PROGRAM_2:           return "program_2";
+    default:                          return "unknown";
+    }
+}
+
+const char *vlx_fault_name(uint8_t fault)
+{
+    switch (fault) {
+    case VLX_FAULT_NONE:               return "none";
+    case VLX_FAULT_SUPPLY_AIR_SENSOR:  return "supply_air_sensor_fault";
+    case VLX_FAULT_CO2_ALARM:          return "co2_alarm";
+    case VLX_FAULT_OUTDOOR_AIR_SENSOR: return "outdoor_air_sensor_fault";
+    case VLX_FAULT_EXTRACT_AIR_SENSOR: return "extract_air_sensor_fault";
+    case VLX_FAULT_WATER_COIL_FROST:   return "water_coil_frost_risk";
+    case VLX_FAULT_EXHAUST_AIR_SENSOR: return "exhaust_air_sensor_fault";
+    default:                           return "unknown";
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Bus survey
 // ---------------------------------------------------------------------------
 

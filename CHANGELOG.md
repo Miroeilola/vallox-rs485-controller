@@ -21,6 +21,10 @@ combination is known to work together.
   write allow-list, and a bus survey that picks a free panel address by listening
   instead of by convention. 897 host-side assertions, no hardware required.
 - ESPHome: wrapper rebuilt on the shared codec, listening only.
+- Tools: `scripts/vlx-decode`, a capture analyser built from the same codec as
+  the firmware. Decodes telegrams into engineering units and reports the address
+  and register census, which temperature register set a machine uses, and a free
+  panel address.
 
 ### Fixed
 - The worked example in the circulated protocol documentation states the checksum

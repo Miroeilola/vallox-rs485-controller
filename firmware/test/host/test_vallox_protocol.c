@@ -367,6 +367,23 @@ static void test_value_range_checks(void)
 
 // ---------------------------------------------------------------------------
 
+static void test_names(void)
+{
+    CHECK(strcmp(vlx_register_name(VLX_REG_FAN_SPEED), "fan_speed") == 0);
+    CHECK(strcmp(vlx_register_name(VLX_POLL), "poll") == 0);
+    CHECK(strcmp(vlx_register_name(0x99), "unknown") == 0);
+    CHECK(strcmp(vlx_fault_name(VLX_FAULT_WATER_COIL_FROST),
+                 "water_coil_frost_risk") == 0);
+    CHECK(strcmp(vlx_fault_name(0xEE), "unknown") == 0);
+
+    // Never NULL, for every possible byte: these strings go straight into
+    // printf in the capture decoder and into ESP_LOG on the device.
+    for (unsigned i = 0; i < 256u; i++) {
+        CHECK(vlx_register_name((uint8_t)i) != NULL);
+        CHECK(vlx_fault_name((uint8_t)i) != NULL);
+    }
+}
+
 static void test_bus_survey_picks_a_free_address(void)
 {
     vlx_bus_survey_t s;
@@ -433,6 +450,7 @@ int main(void)
     test_relative_humidity();
     test_co2_pair();
 
+    test_names();
     test_write_allow_list_has_one_entry();
     test_value_range_checks();
 

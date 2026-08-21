@@ -279,6 +279,20 @@ bool vlx_register_is_write_allowed(uint8_t reg);
 bool vlx_value_is_valid_for(uint8_t reg, uint8_t value);
 
 // ---------------------------------------------------------------------------
+// Names
+// ---------------------------------------------------------------------------
+//
+// For logs, the device's status output and the capture decoder. Kept here so
+// there is one table rather than three that drift.
+
+// Short name of a register, or "unknown" for anything not in the map. Never
+// returns NULL.
+const char *vlx_register_name(uint8_t reg);
+
+// Name of a fault number from VLX_REG_FAULT. Never returns NULL.
+const char *vlx_fault_name(uint8_t fault);
+
+// ---------------------------------------------------------------------------
 // Bus survey
 // ---------------------------------------------------------------------------
 //

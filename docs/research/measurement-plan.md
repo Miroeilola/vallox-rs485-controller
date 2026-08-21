@@ -104,6 +104,12 @@ biased.
 raw capture file kept in the repository — a decoded reference capture is something
 none of the existing projects publish.
 
+The capture is analysed with [`scripts/vlx-decode`](../../scripts/vlx-decode/),
+which is built from the same codec the firmware runs, so the report and the
+device cannot disagree about what a telegram means. It reports the address
+census, the register census, which temperature register set this machine uses,
+and how many bytes it had to discard to stay in sync.
+
 ## M4 — Timing
 
 *From the M3 captures. No new hardware.*

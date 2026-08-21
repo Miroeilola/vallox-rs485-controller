@@ -136,6 +136,16 @@ rail voltages and ripple, bus signal integrity, and temperature under load.
 - **Connecting anything to the machine voids the manufacturer's warranty** and is
   your decision, not this project's.
 
+## Tools
+
+[`scripts/vlx-decode`](scripts/vlx-decode/) decodes a raw bus capture into
+annotated telegrams and a census of the bus. It shares the codec with the
+firmware, so it cannot drift from what the device believes.
+
+```bash
+cd scripts/vlx-decode && make && ./vlx-decode --demo
+```
+
 ## Research
 
 Everything known before the design started, with sources and confidence ratings, is
