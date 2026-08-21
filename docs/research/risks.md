@@ -122,8 +122,9 @@ price of the only architecture the bus allows.
 **Way around:**
 
 - Local controls on the device, so that a network outage is not a loss of control.
-  The minimum that earns its cost is speed up, speed down, and a visible
-  indication of the current speed. Written up in [target.md](target.md).
+  Analysed in [user-interface.md](user-interface.md); the answer is a sleeping
+  0.96" OLED, three buttons and three always-on indicator LEDs, which also covers
+  the setpoints the old panel could reach — see R11.
 - The machine's own protections — frost protection, over-temperature thermostats,
   the defrost cycle — live in the machine's firmware and this device cannot reach
   them. Nothing this device does or fails to do turns into a safety problem, and
@@ -133,8 +134,9 @@ price of the only architecture the bus allows.
 - Keep the original panel. It is being removed, not destroyed, and a working
   spare in a drawer is the cheapest possible recovery path.
 
-**Status:** open. It is the reason the local-controls question in
-[target.md](target.md) has to be answered before the enclosure is designed.
+**Status:** open. The local-interface half of it is answered in
+[user-interface.md](user-interface.md); the rest — watchdog, OTA rollback, keeping
+the old panel as a spare — is firmware and process work that has not started.
 
 ## R11 — Every setting the panel could reach has to be reachable here
 

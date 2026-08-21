@@ -80,8 +80,9 @@ it would protect nothing during normal operation.
 | J1 | 5-pole field terminal | KF128 family, 3.81 or 5.08 mm | C474933 and family | — | ~0.30 | extended, through-hole |
 | — | Bulk, decoupling, dividers, LEDs, buttons | 0402/0603 basic parts | — | — | ~0.40 total | **basic** |
 
-Parts cost lands around **$4.65 per board**, with the module at $2.79 of it. Local
-controls, if fitted, add roughly $0.50 more.
+Parts cost lands around **$4.65 per board**, with the module at $2.79 of it. The
+local interface adds $0.30 to the assembled board and $2.31 to the finished device
+— see below.
 
 ### Why each of those
 
@@ -204,41 +205,38 @@ weaker than assumed, this number moves.
 - **Common-mode choke** on A/B. Cheap, helps conducted emissions, and easy to short
   out with two zero-ohm links if it turns out to be unnecessary.
 
-## The local controls question, and what it would cost
+## Local interface
 
-Removing the panel removes the only way to change fan speed without a network.
-Whether the replacement gets buttons is written up in
-[target.md](target.md); here is what each answer costs in parts.
+Costed in full in [user-interface.md](user-interface.md), which compares an LED bar
+against a 0.96" OLED against a colour TFT with live prices, power arithmetic and
+lifetime. Summary of what it lands on:
 
-| Option | Parts | Approx. cost |
-|---|---|---|
-| Network only | nothing | 0 |
-| Two tactile buttons and an 8-LED bar graph | 2 × SMD tact switch, 8 × 0603 LED, 8 × resistor or a shift register | under 0.50 € |
-| Rotary encoder and a 0.96" I²C OLED | encoder with switch, OLED module | about 1.50 € |
+| Ref | Function | Candidate | LCSC | Stock | $/pc |
+|---|---|---|---|---|---|
+| DS1 | 0.96" 128×64 OLED, SSD1315, I²C | HS96L03W2C03 | C5248080 | 2 467 | 2.314 |
+| J3 | FPC connector, 30P 0.5 mm | HC-FPC-05-10-30RLTAG | C5213742 | 5 932 | 0.179 |
+| SW1–3 | Tactile switch, 5.1 mm | TS-1187A-B-A-B | C318884 | 1 683 297 | 0.020 |
+| D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 |
 
-The middle option is the recommendation and it is close to free against a 4.50 €
-board. The bar graph also has a second use: it mirrors what the original panel
-showed, so a household that has read fan speed off eight LEDs for twenty years
-keeps reading it off eight LEDs.
+**Only $0.30 of that is on the assembled board.** The display is a bare glass panel
+with an FPC tail: the fab solders the connector, the display is plugged in
+afterwards. It is not part of the PCBA order, which means the same board takes
+either a display or nothing and the choice can be made at build time.
 
-Parts are not selected here. The board outline and the enclosure decide the
-switch and LED footprints, and both are downstream of measurements that have not
-happened.
+The three indicator LEDs stay regardless of the display decision — power, bus
+activity and fault, readable from the doorway, six cents, and they answer "is it
+alive" without waking anything.
 
-## The enclosure is now a wall panel
+## The enclosure
 
-This changed with the scope. The device is no longer a box beside the machine; it
-is the thing on the wall where the panel was, in a living space, replacing
-something that was designed to be looked at.
+The panel is mounted **under the machine**, in a technical space. There is no
+footprint to match and nothing to cover: the manufacturer's 90 × 110 × 23 mm is a
+reference point, not a requirement.
 
-The manufacturer's drawing gives the original as **90 × 110 × 23 mm**, surface
-mounted on a wall or over a one-gang box. Matching that footprint or covering it is
-worth doing: whatever was behind the old panel — paint edges, a wall box, screw
-holes — is what the new one has to hide.
-
-That is a mechanical decision and it belongs to `/kotelo`, but it belongs in the
-component list too, because it is what makes the through-hole terminal, the button
-footprints and the board outline a single problem rather than three.
+What that permits is a board shaped around its own contents rather than around a
+hole in a wall. What it still demands is a display window if a display is fitted,
+which is the hardest feature to print well on an FDM part, and cable entry that
+suits a cable arriving from the machine above.
 
 ## Variant B — isolated bus front end
 
@@ -281,10 +279,14 @@ Variant B is a contingency, not an upgrade.
 
 1. **M1 and M2.** The rail's isolation and its current capability. Variant A or B,
    TPS54202 or MP2459, and the bulk capacitor all hang on these.
-1b. **Local controls: yes or no, and which.** It changes the board outline, the
-   enclosure and about half a euro of parts. The recommendation is speed up, speed
-   down and an eight-LED bar; the reasoning is in [target.md](target.md) and in
-   risk R10.
+1b. **M2a — what the original panel draws.** Two minutes with an ammeter in series
+   with the + wire, before the panel comes off the wall. Because the panel's
+   regulator is linear, its input current is the rail's demonstrated capability.
+   It is the cheapest way to close the project's central open question.
+1c. **Local interface: display or LEDs.** Analysed in
+   [user-interface.md](user-interface.md); the recommendation is a sleeping 0.96"
+   OLED with three buttons. It changes the enclosure but barely touches the PCBA,
+   so it is reversible for longer than most decisions here.
 2. **The through-hole terminal.** Cost per joint at the intended batch size decides
    whether it is assembled or shipped loose.
 3. **Basic versus Extended for the SM712.** Decided by batch size at order time.

@@ -61,15 +61,36 @@ depends on it — the register set, whether 0xB0/0xB1 exist, which address is fr
 **This step is the gate for everything else.** No further work happens until the
 first two rows are known.
 
+## M2a — What the original panel draws
+
+*Multimeter in series with the + conductor. Two minutes. Do this before the panel
+comes off the wall, because afterwards it is not connected to anything.*
+
+Break the + wire at the terminal, put the meter in series, and read the current
+with the machine idle, with the machine at fan speed 8, and with the panel's own
+LEDs at their brightest.
+
+**Why this is the most valuable measurement available right now.** The panel's
+logic runs from a *linear* regulator, so its input current is its output current.
+Whatever it draws is current the rail has been delivering, continuously, for
+twenty years. That converts the central open question of this project — how much
+can the bus give — from an inference about the size of a heatsink into a number,
+and it does so without loading the rail, without risking anything and without
+transmitting a single frame.
+
+**Result:** the demonstrated floor of the rail's capability, and with it the power
+budget in [user-interface.md](user-interface.md) stops being arithmetic.
+
 ## M2 — How much current can the rail give
 
 *Bench supply not usable here — the source is the machine. Electronic load or a
 resistor decade, plus a multimeter, plus the oscilloscope on the rail.*
 
-Load the 21 V rail in steps with the factory panel connected and the machine
-running, watching the rail voltage and watching the factory panel for a bus fault or
-a reset. Find the current at which either the rail collapses or the machine
-complains, and stay well below it.
+M2a gives the floor — what the rail has been supplying. This gives the ceiling.
+
+Load the rail in steps with the machine running, watching the rail voltage and
+watching the panel for a bus fault or a reset. Find the current at which either the
+rail collapses or the machine complains, and stay well below it.
 
 **Result:** the power budget. If the usable headroom turns out to be smaller than an
 ESP32-S3's Wi-Fi transmit peak plus margin, the design changes — either a large bulk

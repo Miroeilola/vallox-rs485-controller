@@ -165,31 +165,33 @@ record in [`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md)
 - Touch anything on the mains side of the machine.
 - Claim support for Vallox MV, or for Vallox 130 D, without a capture from one.
 
-### Open, and it decides the shape of the product
+### Where it lives, and what that permits
 
-**Does the replacement have local controls?**
+The panel is mounted **under the machine**, in a technical space — not on a
+living-room wall. There is no footprint to match, nothing to cover up and no size
+constraint. The replacement is free to be whatever shape suits it.
 
-Removing the panel removes the only way to change fan speed without a network. A
-household that cannot turn up the ventilation because the Wi-Fi is down has been
-given a worse device than it had, and the person who notices will not be the one
-who built it.
+That is worth stating because it removes a constraint that would otherwise have
+driven the mechanical design, and because it changes what the local interface is
+for: this is a place people visit when something needs attention, not a thing they
+look at every day.
 
-The options, with what each costs:
+### Local interface
 
-| Option | Parts cost | What it gives up |
-|---|---|---|
-| No local controls, network only | 0 | Ventilation becomes unadjustable whenever the network is down |
-| Two buttons, speed up and down, and an 8-LED bar | under 1 € | No setpoint editing locally, but the daily action still works |
-| Rotary encoder and a small OLED | about 1.5 € | Nothing much — it can do everything the panel did |
+Analysed in full, with live prices and the power arithmetic, in
+[user-interface.md](user-interface.md).
 
-The recommendation is the **middle option at minimum**: speed up, speed down, and
-a visible indication of the current speed. It is the action people actually use on
-a ventilation panel, it costs under a euro, and it keeps the device from being a
-downgrade in the one situation where a downgrade matters.
+Short version: **a 0.96" OLED that sleeps, three buttons, and three always-on
+indicator LEDs.** About $2.55 per finished device, of which only $0.24 lands on the
+assembled board — the display is a bare panel plugged into an FPC connector after
+assembly, so the same board takes either option.
 
-This is not settled here because it changes the enclosure and the board outline,
-and both of those are downstream of the electrical measurements that have not
-happened yet.
+The reason is not the display itself. It is that the panel being removed could set
+the heating setpoint from the wall, and matching that with LEDs means rebuilding a
+2001 keypad. A display and three buttons is a menu.
+
+The argument against is in the same file and it is a good one: the LEDs in the
+original panel outlived its electrolytics.
 
 ## What the user ends up with
 

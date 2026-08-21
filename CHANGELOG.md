@@ -31,6 +31,13 @@ combination is known to work together.
 - First measurement report: the target panel identified as a Vallox DIGIT SE LED
   panel with photographs, its terminal block, its MAX487 transceiver and its
   linear supply, and 22 V measured on the supply pair.
+- Local interface analysis: LED bar against 0.96" OLED against colour TFT, costed
+  against live stock, with the power arithmetic, the OLED burn-in question and a
+  recommendation. Lands on a sleeping OLED, three buttons and three indicator LEDs.
+- Measurement M2a: put an ammeter in series with the original panel's supply wire
+  before removing it. Because that panel's regulator is linear, its input current
+  is the rail's demonstrated capability — the cheapest available answer to the
+  project's central open question.
 
 ### Changed
 - **Scope: this replaces the original panel instead of joining the bus alongside

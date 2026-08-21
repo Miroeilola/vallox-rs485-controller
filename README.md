@@ -72,6 +72,8 @@ out of source code, published measurements, an enclosure and a datasheet.
 | Supply voltage | 22 V DC measured at the panel terminal; range not yet measured |
 | Current consumption | — (measured, see `docs/measurements/`) |
 | Interfaces | RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol · Wi-Fi 2.4 GHz |
+| Local interface | 0.96" 128×64 OLED (sleeps), 3 buttons, 3 indicator LEDs — proposed, see `docs/research/user-interface.md` |
+| Mounting | Under the machine, replacing the original panel. No footprint to match |
 | Dimensions | — |
 | Operating temperature | — |
 | Enclosure | — |
@@ -134,10 +136,13 @@ still an open question rather than a specification.
 
 ## What this does not do
 
-- **It replaces the panel, so the panel's local controls go with it.** Whether the
-  replacement has buttons of its own is an open design decision, written up in
-  [`docs/research/target.md`](docs/research/target.md). Until it is settled, assume
-  that controlling the ventilation needs the network.
+- **The display sleeps.** It is off until a button is pressed, and it stays off
+  the rest of the time. That is deliberate — a static readout burns into a
+  passive-matrix OLED inside about fourteen months of continuous use — but it does
+  mean the device looks dark when you glance at it. Three indicator LEDs stay lit
+  for power, bus activity and fault, and they are what answers "is it running".
+- **Home Assistant is the primary interface.** The local menu covers fan speed,
+  the setpoints and diagnostics, and it is a fallback rather than the main event.
 - **It is not a safety device and it is not in any safety path.** The machine's
   frost protection, over-temperature thermostats and defrost cycle are in the
   machine's own firmware. This device cannot reach them and cannot disable them.

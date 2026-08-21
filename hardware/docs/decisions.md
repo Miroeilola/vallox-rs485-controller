@@ -246,10 +246,11 @@ operation.
 4. **The bus survey in the firmware changes purpose.** It no longer picks a free
    address. It verifies that nothing else is talking on the panel side, which is
    a precondition rather than a convenience.
-5. **The enclosure is now a wall panel**, not a box beside the machine. It is
-   visible, it is in a living space, and it replaces something that was designed
-   to be looked at. The original is 90 × 110 × 23 mm on the manufacturer's
-   drawing.
+5. **The enclosure replaces a panel, but not a living-room one.** The original is
+   mounted under the machine, in a technical space, with no footprint to match and
+   nothing to cover up. The manufacturer's 90 × 110 × 23 mm is a reference point,
+   not a requirement, and the replacement is free to be whatever shape suits its
+   contents.
 
 ---
 
@@ -290,3 +291,55 @@ transceiver choice does not replace the protection, it sits behind it.
 If the transceiver is ever swapped for the cheaper Basic part on cost grounds,
 that substitution has to be checked against all three requirements above, not just
 against the pinout.
+
+---
+
+### 2026-08-21 — Local interface: a sleeping OLED, three buttons, three LEDs
+
+**Context.** With the panel removed, the machine has no local interface at all.
+The panel it replaces sits under the machine in a technical space, so there is no
+size to match and no aesthetic to preserve — the question is purely what the
+interface is for.
+
+**Options.** Costed against live JLCPCB stock in
+`docs/research/user-interface.md`: an LED bar and buttons at about $0.36, a 0.96"
+128×64 OLED at about $2.55 for the finished device, a 1.14" colour TFT at about
+$3.05 with an unresolved backlight question, and e-paper, which is not in the
+fab's catalogue and needs ambient light in a room that has none.
+
+**Decision.** A 0.96" OLED that sleeps and wakes on a button press, three tactile
+switches, and three always-on indicator LEDs for power, bus activity and fault.
+
+**Reasoning.** Three things, in order of weight.
+
+1. **Parity.** The panel being removed could set the heating setpoint from an
+   eight-step bar graph on the wall. Matching that with LEDs means rebuilding a
+   2001 keypad — twenty LEDs and eight buttons. A display and three buttons is a
+   menu, and it is cheaper than the replica.
+2. **Diagnostics.** Wi-Fi state, IP address, bus frame and error counters, the
+   last reset reason. On a display that is a screen; on LEDs it is a blink code,
+   and blink codes are how a device becomes hostile. The firmware rules already
+   require this output to exist.
+3. **It barely touches the board.** $0.30 of connector and switches is assembled;
+   the display is a bare panel plugged in afterwards. The same board takes either
+   choice, so this decision stays reversible far longer than most.
+
+Sleeping is not a power saving, it is a lifetime decision. Passive-matrix OLED is
+specified to half brightness in the region of 10 000 hours for lit pixels, which
+is fourteen months of continuous operation, and a static fan-speed readout would
+burn in well inside the life of the appliance. Off by default, thirty seconds on a
+keypress, removes that entirely.
+
+**The argument against, kept because it is good.** The panel being replaced has
+LEDs that outlived its own electrolytic capacitors, and they are still lit in the
+photographs after about twenty-five years. An OLED will be the first thing on this
+board to fail, and a sleeping display is dark exactly when someone glances over to
+check the machine is running. That argument loses only because Home Assistant is
+the primary interface here and the local one is a fallback — and if that
+assumption ever changes, so does this decision.
+
+**Consequences.** The enclosure needs a display window, which is the hardest
+feature to print well on an FDM part. The firmware acquires a menu, which is scope
+that competes with the protocol work, so it is built last and kept small. The
+three indicator LEDs stay regardless, because "is it alive" should not require
+waking anything.
