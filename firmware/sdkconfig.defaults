@@ -1,0 +1,24 @@
+# Committed defaults. The generated sdkconfig is machine-specific and gitignored.
+
+# --- Application ---
+CONFIG_APP_PROJECT_VER_FROM_CONFIG=n
+
+# --- Flash ---
+# Two OTA app partitions do not fit the 2 MB default; 4 MB is the smallest
+# common module size that leaves room for both apps plus NVS.
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+
+# --- OTA: two app partitions with rollback, mandatory for a networked device ---
+CONFIG_PARTITION_TABLE_TWO_OTA=y
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# --- Watchdogs ---
+CONFIG_ESP_TASK_WDT_INIT=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
+
+# --- Logging: INFO in release builds, DEBUG is opt-in ---
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# --- Brownout: keep enabled; a reset is better than corrupt flash ---
+CONFIG_ESP_BROWNOUT_DET=y

@@ -1,0 +1,58 @@
+# Datasheet source data. Consumed by /datasheet.
+# Every number here comes from a measurement report or a component datasheet.
+# Leave a field null rather than guessing — a blank cell is honest, a made-up
+# number is not.
+
+part_number: vallox-rs485-controller
+title: Vallox RS-485 Controller
+tagline: null
+revision: A
+date: 2026-08-21
+
+features: []
+  # - "RS-485 half duplex, galvanically isolated"
+
+applications: []
+
+description: |
+  Replacement bus controller for legacy Vallox ventilation units.
+
+block_diagram: ../images/block-diagram.png
+
+# Ratings that destroy the device if exceeded. Not an operating range.
+absolute_maximum_ratings: []
+  # - parameter: "Supply voltage"
+  #   min: -0.3
+  #   max: 36
+  #   unit: V
+  #   source: "U1 datasheet p. 5"
+
+recommended_operating_conditions: []
+
+# Guaranteed behaviour inside the recommended range. Measured values only.
+electrical_characteristics: []
+  # - parameter: "Idle current"
+  #   min: null
+  #   typ: 12.4
+  #   max: null
+  #   unit: mA
+  #   conditions: "12 V, Wi-Fi connected, idle"
+  #   source: "docs/measurements/2026-09-01-current.md"
+
+interfaces: []
+
+mechanical:
+  dimensions: null
+  weight: null
+  mounting: null
+  ip_rating: null            # only if actually tested
+
+ordering:
+  repository: https://github.com/Miroeilola/vallox-rs485-controller
+  estimated_bom_cost: null
+  assembly: null
+
+revision_history:
+  - revision: A
+    date: 2026-08-21
+    changes: "Initial release."

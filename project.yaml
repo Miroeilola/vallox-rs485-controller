@@ -1,0 +1,51 @@
+# Project metadata. Read by workspace tooling (/pcba-order, /datasheet, /projektit).
+name: Vallox RS-485 Controller
+slug: vallox-rs485-controller
+visibility: public          # public | client | internal
+status: development                 # development | review | released | discontinued
+created: 2026-08-21
+designer: Miro Eilola / Mironet
+
+description: |
+  Replacement bus controller for legacy Vallox ventilation units.
+
+platform:
+  mcu: ESP32-S3
+  target: esp32s3
+
+# Electrical envelope. Fill from datasheets and measurements — never from memory.
+electrical:
+  supply_voltage: null              # e.g. "12 V DC (9-30 V)"
+  current_idle: null
+  current_peak: null
+  interfaces: []                    # e.g. ["RS-485 half duplex", "Wi-Fi 2.4 GHz"]
+
+mechanical:
+  enclosure_master: fusion          # fusion | code — see .claude/rules/mekaniikka.md
+  dimensions: null
+  material: null
+
+# Hardware revisions. One entry per fabricated revision, newest last.
+revisions: []
+  # - rev: A
+  #   date: 2026-09-01
+  #   package: hardware/orders/revA-2026-09-01
+  #   status: ordered               # planned | ordered | built
+  #   cost: null
+  #   notes: |
+  #     Known issues found after assembly.
+
+# Consumed by /pcba-order. This is stored judgement — do not re-derive it every order.
+assembly:
+  fab: pcbway
+  surface_finish: hasl-lead-free
+  solder_mask: Green
+  silkscreen: White
+  panelized: true
+  mcu_blank: true                   # deliver MCU unprogrammed
+  first_article: true
+  no_substitute: []
+    # - ref: U1
+    #   reason: "exact part required"
+  gotchas: []
+  dnp: []

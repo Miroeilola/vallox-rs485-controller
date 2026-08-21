@@ -1,0 +1,57 @@
+# Electrical rule check, design rule check and manufacturing outputs.
+# Runs in the official KiCad container so results match the desktop version.
+# NOTE: kicad-cli does not load project-specific .kicad_dru custom rules.
+# Those must be checked in the GUI before ordering — see the project docs.
+name: hardware
+
+on:
+  push:
+    paths: ['hardware/**', '.github/workflows/hardware.yml']
+  pull_request:
+    paths: ['hardware/**', '.github/workflows/hardware.yml']
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:10.0
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Electrical rule check
+        run: |
+          kicad-cli sch erc \
+            --output hardware/output/erc_report.json --format json \
+            --severity-error --exit-code-violations \
+            hardware/vallox-rs485-controller.kicad_sch
+
+      - name: Design rule check
+        run: |
+          kicad-cli pcb drc \
+            --output hardware/output/drc_report.json --format json \
+            --severity-error --exit-code-violations \
+            hardware/vallox-rs485-controller.kicad_pcb
+
+      - name: Manufacturing outputs
+        if: success()
+        run: |
+          mkdir -p hardware/manufacturing/gerber
+          kicad-cli pcb export gerbers --output hardware/manufacturing/gerber hardware/vallox-rs485-controller.kicad_pcb
+          kicad-cli pcb export drill   --output hardware/manufacturing/gerber hardware/vallox-rs485-controller.kicad_pcb
+          kicad-cli pcb export pos     --output hardware/manufacturing/vallox-rs485-controller-all-pos.csv \
+            --format csv --units mm --side both hardware/vallox-rs485-controller.kicad_pcb
+          kicad-cli sch export bom     --output hardware/manufacturing/vallox-rs485-controller-bom.csv hardware/vallox-rs485-controller.kicad_sch
+          kicad-cli sch export pdf     --output hardware/manufacturing/vallox-rs485-controller-schematic.pdf hardware/vallox-rs485-controller.kicad_sch
+
+      - name: Upload reports and outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hardware-outputs
+          path: |
+            hardware/output/
+            hardware/manufacturing/

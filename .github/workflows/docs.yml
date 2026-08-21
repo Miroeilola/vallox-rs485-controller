@@ -1,0 +1,31 @@
+# Documentation hygiene: no dead links, no leftover placeholders in published docs.
+name: docs
+
+on:
+  push:
+    paths: ['**/*.md', '.github/workflows/docs.yml']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  placeholders:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on unresolved placeholders and TODO markers
+        run: |
+          if grep -rnE '\{\{[A-Z_]+\}\}|\bTBD\b|\bTODO\b' \
+               --include='*.md' --include='*.yaml' . ; then
+            echo "::error::Unresolved placeholders or TODO markers in published documents"
+            exit 1
+          fi
+          echo "No placeholders found."
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-path LICENSES --accept 200,429 '**/*.md'
+          fail: true

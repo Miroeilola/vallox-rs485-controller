@@ -1,0 +1,34 @@
+# Working example configuration for Vallox RS-485 Controller.
+# Copy this file, fill in secrets.yaml, and run:  esphome run example.yaml
+
+esphome:
+  name: vallox-rs485-controller
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+logger:
+api:
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [ vallox_rs485_controller ]
+
+uart:
+  id: bus
+  tx_pin: GPIO17
+  rx_pin: GPIO18
+  baud_rate: 9600
+
+vallox_rs485_controller:
+  uart_id: bus
