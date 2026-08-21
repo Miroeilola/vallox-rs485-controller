@@ -653,48 +653,107 @@ For comparison, the part being replaced: TS-1187A-B-A-B, C318884, 5.1 × 5.1 mm,
 footprint present, **no 3D model**.
 
 **Decision.** Lay the board out on the **PTS645 land pattern**
-(`SW_SPST_PTS645Sx43SMTR92`). Default fitted part: **K2-6639SP-A4SC-04**, LCSC
-**C879454**.
+(`SW_SPST_PTS645Sx43SMTR92`). Fitted part: **PTS645SM43SMTR92LFS**, LCSC
+**C221880** — C&K's own part, 1.6 N, 4.3 mm, −20…+85 °C, 1 421 in stock, $0.532.
+
+*Recorded earlier the same day as `K2-6639SP-A4SC-04` (C879454, $0.0456), and
+changed when price was explicitly removed as a constraint. The clone is kept below
+as the cost-reduction option, because it is the right answer if a batch ever makes
+$0.49 a button matter.*
 
 **Reasoning.**
 
-1. **The 3D model is exact, not approximate.** K2-6639SP is 4.3 mm high and the
+1. **It is the part the KiCad footprint was drawn for.** `SW_SPST_PTS645Sx43SMTR92`
+   is C&K's own land pattern, taken from C&K's datasheet. Fitting the genuine part
+   removes the pad-span question entirely rather than answering it — see the note
+   on that below, which this decision retires.
+2. **1.6 N restores the force the flexure wanted.** The superseded entry chose
+   1.6 N because a printed flexure adds its own force. The 6 × 6 clones are
+   2.5–2.6 N; this part is 1.6 N. The compromise disappears instead of being
+   deferred.
+3. **The 3D model is exact, not approximate.** This part is 4.3 mm high and the
    KiCad model is the 4.3 mm variant. The cheaper KH-6X6X5H is 5.0 mm, which
    leaves the model 0.7 mm wrong in exactly the dimension that sets front-panel
    thickness and clearance. A model that is nearly right is worse than none,
    because it will not be questioned.
-2. **1 000 000 cycles against 100 000.** This is the only control the household
-   has for its ventilation, on a board intended to outlast the machine.
-3. **6 × 6 mm is a larger target than 5.1 × 5.1 mm**, pressed through a printed
+4. **A real second source.** C&K is stocked by Digi-Key, Mouser and Farnell. Every
+   6 × 6 clone considered here is available from LCSC and nowhere else, which is a
+   single point of failure on a part fitted four times per board.
+5. **6 × 6 mm is a larger target than 5.1 × 5.1 mm**, pressed through a printed
    front panel. Larger is better here, not worse.
-4. The same argument that favoured the TS-1187A family still holds and holds
+6. The same argument that favoured the TS-1187A family still holds and holds
    wider: one land pattern carries plunger heights from 4.3 mm to 9.0 mm — 4.7 mm
    of choice against the TS-1187A family's 1.5 mm.
 
-**The force question, stated rather than hidden.** The superseded entry preferred a
-printed flexure in the front panel, and reasoned that a flexure adds its own force
-and therefore wants a light switch — which is why it landed on 1.6 N. The cheap
-6 × 6 clones are 2.5–2.6 N. That is a real regression against that preference.
+**Other parts on the same pads**, if the enclosure or a cost target later argues
+for one. The board does not change for any of them:
 
-It is not resolved here, and it does not have to be, because the same land pattern
-carries **PTS645SL50SMTR92LFS at 1.3 N** (C221877, $0.2831, 9 410 in stock) —
-lighter than the part being replaced. The choice between $0.0456 at 2.5 N and
-$0.2831 at 1.3 N is a $0.95-per-board question that the enclosure answers, and the
-enclosure is designed after components and layout. The board does not change
-either way.
+| LCSC | Part | Force | Height | Stock | $/pc |
+|---|---|---|---|---|---|
+| **C221880** | **PTS645SM43SMTR92LFS** | **1.6 N** | **4.3 mm** | 1 421 | **0.532** |
+| C221871 | PTS645SK43SMTR92LFS | 2.6 N | 4.3 mm | 2 152 | 0.482 |
+| C221877 | PTS645SL50SMTR92LFS | 1.3 N | 5.0 mm | 9 410 | 0.283 |
+| C879454 | K2-6639SP-A4SC-04 | 2.5 N | 4.3 mm | 54 370 | 0.046 |
+| C7470150 | ZX-QC66-4.3TP | 2.6 N | 4.3 mm | 65 369 | 0.029 |
+
+The 1.3 N part is lighter still but 5.0 mm tall, so its 3D model is 0.7 mm off.
+The clones are an order of magnitude cheaper and carry both the pad-span question
+and single-sourcing.
 
 **Consequences.**
 
 - **Basic status is lost.** Every 6 × 6 option is Extended; TS-1187A was Basic.
   That is roughly $3 of feeder setup per order, not per board — about $0.30 a board
   across ten boards.
-- Parts cost for the button set rises from $0.08 to $0.18 per board at the default
-  part, or to $1.13 if the 1.3 N C&K part is fitted.
+- Parts cost for the button set rises from $0.08 to **$2.13** per board. On a board
+  whose parts come to about $4.85 that is a 44 % increase for four switches, and it
+  is accepted deliberately: it buys the correct force, an exact model, a verified
+  land pattern and a second source, on the only control the household has.
 - Board area per button grows from 5.1 × 5.1 mm to 6 × 6 mm, four times over.
-- **Blocking before layout: the pad span must be verified from the fitted part's
-  own datasheet.** The two 6 × 6 land patterns differ by 1.14 mm in pad span and
-  are not interchangeable. "6 × 6 gullwing" is not sufficient evidence that a clone
-  follows the PTS645 pattern rather than the TL3301 one. This is checked against
-  the datasheet, not inferred from the package string in a catalogue.
+- **The pad-span verification that this entry originally listed as blocking is
+  retired.** It existed because a clone's land pattern could not be inferred from a
+  catalogue package string. Fitting C&K's own part makes KiCad's footprint and the
+  part's datasheet the same document. If a clone is ever substituted for cost, the
+  check comes back with it.
 - The switch is 4.3 mm high against 1.5 mm. The board-to-front-panel distance
   changes accordingly and is an input to the enclosure, not a consequence of it.
+
+---
+
+### 2026-08-22 — USB-C stays inside the enclosure
+
+**Context.** The USB-C receptacle `TYPE-C-31-M-12` (C165948) has an exact KiCad
+footprint but no 3D model, and the search for a replacement that has both found
+only one part in JLCPCB's catalogue: Amphenol `12401610E4#2A` (C5119948) at $1.334
+against $0.161, 24 pins of USB 3.2 against 16 of USB 2.0, for a port this design
+uses as a bench connection. Changing the part to gain a model is the wrong trade.
+
+**Decision.** Keep `TYPE-C-31-M-12`, and place it **inside the enclosure** with no
+opening in the wall. Reaching it means opening the box.
+
+**Reasoning.** The port exists for bench work: first flash, console, and recovery.
+None of those happen with the device installed under the machine. An opening in the
+wall would add a dust path into an enclosure that lives beside a fan moving filtered
+air, and dust ingress is the failure this enclosure is most exposed to.
+
+That also settles what the missing 3D model is for. It is no longer needed to place
+an opening to ±0.5 mm; it is needed for internal clearance — that the lid closes
+over the receptacle and that nothing lands on top of it. That is a lower accuracy
+requirement, and it does not change the decision to model the part, only its
+urgency.
+
+**Consequences.**
+
+- **Field firmware updates are OTA-only.** This is already required by the
+  workspace firmware rule, but it stops being a convenience and becomes the only
+  path. Rollback on a failed update has to work, because the fallback is a
+  screwdriver.
+- **Recovery from a bad flash means opening the enclosure.** Combined with the
+  earlier decision to fit no BOOT or RESET buttons and rely on the C3's native
+  USB-Serial-JTAG, there is no way to recover a bricked device without taking it
+  off the wall. Accepted: the alternative is a hole, a button, or both, on a front
+  panel that should carry nothing that is not for the user.
+- The enclosure needs no USB cutout, no gasket around one, and no strain relief for
+  a cable that is never connected in service.
+- Test pads for EN and GPIO9 remain worth having, and are now the only external
+  electrical access besides the terminal block.

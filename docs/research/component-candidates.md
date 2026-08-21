@@ -108,8 +108,9 @@ model exists, both checked on disk.
 | — | Bulk, decoupling, dividers, LEDs | 0402/0603 basic parts | — | — | ~0.38 total | **basic** | ✔ | ✔ |
 
 Parts cost lands around **$4.85 per board**, with the module at $2.89 of it. The
-local interface adds about $0.40 to the assembled board and about $4.25 to the
-finished device — see below.
+local interface adds about $2.35 to the assembled board and about $6.20 to the
+finished device — see below. Almost all of that increase is the four C&K switches,
+and the reasoning for paying it is in `decisions.md`.
 
 **Changed since the 2026-08-21 snapshot.** U1 was `ESP32-C3-MINI-1-N4` (C2838502)
 at a recorded $2.79; it is now $3.84 with no footprint and no 3D model, and the
@@ -248,21 +249,26 @@ lifetime. Summary of what it lands on:
 |---|---|---|---|---|---|---|---|
 | DS1 | 2.0" 320×240 colour IPS, ST7789, SPI | HS20HS072RX | C5329582 | 657 | 3.772 | n/a — off board | ✘ **task** |
 | J3 | FPC connector, 0.5 mm | HC-FPC-05-10-30RLTAG family | C5213742 | 5 932 | 0.179 | verify vs `Hirose_FH12-30S-0.5SH` | ✔ |
-| SW1–4 | Tactile switch, 6 × 6 mm — `−` `+` `OK` `←` | **K2-6639SP-A4SC-04** | C879454 | 54 370 | 0.046 | ✔ `SW_SPST_PTS645Sx43SMTR92` | ✔ H4.3 exact |
+| SW1–4 | Tactile switch, 6 × 6 mm — `−` `+` `OK` `←` | **PTS645SM43SMTR92LFS** | C221880 | 1 421 | 0.532 | ✔ `SW_SPST_PTS645Sx43SMTR92` | ✔ H4.3 exact |
 | R-ladder | Four 0402 resistors, buttons onto one ADC pin | — | — | — | 0.002 | ✔ | ✔ |
 | D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 | ✔ | ✔ |
 | — | Backlight drive | open — boost driver ~$0.30, or a constant-current sink from a 5 V rail ~$0.05 | — | — | — | — | — |
 
 **Buttons changed 2026-08-22.** Was `TS-1187A-B-A-B` (C318884, 5.1 × 5.1 mm, 1.6 N,
-Basic, $0.0197): footprint present, **no 3D model in any library**. The board is
-now laid out on the PTS645 6 × 6 gullwing land pattern, which carries plunger
-heights from 4.3 to 9.0 mm and both light and heavy actuation forces on one
-footprint. `K2-6639SP-A4SC-04` is the default fitted part — 4.3 mm, matching the
-KiCad 3D model exactly, 1 000 000 cycles. If the printed flexure needs a lighter
-switch than its 2.5 N, `PTS645SL50SMTR92LFS` (C221877, 1.3 N, $0.2831, 9 410 in
-stock) drops onto the same pads. Blocking before layout: the fitted part's pad span
-is verified from its own datasheet, because the two 6 × 6 gullwing land patterns
-differ by 1.14 mm and are not interchangeable.
+Basic, $0.0197): footprint present, **no 3D model in any library**. The board is now
+laid out on the PTS645 6 × 6 gullwing land pattern, and the fitted part is C&K's own
+`PTS645SM43SMTR92LFS` — 1.6 N, which is the force the printed flexure wanted, and
+4.3 mm, which is exactly the height of the KiCad 3D model.
+
+Fitting the genuine part rather than a clone retires the pad-span check that this
+document briefly listed as blocking: `SW_SPST_PTS645Sx43SMTR92` is C&K's own land
+pattern from C&K's datasheet, so the footprint and the part specification are the
+same document. It also gives a second source outside LCSC, which no clone does.
+
+The cost is real — $2.13 a board against $0.18 for the cheapest clone. Cheaper parts
+on the same pads, if a batch ever makes that matter: `K2-6639SP-A4SC-04` (C879454,
+2.5 N, 4.3 mm, $0.0456, 54 370 in stock) and `ZX-QC66-4.3TP` (C7470150, 2.6 N,
+4.3 mm, $0.0288). Substituting one brings the pad-span check back with it.
 
 A 0.96" OLED was the first choice and it was wrong: it shows eight characters by
 three lines at arm's length, which is a readout rather than a menu, and the reason
@@ -395,15 +401,15 @@ Variant B is a contingency, not an upgrade.
    whether it is assembled or shipped loose. Choose the part from one that has a
    footprint and a 3D model, per selection rule 6.
 3. **Basic versus Extended for the SM712.** Decided by batch size at order time.
-4. **Button pad span.** Blocking before layout. The fitted 6 × 6 part's land
-   pattern is verified from its own datasheet: `SW_SPST_PTS645Sx43SMTR92` is
-   7.96 mm pad span and `SW_Push_1P1T_NO_E-Switch_TL3301NxxxxxG` is 9.10 mm, and a
-   catalogue package string of "SMD-4P,6x6mm" does not say which one a clone
-   follows.
-5. **Two 3D models to obtain**, into `mironet-hw-lib`: the USB-C receptacle
+4. **Two 3D models to obtain**, into `mironet-hw-lib`: the USB-C receptacle
    (`USB_C_Receptacle_HRO_TYPE-C-31-M-12` has the exact footprint but no model) and
    the display glass, which needs a model for the enclosure even though it is not
-   on the PCBA.
+   on the PCBA. Replacements that already have models were searched for and do not
+   exist at a sensible price — the only JLCPCB-stocked USB-C with a model is
+   $1.334 against $0.161 for 24 pins of USB 3.2 this design does not use, and no
+   bare IPS glass has a footprint at all because it does not mount to the board.
+   Both are now issues on `mironet-hw-lib`, with that search recorded so it is not
+   repeated.
 6. **Order of work: components, then layout, then enclosure.** Decided 2026-08-22.
    This is the reverse of the earlier note here, which said the enclosure comes
    first because the terminal block position and the antenna keep-out are enclosure
