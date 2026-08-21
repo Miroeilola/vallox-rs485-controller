@@ -24,6 +24,30 @@ the dependency is written next to it rather than resolved by guessing.
 5. Prices are single-unit catalogue prices in USD. At a build of 5–10 boards the
    feeder fees dominate, which is why the Basic/Extended column matters more than
    the price column.
+6. **An existing KiCad footprint and 3D model, whenever a part that has both meets
+   the requirement.** Added 2026-08-22. A drawn footprint has to be validated
+   against the manufacturer's land pattern; a missing 3D model is not visible as a
+   problem until the enclosure has been designed around a guess. Checked on disk,
+   because two of the library search tools give false negatives. Full rule and its
+   three cases in [`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md).
+
+## Revised 2026-08-22
+
+The tables below carry live figures re-read on 2026-08-22. Two part choices changed
+as a result, both recorded in `decisions.md`:
+
+- **U1** — `ESP32-C3-MINI-1-N4` → `ESP32-C3-WROOM-02-N4`. The MINI had neither a
+  footprint nor a 3D model, and its price rose from $2.79 to $3.84 while the
+  alternative fell to $2.89. The argument for the MINI was price, and price
+  inverted.
+- **SW1–4** — `TS-1187A-B-A-B` → 6 × 6 mm gullwing, default `K2-6639SP-A4SC-04`.
+  The TS-1187A family has a footprint but no 3D model in any library.
+
+Two parts keep their choice and gain a library task instead: the USB-C receptacle
+and the display, both of which need a STEP model adding to `mironet-hw-lib`.
+
+The reasoning written before those changes is left standing below rather than
+edited, so that what was thought at the time stays readable.
 
 ## Where the cost actually is
 
@@ -67,22 +91,31 @@ voltage supply isolated from mains.** In that case the board has exactly one
 galvanic connection to the world — the bus itself — and an isolation barrier inside
 it would protect nothing during normal operation.
 
-| Ref | Function | Candidate | LCSC | Stock | $/pc | Class |
-|---|---|---|---|---|---|---|
-| U1 | MCU + radio | ESP32-C3-MINI-1-N4 | C2838502 | 16 416 | 2.790 | extended |
-| U2 | 21 V → 3.3 V buck | TPS54202DDCR | C191884 | 180 809 | 0.226 | extended |
-| U3 | RS-485 transceiver | THVD1400DR | C3235232 | 93 954 | 0.320 | extended |
-| D1 | Reverse-polarity block | SS34 | C8678 | 3 557 042 | 0.030 | **basic** |
-| D2 | Bus transient clamp | PSM712-LF-T7 (SM712) | C32677 | 151 478 | 0.298 | **basic** |
-| F1, F2 | Bus overcurrent, 100 mA / 60 V | JK-mSMD010-60 | C1884489 | 74 360 | 0.035 | extended |
-| L1 | Buck inductor, 10 µH | FNR6045S100MT | C168076 | 31 949 | 0.073 | extended |
-| J2 | USB-C 2.0 receptacle | TYPE-C-31-M-12 | C165948 | 336 394 | 0.161 | extended |
-| J1 | 5-pole field terminal | KF128 family, 3.81 or 5.08 mm | C474933 and family | — | ~0.30 | extended, through-hole |
-| — | Bulk, decoupling, dividers, LEDs, buttons | 0402/0603 basic parts | — | — | ~0.40 total | **basic** |
+Stock and price re-read live 2026-08-22. `FP` = KiCad footprint exists, `3D` = 3D
+model exists, both checked on disk.
 
-Parts cost lands around **$4.65 per board**, with the module at $2.79 of it. The
-local interface adds about $0.30 to the assembled board and about $4.15 to the
+| Ref | Function | Candidate | LCSC | Stock | $/pc | Class | FP | 3D |
+|---|---|---|---|---|---|---|---|---|
+| U1 | MCU + radio | **ESP32-C3-WROOM-02-N4** | C2934560 | 2 255 | 2.886 | extended | ✔ | ✔ |
+| U2 | 21 V → 3.3 V buck | TPS54202DDCR | C191884 | 180 809 | 0.226 | extended | ✔ | ✔ |
+| U3 | RS-485 transceiver | THVD1400DR | C3235232 | 10 443 | 0.237 | extended | ✔ | ✔ |
+| D1 | Reverse-polarity block | SS34 | C8678 | 3 557 042 | 0.030 | **basic** | ✔ | ✔ |
+| D2 | Bus transient clamp | PSM712-LF-T7 (SM712) | C32677 | 151 478 | 0.298 | **basic** | ✔ | ✔ |
+| F1, F2 | Bus overcurrent, 100 mA / 60 V | JK-mSMD010-60 | C1884489 | 74 360 | 0.035 | extended | ✔ | ✔ |
+| L1 | Buck inductor, 10 µH | FNR6045S100MT | C168076 | 31 949 | 0.073 | extended | ✔ `L_Changjiang_FNR6045S` | ✔ |
+| J2 | USB-C 2.0 receptacle | TYPE-C-31-M-12 | C165948 | 336 394 | 0.161 | extended | ✔ exact part | ✘ **task** |
+| J1 | 5-pole field terminal | KF128 family, 3.81 or 5.08 mm | C474933 and family | — | ~0.30 | extended, through-hole | choose by coverage | — |
+| — | Bulk, decoupling, dividers, LEDs | 0402/0603 basic parts | — | — | ~0.38 total | **basic** | ✔ | ✔ |
+
+Parts cost lands around **$4.85 per board**, with the module at $2.89 of it. The
+local interface adds about $0.40 to the assembled board and about $4.25 to the
 finished device — see below.
+
+**Changed since the 2026-08-21 snapshot.** U1 was `ESP32-C3-MINI-1-N4` (C2838502)
+at a recorded $2.79; it is now $3.84 with no footprint and no 3D model, and the
+alternative has fallen to $2.89 with both — see `decisions.md`. U3 is $0.08 cheaper
+but its stock fell from 93 954 to 10 443, which is a drop worth watching rather
+than acting on.
 
 ### Why each of those
 
@@ -211,14 +244,25 @@ Costed in full in [user-interface.md](user-interface.md), which compares an LED 
 against a 0.96" OLED against a colour TFT with live prices, power arithmetic and
 lifetime. Summary of what it lands on:
 
-| Ref | Function | Candidate | LCSC | Stock | $/pc |
-|---|---|---|---|---|---|
-| DS1 | 2.0" 320×240 colour IPS, ST7789, SPI | HS20HS072RX | C5329582 | 657 | 3.772 |
-| J3 | FPC connector, 0.5 mm | HC-FPC-05-10-30RLTAG family | C5213742 | 5 932 | 0.179 |
-| SW1–4 | Tactile switch, 5.1 mm — `−` `+` `OK` `←` | TS-1187A-B-A-B | C318884 | 1 683 297 | 0.020 |
-| R-ladder | Four 0402 resistors, buttons onto one ADC pin | — | — | — | 0.002 |
-| D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 |
-| — | Backlight drive | open — boost driver ~$0.30, or a constant-current sink from a 5 V rail ~$0.05 | — | — | — |
+| Ref | Function | Candidate | LCSC | Stock | $/pc | FP | 3D |
+|---|---|---|---|---|---|---|---|
+| DS1 | 2.0" 320×240 colour IPS, ST7789, SPI | HS20HS072RX | C5329582 | 657 | 3.772 | n/a — off board | ✘ **task** |
+| J3 | FPC connector, 0.5 mm | HC-FPC-05-10-30RLTAG family | C5213742 | 5 932 | 0.179 | verify vs `Hirose_FH12-30S-0.5SH` | ✔ |
+| SW1–4 | Tactile switch, 6 × 6 mm — `−` `+` `OK` `←` | **K2-6639SP-A4SC-04** | C879454 | 54 370 | 0.046 | ✔ `SW_SPST_PTS645Sx43SMTR92` | ✔ H4.3 exact |
+| R-ladder | Four 0402 resistors, buttons onto one ADC pin | — | — | — | 0.002 | ✔ | ✔ |
+| D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 | ✔ | ✔ |
+| — | Backlight drive | open — boost driver ~$0.30, or a constant-current sink from a 5 V rail ~$0.05 | — | — | — | — | — |
+
+**Buttons changed 2026-08-22.** Was `TS-1187A-B-A-B` (C318884, 5.1 × 5.1 mm, 1.6 N,
+Basic, $0.0197): footprint present, **no 3D model in any library**. The board is
+now laid out on the PTS645 6 × 6 gullwing land pattern, which carries plunger
+heights from 4.3 to 9.0 mm and both light and heavy actuation forces on one
+footprint. `K2-6639SP-A4SC-04` is the default fitted part — 4.3 mm, matching the
+KiCad 3D model exactly, 1 000 000 cycles. If the printed flexure needs a lighter
+switch than its 2.5 N, `PTS645SL50SMTR92LFS` (C221877, 1.3 N, $0.2831, 9 410 in
+stock) drops onto the same pads. Blocking before layout: the fitted part's pad span
+is verified from its own datasheet, because the two 6 × 6 gullwing land patterns
+differ by 1.14 mm and are not interchangeable.
 
 A 0.96" OLED was the first choice and it was wrong: it shows eight characters by
 three lines at arm's length, which is a readout rather than a menu, and the reason
@@ -339,16 +383,37 @@ Variant B is a contingency, not an upgrade.
    with the + wire, before the panel comes off the wall. Because the panel's
    regulator is linear, its input current is the rail's demonstrated capability.
    It is the cheapest way to close the project's central open question.
-1c. **Local interface: display or LEDs.** Analysed in
-   [user-interface.md](user-interface.md); the recommendation is a sleeping 0.96"
-   OLED with three buttons. It changes the enclosure but barely touches the PCBA,
-   so it is reversible for longer than most decisions here.
+1c. **Local interface — decided 2026-08-21.** A 2.0" 320×240 colour IPS, four
+   buttons and three LEDs. Analysed in [user-interface.md](user-interface.md); the
+   earlier recommendation of a sleeping 0.96" OLED was wrong and is superseded
+   there. What remains open under it is the backlight drive, below.
+1d. **Backlight drive.** Four white LEDs in parallel, 80 mA typical, which will not
+   run from 3.3 V. Boost driver at about $0.30 against a 5 V intermediate rail with
+   a PWM-dimmed current sink at about $0.05. The cheaper answer changes the whole
+   power chain, so it is decided together with M2a.
 2. **The through-hole terminal.** Cost per joint at the intended batch size decides
-   whether it is assembled or shipped loose.
+   whether it is assembled or shipped loose. Choose the part from one that has a
+   footprint and a 3D model, per selection rule 6.
 3. **Basic versus Extended for the SM712.** Decided by batch size at order time.
-4. **Enclosure before final layout**, per the workspace rule that mechanics comes
-   before placement — the terminal block's position and the antenna keep-out are
-   enclosure decisions, not layout decisions.
+4. **Button pad span.** Blocking before layout. The fitted 6 × 6 part's land
+   pattern is verified from its own datasheet: `SW_SPST_PTS645Sx43SMTR92` is
+   7.96 mm pad span and `SW_Push_1P1T_NO_E-Switch_TL3301NxxxxxG` is 9.10 mm, and a
+   catalogue package string of "SMD-4P,6x6mm" does not say which one a clone
+   follows.
+5. **Two 3D models to obtain**, into `mironet-hw-lib`: the USB-C receptacle
+   (`USB_C_Receptacle_HRO_TYPE-C-31-M-12` has the exact footprint but no model) and
+   the display glass, which needs a model for the enclosure even though it is not
+   on the PCBA.
+6. **Order of work: components, then layout, then enclosure.** Decided 2026-08-22.
+   This is the reverse of the earlier note here, which said the enclosure comes
+   first because the terminal block position and the antenna keep-out are enclosure
+   decisions. Those two remain the cost of this order and are handled by treating
+   them as layout constraints written down in advance rather than as things the
+   enclosure gets to move later: the terminal block goes on the edge the cable
+   arrives at, and the module's antenna keep-out comes from the WROOM-02 datasheet
+   and is kept clear of copper and of any metal fastener. The enclosure draft is
+   then generated from the finished board — the first STEP reads the board outline
+   and the hole pattern out of KiCad rather than having them measured by hand.
 
 ## Which fab, and an inconsistency worth naming
 

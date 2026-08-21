@@ -135,7 +135,7 @@ code runs, so this decision gets checked against evidence rather than assumed to
 
 ---
 
-### 2026-08-21 — Proposed: ESP32-C3 instead of the scaffolded ESP32-S3
+### 2026-08-21 — Proposed: ESP32-C3 instead of the scaffolded ESP32-S3  — MODULE VARIANT REVISED 2026-08-22
 
 **Context.** The project was scaffolded with the workspace default, ESP32-S3. The
 workload is one 9600 baud UART, a Wi-Fi client and MQTT.
@@ -423,7 +423,7 @@ tactile switches and three indicator LEDs as before.
 
 ---
 
-### 2026-08-21 — Buttons: four tactile switches on a resistor ladder
+### 2026-08-21 — Buttons: four tactile switches on a resistor ladder  — PART REVISED 2026-08-22
 
 **Context.** The bill of materials has carried `TS-1187A-B-A-B` since the LED
 sketch, but it was carried rather than chosen — nobody had decided how many
@@ -521,3 +521,180 @@ part that could be put on a board meant to last as long as the machine.
   there are pins to spare and the buttons would be four plain GPIOs. The C3 fits,
   but with one pin left, and that is worth weighing when M2a closes the power
   question and the C3-versus-S3 decision is finally taken.
+
+---
+
+### 2026-08-22 — Library coverage is a part selection criterion
+
+**Context.** Parts had been selected on requirement, price, stock and JLCPCB
+Basic/Extended class. Nothing in that list asks whether a KiCad footprint and a 3D
+model already exist. Checking the shortlist against the installed libraries found
+that the most important footprint on the board — the microcontroller module — had
+neither.
+
+**Decision.** Existing library coverage is a selection criterion alongside the
+others: prefer the part that already has a footprint **and** a 3D model, whenever
+one exists that meets the electrical and mechanical requirement.
+
+**Reasoning.** A drawn footprint has to be validated against IPC-7351 and against
+the manufacturer's land pattern, and a wrong one is found at assembly. A 3D model
+is a precondition for the enclosure fit check that this workspace requires before
+anything is printed — and a missing model is not visible as a problem until the
+enclosure has already been designed around a guess.
+
+**How it is applied.** Three cases, three different answers:
+
+1. **Footprint and model both exist** — use the part.
+2. **Footprint exists, model missing** — this is not a reason to change the part.
+   Obtain the manufacturer's STEP, or build one, and put it in `mironet-hw-lib`.
+3. **Neither exists** — the strongest reason to prefer a different part. If the
+   part is kept anyway, the library work is recorded as work, not assumed.
+
+The rule does not override an electrical or mechanical requirement. If library
+coverage is only available on the wrong part, the right part wins and the library
+is extended.
+
+**Where to check.** On disk, not from memory:
+
+- footprints: `<KiCad>/SharedSupport/footprints/<lib>.pretty/<name>.kicad_mod`
+- models: `<KiCad>/SharedSupport/3dmodels/<lib>.3dshapes/<name>.step`
+
+KiCad 10 ships `.step` only, not `.wrl`. Two MCP tools give false negatives here
+and neither may be used as evidence that something is missing:
+`lib_search_3d_models` returns nothing for everything because it searches the
+footprint directory, and `lib_search_footprints` missed footprints that are
+present on disk.
+
+**Consequences.** Two parts changed as a direct result, recorded below. Two more —
+the USB-C receptacle and the display — keep their part and gain a library task
+instead.
+
+---
+
+### 2026-08-22 — ESP32-C3-WROOM-02 instead of ESP32-C3-MINI-1
+
+**Context.** The proposal above chose `ESP32-C3-MINI-1-N4` and named
+`ESP32-C3-WROOM-02-N4` as a design-time alternative on a different footprint.
+Two things have changed since it was written, and both point the same way.
+
+**Options.**
+
+| | ESP32-C3-MINI-1-N4 | ESP32-C3-WROOM-02-N4 |
+|---|---|---|
+| LCSC | C2838502 | C2934560 |
+| Price, 2026-08-21 as recorded | $2.79 | $3.11 |
+| Price, 2026-08-22 live | **$3.84** | **$2.89** |
+| Stock | 25 989 | 2 255 |
+| KiCad footprint | none | `RF_Module:ESP32-C3-WROOM-02` |
+| KiCad 3D model | none | present |
+| Module size | 13.2 × 16.6 mm | 18.0 × 20.0 mm |
+
+**Decision.** `ESP32-C3-WROOM-02-N4`, LCSC C2934560.
+
+**Reasoning.** The original argument for the MINI was price, and the price has
+inverted: the module is now $0.95 cheaper than the part that was chosen for being
+cheaper. Independently of that, the MINI-1 is the only part in the design with
+neither a footprint nor a 3D model, and it carries the largest and most
+consequential land pattern on the board.
+
+The size penalty costs nothing here. The panel is mounted under the machine in a
+technical space, and it is already recorded that there is no enclosure footprint to
+match and nothing to cover. 4.4 mm of extra width buys a verified land pattern.
+
+Both are the same silicon: ESP32-C3, 4 MB flash, and the pin budget above is
+unchanged — the WROOM-02 exposes the same GPIO0–10 and GPIO18–21.
+
+**Consequences.**
+
+- Stock is 2 255 against 25 989. That is enough for any realistic batch but it is
+  not the same margin, and it is re-checked at the pre-order gate.
+- The MINI-1 becomes the second source rather than the first, and it is a
+  design-time alternative only: different footprint, so it is not a drop-in.
+- The board outline grows by roughly 4 mm in each direction in the module area.
+  Layout has not started, so nothing is lost.
+- The antenna keep-out moves with the module and is re-derived from the WROOM-02
+  datasheet, not carried over.
+
+---
+
+### 2026-08-22 — Buttons revised: 6 × 6 mm gullwing instead of TS-1187A
+
+**Supersedes the part choice in "Buttons: four tactile switches on a resistor
+ladder" above.** Everything else in that entry stands: four buttons, the `−` `+`
+`OK` `←` assignment, the resistor ladder into one ADC1 channel, no BOOT or RESET
+buttons, and the rejection of capacitive touch and of a rotary encoder.
+
+**Context.** `TS-1187A-B-A-B` was chosen partly because the whole TS-1187A family
+shares one footprint, so the board could be laid out before the enclosure existed.
+That argument was right. What it missed is that the family has a KiCad footprint
+but **no 3D model at all**, which defers a problem into the one activity that
+cannot absorb it — fitting an enclosure to a real board.
+
+**Options.** Restricted to 4-pad SMD tactile switches that have both a footprint
+and a 3D model in the installed libraries. That is the 6 × 6 mm gullwing family,
+which resolves to two land patterns that are **not interchangeable**:
+
+| Footprint | Pad span | 3D model |
+|---|---|---|
+| `SW_SPST_PTS645Sx43SMTR92` | 7.96 × 4.5 mm | present, H4.3 mm |
+| `SW_Push_1P1T_NO_E-Switch_TL3301NxxxxxG` | 9.10 × 4.5 mm | present, H4.3 mm |
+
+Parts on the 6 × 6 gullwing pattern, read live 2026-08-22:
+
+| LCSC | Part | Height | Force | Cycles | Stock | $/pc |
+|---|---|---|---|---|---|---|
+| C879454 | K2-6639SP-A4SC-04 | 4.3 mm | 2.5 N | 1 000 000 | 54 370 | 0.0456 |
+| C2837531 | KH-6X6X5H-STM | 5.0 mm | — | 80 000 | 720 195 | 0.0188 |
+| C7470150 | ZX-QC66-4.3TP | 4.3 mm | 2.6 N | 100 000 | 65 369 | 0.0288 |
+| C221877 | PTS645SL50SMTR92LFS | 5.0 mm | **1.3 N** | — | 9 410 | 0.2831 |
+
+For comparison, the part being replaced: TS-1187A-B-A-B, C318884, 5.1 × 5.1 mm,
+1.5 mm high, 1.6 N, 100 000 cycles, JLCPCB *Basic*, $0.0197, 1 683 297 in stock,
+footprint present, **no 3D model**.
+
+**Decision.** Lay the board out on the **PTS645 land pattern**
+(`SW_SPST_PTS645Sx43SMTR92`). Default fitted part: **K2-6639SP-A4SC-04**, LCSC
+**C879454**.
+
+**Reasoning.**
+
+1. **The 3D model is exact, not approximate.** K2-6639SP is 4.3 mm high and the
+   KiCad model is the 4.3 mm variant. The cheaper KH-6X6X5H is 5.0 mm, which
+   leaves the model 0.7 mm wrong in exactly the dimension that sets front-panel
+   thickness and clearance. A model that is nearly right is worse than none,
+   because it will not be questioned.
+2. **1 000 000 cycles against 100 000.** This is the only control the household
+   has for its ventilation, on a board intended to outlast the machine.
+3. **6 × 6 mm is a larger target than 5.1 × 5.1 mm**, pressed through a printed
+   front panel. Larger is better here, not worse.
+4. The same argument that favoured the TS-1187A family still holds and holds
+   wider: one land pattern carries plunger heights from 4.3 mm to 9.0 mm — 4.7 mm
+   of choice against the TS-1187A family's 1.5 mm.
+
+**The force question, stated rather than hidden.** The superseded entry preferred a
+printed flexure in the front panel, and reasoned that a flexure adds its own force
+and therefore wants a light switch — which is why it landed on 1.6 N. The cheap
+6 × 6 clones are 2.5–2.6 N. That is a real regression against that preference.
+
+It is not resolved here, and it does not have to be, because the same land pattern
+carries **PTS645SL50SMTR92LFS at 1.3 N** (C221877, $0.2831, 9 410 in stock) —
+lighter than the part being replaced. The choice between $0.0456 at 2.5 N and
+$0.2831 at 1.3 N is a $0.95-per-board question that the enclosure answers, and the
+enclosure is designed after components and layout. The board does not change
+either way.
+
+**Consequences.**
+
+- **Basic status is lost.** Every 6 × 6 option is Extended; TS-1187A was Basic.
+  That is roughly $3 of feeder setup per order, not per board — about $0.30 a board
+  across ten boards.
+- Parts cost for the button set rises from $0.08 to $0.18 per board at the default
+  part, or to $1.13 if the 1.3 N C&K part is fitted.
+- Board area per button grows from 5.1 × 5.1 mm to 6 × 6 mm, four times over.
+- **Blocking before layout: the pad span must be verified from the fitted part's
+  own datasheet.** The two 6 × 6 land patterns differ by 1.14 mm in pad span and
+  are not interchangeable. "6 × 6 gullwing" is not sufficient evidence that a clone
+  follows the PTS645 pattern rather than the TL3301 one. This is checked against
+  the datasheet, not inferred from the package string in a catalogue.
+- The switch is 4.3 mm high against 1.5 mm. The board-to-front-panel distance
+  changes accordingly and is an input to the enclosure, not a consequence of it.
