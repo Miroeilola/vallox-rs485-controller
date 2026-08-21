@@ -1,9 +1,0 @@
-(kicad_sch
-	(version 20250316)
-	(generator "kicad-mcp-pro")
-	(uuid "72beb40b-69c2-434c-a893-dfb5f591d6ef")
-	(paper "A4")
-	(lib_symbols)
-	(sheet_instances (path "/" (page "1")))
-	(embedded_fonts no)
-)

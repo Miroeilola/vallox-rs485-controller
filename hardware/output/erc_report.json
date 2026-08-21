@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-08-22T00:37:20",
+    "date": "2026-08-22T01:27:20",
     "ignored_checks": [
         {
             "description": "Global label only appears once in the schematic",
@@ -29,8 +29,24 @@
     "sheets": [
         {
             "path": "/",
-            "uuid_path": "/72beb40b-69c2-434c-a893-dfb5f591d6ef",
-            "violations": []
+            "uuid_path": "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0",
+            "violations": [
+                {
+                    "description": "Symbol 'AO3400A' doesn't match copy in library 'Transistor_FET'",
+                    "items": [
+                        {
+                            "description": "Symbol Q1 [AO3400A]",
+                            "pos": {
+                                "x": 3.4036,
+                                "y": 1.1938
+                            },
+                            "uuid": "7d3f9566-e6ca-4b3d-80aa-075340875710"
+                        }
+                    ],
+                    "severity": "warning",
+                    "type": "lib_symbol_mismatch"
+                }
+            ]
         }
     ],
     "source": "vallox-rs485-controller.kicad_sch"

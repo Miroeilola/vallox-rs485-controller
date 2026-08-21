@@ -39,3 +39,9 @@ hardware/sim/out/
 firmware/test/host/run_tests
 scripts/vlx-decode/vlx-decode
 *.dSYM/
+
+# KiCad MCP scratch (checkpoints, visual diffs, render cache) - never source
+hardware/.kicad-mcp/
+hardware/.history/
+hardware/output/schematic-renders/
+hardware/output/netlist.net
