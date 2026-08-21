@@ -52,12 +52,23 @@ by discarding one byte at a time until a checksum passes.
 Read (poll): `register = 0x00`, `value = the register being asked for`.
 Write, and the reply to a poll: `register = the register`, `value = its value`.
 
-Worked example from windkh, a panel at 0x21 polling the mainboard at 0x11 for
-register 0xA3:
+Worked example, a panel at 0x21 polling the mainboard at 0x11 for register 0xA3:
 
 ```
-01 21 11 00 A3 C9      C9 = (01 + 21 + 11 + 00 + A3) & 0xFF
+01 21 11 00 A3 D6      D6 = (01 + 21 + 11 + 00 + A3) & 0xFF = 214
 ```
+
+**The source this example comes from writes the checksum as `C9`.** It is `D6`.
+The arithmetic is not close — 201 against 214 — so it is a transcription error in
+an annotation rather than a different checksum rule, and the two implementations
+that compute the checksum in code both compute it the way it is written above.
+
+The mistake is recorded rather than quietly corrected because it is the concrete
+form of what the confidence ratings in this file mean. Four sources agreeing does
+not make a claim measured; it makes it four copies of the same transcription, and
+one of them has a wrong number in it. Found by a unit test in
+`firmware/components/vallox_protocol`, which is why that code exists before any
+hardware does.
 
 ## Addresses
 
