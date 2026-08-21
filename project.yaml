@@ -7,18 +7,25 @@ created: 2026-08-21
 designer: Miro Eilola / Mironet
 
 description: |
-  Replacement bus controller for legacy Vallox ventilation units.
+  Replacement bus controller for legacy Vallox ventilation units. Joins the Vallox
+  DIGIT RS-485 panel bus as an additional client, powered from the panel connector,
+  and exposes temperatures, fan speed and machine status over Wi-Fi to Home
+  Assistant or MQTT. The factory control panel stays in place.
 
 platform:
-  mcu: ESP32-S3
-  target: esp32s3
+  mcu: ESP32-S3                     # under review, see hardware/docs/decisions.md
+  target: esp32s3                   # ESP32-C3 proposed; blocked on measurement M2
 
 # Electrical envelope. Fill from datasheets and measurements — never from memory.
 electrical:
-  supply_voltage: null              # e.g. "12 V DC (9-30 V)"
+  # Nothing here is measured yet. The supply figure is the manufacturer's nominal
+  # value from the Vallox Digit2 SE manual; the range is not known until M1.
+  supply_voltage: null              # manual states "n. 21 VDC" at the panel terminal
   current_idle: null
   current_peak: null
-  interfaces: []                    # e.g. ["RS-485 half duplex", "Wi-Fi 2.4 GHz"]
+  interfaces:
+    - "RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol"
+    - "Wi-Fi 2.4 GHz"
 
 mechanical:
   enclosure_master: fusion          # fusion | code — see .claude/rules/mekaniikka.md

@@ -9,18 +9,57 @@ Replacement bus controller for legacy Vallox ventilation units.
 ![hardware revision](https://img.shields.io/badge/hardware-rev%20A-blue)
 ![license](https://img.shields.io/badge/license-MIT%20%2F%20CERN--OHL--S%20%2F%20CC--BY--SA-green)
 
+> **Status: research.** No board exists yet. The bus protocol has been compiled from
+> the manufacturer's manual and four independent implementations, and the parts have
+> been costed, but nothing has been measured on a machine. What is known, what is
+> only reported, and what has to be measured before a schematic is drawn is written
+> down in [`docs/research/`](docs/research/).
+
 ## What this replaces
 
-<!-- The concrete problem. What device, what limitation, why a replacement is worth building. -->
+Vallox has built residential heat-recovery ventilation units in Finland since the
+1970s, and the SE-series machines are still in service in tens of thousands of
+houses. The machine outlives its control panel: the mechanics and the heat exchanger
+last decades, the panel's keypad and its electrolytics do not, and panels for the
+older models are no longer made.
+
+The machines already carry an RS-485 bus. The panel is a client on it, up to three
+panels are allowed, and everything the panel shows — four temperatures, fan speed,
+humidity, CO₂, fault and service state — travels over that bus in a six-byte
+telegram. This board joins that bus as one more client, takes its power from the
+same five terminals the panel uses, and puts the machine into Home Assistant or MQTT
+with no manufacturer cloud service and no gateway hardware.
+
+**The factory panel stays.** This is not a panel replacement. If this board fails,
+the machine keeps running and the household keeps its buttons.
+
+### This is not the first attempt, and that is worth saying
+
+Several people have solved the software side, and solved it well —
+[pvainio](https://github.com/pvainio/vallox-rs485),
+[kotope](https://github.com/kotope/valloxesp),
+[windkh](https://github.com/windkh/valloxserial),
+[pecca](https://github.com/pecca/vallox_control),
+[mld18](https://github.com/mld18/ioBroker.valloxSerial) and
+[Tom-Bom-badil](https://github.com/Tom-Bom-badil/home-assistant_helios-vallox).
+The register map here comes from reading their work and is credited in
+[`docs/research/sources.md`](docs/research/sources.md).
+
+What none of them ships is hardware. The usual build is a development board, an
+RS-485 breakout and a step-down module, loose inside the machine's cable box. This
+project adds the missing half: one board that lands on the panel terminals, survives
+the wiring mistake the manufacturer warns about in bold, a measured protocol
+description with oscilloscope captures rather than a register map you have to read
+out of source code, published measurements, an enclosure and a datasheet.
 
 ## Specifications
 
 | | |
 |---|---|
-| Microcontroller | ESP32-S3 |
-| Supply voltage | — |
+| Microcontroller | not fixed — ESP32-C3 proposed, see `hardware/docs/decisions.md` |
+| Supply voltage | — (manufacturer states approx. 21 VDC at the panel terminal; range not measured) |
 | Current consumption | — (measured, see `docs/measurements/`) |
-| Interfaces | — |
+| Interfaces | RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol · Wi-Fi 2.4 GHz |
 | Dimensions | — |
 | Operating temperature | — |
 | Enclosure | — |
@@ -78,9 +117,35 @@ rail voltages and ripple, bus signal integrity, and temperature under load.
 
 ## What this does not do
 
-<!-- Honest limitations. What is untested, what is out of scope, what is known to be
-     imperfect. This section is required and must not be empty — it is the most
-     credible part of the document. -->
+- **It is not a control panel.** No display, no buttons. It needs Home Assistant or
+  an MQTT broker to be worth anything, and the factory panel has to stay for local
+  control.
+- **It does not support Vallox MV.** Those units use Modbus and have their own
+  interface. This is for the legacy DIGIT RS-485 bus only.
+- **It does not support Vallox 130 D** without changes — that model is reported to
+  use different register numbers, and no capture from one exists here.
+- **It will claim support only for machines a capture exists from.** Other SE-series
+  models and Helios KWL EC/ET units are reported to use the same bus, and reported is
+  not the same as verified. Which registers a given machine answers is a property of
+  that machine.
+- **It does not write registers that have not been verified on hardware.** The
+  firmware carries an explicit allow-list, it starts with one entry, and a register
+  joins it only when a measurement report exists for it. Vallox warns that writing an
+  incorrect register or value can damage the unit.
+- **It makes no safety or IP-rating claim.** Nothing has been tested for either.
+- **Connecting anything to the machine voids the manufacturer's warranty** and is
+  your decision, not this project's.
+
+## Research
+
+Everything known before the design started, with sources and confidence ratings, is
+in [`docs/research/`](docs/research/): the
+[protocol](docs/research/protocol.md) and its register map, the
+[target device](docs/research/target.md) and its panel pinout, the
+[measurement plan](docs/research/measurement-plan.md) that has to run before a
+schematic is drawn, the [risks](docs/research/risks.md), and the
+[component candidates](docs/research/component-candidates.md) with live stock and
+prices.
 
 ## License
 
