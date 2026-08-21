@@ -23,8 +23,17 @@ The strongest sources in this project are not documents.
 | The target panel, removed and photographed | 2026-08-21 | Panel identified as a Vallox DIGIT SE LED panel; terminal block `+ − A B M` confirmed on the hardware; installed wire colours, which do not match the manufacturer's colour code; MAX487 transceiver read off the board; linear supply on a heatsink. Report: [`../measurements/2026-08-21-panel-identification.md`](../measurements/2026-08-21-panel-identification.md) | `first-hand` |
 | Supply voltage at the terminal | 2026-08-21 | 22 V DC. Instrument and load state not recorded, so the figure confirms the order of magnitude and nothing more | `first-hand, conditions incomplete` |
 | Prior testing on the target machine | before 2026-08-21 | Two controllers on this bus override each other. This is why the project replaces the panel rather than joining the bus, and it contradicts the manufacturer's "up to three panels" for any client that is not a Vallox panel | `first-hand` |
-| [Analog Devices MAX481/483/485/487–491 datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX1487-MAX491.pdf) | 2026-08-21 | MAX487: 48 kΩ receiver input, 1/4 unit load, up to 128 nodes, slew-rate limited to 250 kbps — the characteristics the replacement has to match | `manufacturer` |
-| Texas Instruments THVD1400 datasheet SLLSF78B | 2026-08-21 | Candidate transceiver: 1/8 unit load, integrated open/short/idle fail-safe, 500 kbps slew-limited, bus pins −16 V to +16 V absolute maximum | `manufacturer` |
+| Analog Devices MAX481/483/485/487–491/MAX1487 datasheet | 2026-08-21 | MAX487: 48 kΩ receiver input, 1/4 unit load, up to 128 nodes, slew-rate limited to 250 kbps — the characteristics the replacement has to match | `manufacturer, quoted` |
+| Texas Instruments THVD1400 / THVD1420 datasheet, SLLSF78B, Dec 2020 rev. Oct 2021 | 2026-08-21 | Candidate transceiver: 1/8 unit load, integrated open/short/idle fail-safe, 500 kbps slew-limited, bus pins −16 V to +16 V absolute maximum, ±12 kV IEC contact ESD, 700–900 µA quiescent receiving | `manufacturer, read` |
+
+**`manufacturer, quoted` versus `manufacturer, read`.** The TI datasheet was
+retrieved and its tables read directly. The Analog Devices one was not: their
+server fails HTTP/2 negotiation and times out on HTTP/1.1 from here, so the MAX487
+figures come from a search result quoting that datasheet rather than from the
+document. The numbers are unambiguous and the part is thirty years old, but the
+distinction is the whole method of this file and it would be hypocritical to skip
+it here. Re-read the PDF and upgrade the rating before any of it reaches a
+datasheet of ours.
 
 ## Independent implementations
 

@@ -115,8 +115,10 @@ Visible in the terminal photograph, immediately below the terminal block: a
 SOIC-8 marked **MAX487 CSA .037**.
 
 The MAX487 is a 1/4-unit-load, slew-rate-limited RS-485 transceiver: 48 kΩ
-receiver input impedance, up to 128 nodes, error-free to 250 kbps
-([Analog Devices datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX1487-MAX491.pdf)).
+receiver input impedance, up to 128 nodes, error-free to 250 kbps. Source: the
+Analog Devices MAX481/483/485/487–491/MAX1487 datasheet — quoted rather than read,
+because their server could not be fetched from here. See the note in
+[`../research/sources.md`](../research/sources.md).
 
 That is a design constraint for the replacement, and a useful one:
 
