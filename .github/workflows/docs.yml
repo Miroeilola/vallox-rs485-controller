@@ -25,7 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The repository's own URLs and CI badges 404 for an anonymous checker
+      # while the repository is private. Remove this exclusion at the same time
+      # the repository is made public - it is the one link check that matters
+      # most once anyone can follow them.
       - uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --exclude-path LICENSES --accept 200,429 '**/*.md'
+          args: >-
+            --no-progress --exclude-path LICENSES --accept 200,429
+            --exclude 'github\.com/Miroeilola/vallox-rs485-controller'
+            '**/*.md'
           fail: true
