@@ -215,7 +215,8 @@ lifetime. Summary of what it lands on:
 |---|---|---|---|---|---|
 | DS1 | 2.0" 320×240 colour IPS, ST7789, SPI | HS20HS072RX | C5329582 | 657 | 3.772 |
 | J3 | FPC connector, 0.5 mm | HC-FPC-05-10-30RLTAG family | C5213742 | 5 932 | 0.179 |
-| SW1–3 | Tactile switch, 5.1 mm | TS-1187A-B-A-B | C318884 | 1 683 297 | 0.020 |
+| SW1–4 | Tactile switch, 5.1 mm — `−` `+` `OK` `←` | TS-1187A-B-A-B | C318884 | 1 683 297 | 0.020 |
+| R-ladder | Four 0402 resistors, buttons onto one ADC pin | — | — | — | 0.002 |
 | D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 |
 | — | Backlight drive | open — boost driver ~$0.30, or a constant-current sink from a 5 V rail ~$0.05 | — | — | — |
 
@@ -234,6 +235,49 @@ the same board takes either a display or nothing.
 cannot run from 3.3 V. The cheap answer is a 5 V intermediate rail with a
 PWM-dimmed current sink, but that changes the power chain, so it is decided with
 M2a rather than assumed here.
+
+### The buttons, and the pin budget that shaped them
+
+Four switches: `−` and `+` change fan speed directly on the home screen, `OK`
+enters the menu and confirms, `←` backs out. Long-press as the only way back is
+rejected — it is a convention that has to be taught, and this device gets used
+twice a year.
+
+They go on a **resistor ladder into one ADC channel**, not four GPIOs, and that is
+not a flourish. ESP32-C3-MINI-1 exposes fifteen pins, two of which are USB:
+
+| Function | Pins |
+|---|---|
+| RS-485 TX, RX, DE | 3 |
+| Display SPI: SCK, MOSI, CS, DC | 4 |
+| Display reset — RC from the rail | 0 |
+| Backlight PWM | 1 |
+| Indicator LEDs | 3 |
+| Buttons, via the ladder | 1 |
+| **Total** | **12 of 13** |
+
+Four discrete button GPIOs would need sixteen and does not fit. The ladder lands
+on GPIO3 or GPIO4 — ADC1, because ADC2 is unusable with Wi-Fi running, and neither
+is a strapping pin, so a button held at power-up cannot change the boot mode.
+
+The chosen part matters less than the family: **every TS-1187A shares the same
+5.1 × 5.1 mm four-pad footprint** and they differ only in plunger height
+(1.5–3.0 mm) and force (1.6 N or 2.6 N). The board is laid out once and the height
+is chosen when the enclosure exists. `TS-1187A-B-A-B` is the Basic part with 1.68
+million in stock, and its 1.5 mm / 1.6 N combination is the one that suits a thin
+printed flexure — no holes in the front panel, which matters beside a machine
+that moves dusty air.
+
+Not chosen, with reasons: **capacitive touch**, because ESP32-C3 has no touch
+peripheral at all and because a control with no tactile feedback should not be the
+only way to run a household's ventilation; **a rotary encoder**, because
+`EC11L1525G01` at $1.27 is sixteen times the price of the whole button set, is
+through-hole, and is the most wear-prone part that could go on a board meant to
+outlast the machine. Both are written up in
+[`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md).
+
+**No BOOT or RESET buttons.** The C3's native USB-Serial-JTAG resets and enters
+download mode over USB. EN and GPIO9 get test pads instead.
 
 The three indicator LEDs stay regardless of the display decision — power, bus
 activity and fault, readable from the doorway, six cents, and they answer "is it

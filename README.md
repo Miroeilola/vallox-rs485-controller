@@ -72,7 +72,7 @@ out of source code, published measurements, an enclosure and a datasheet.
 | Supply voltage | 22 V DC measured at the panel terminal; range not yet measured |
 | Current consumption | — (measured, see `docs/measurements/`) |
 | Interfaces | RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol · Wi-Fi 2.4 GHz |
-| Local interface | 2.0" 320×240 colour IPS, 3 buttons, 3 indicator LEDs — proposed, see `docs/research/user-interface.md` |
+| Local interface | 2.0" 320×240 colour IPS, 4 buttons, 3 indicator LEDs — proposed, see `docs/research/user-interface.md` |
 | Mounting | Under the machine, replacing the original panel. No footprint to match |
 | Dimensions | — |
 | Operating temperature | — |

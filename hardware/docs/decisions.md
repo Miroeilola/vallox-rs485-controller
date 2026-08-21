@@ -161,6 +161,14 @@ and deciding now would only have to be undone.
 left alone until M2 closes this. Recorded here so the contradiction is visible rather
 than forgotten.
 
+**Update, same day.** The local interface grew a 320 × 240 display, four buttons
+and three indicator LEDs, and the C3's pin budget went from comfortable to
+twelve-of-thirteen — and only because the buttons were moved onto a resistor
+ladder. It still fits, and the ladder is a reasonable design rather than a
+workaround, but the margin is gone. Whichever way M2 pushes the power question,
+the pin count is now a second thing weighing on the same decision. See the button
+entry at the end of this file for the budget.
+
 ---
 
 ### 2026-08-21 — Isolation deferred to a measurement, not chosen up front
@@ -412,3 +420,104 @@ tactile switches and three indicator LEDs as before.
   rather than softened.
 - The board must work with the display unplugged, and the three indicator LEDs
   stay, so that a failed or unfitted display never means a dead device.
+
+---
+
+### 2026-08-21 — Buttons: four tactile switches on a resistor ladder
+
+**Context.** The bill of materials has carried `TS-1187A-B-A-B` since the LED
+sketch, but it was carried rather than chosen — nobody had decided how many
+buttons, what force, what plunger height, how they are actuated through a printed
+enclosure, or how they connect to a microcontroller whose pins are nearly all
+spoken for.
+
+**How many, and which.** Four: `−`, `+`, `OK`, `←`.
+
+On the home screen `−` and `+` change fan speed directly, with no menu. That is
+the daily action and it is what the original panel had dedicated arrows for. `OK`
+enters the settings menu and confirms, `←` backs out.
+
+Three buttons would work if `←` became a long press on `OK`. It is rejected
+because long-press is a convention that has to be taught, and this device will be
+operated twice a year by somebody who has forgotten. The fourth button costs one
+resistor and one hole.
+
+**The pin budget is what decided the wiring, and it is tighter than expected.**
+ESP32-C3-MINI-1 exposes GPIO0–10 and GPIO18–21: fifteen pins, of which GPIO18 and
+GPIO19 are USB-Serial-JTAG and giving them up means giving up USB.
+
+| Function | Pins |
+|---|---|
+| RS-485 TX, RX, DE | 3 |
+| Display SPI: SCK, MOSI, CS, DC | 4 |
+| Display reset | 0 — RC from the 3.3 V rail |
+| Backlight PWM | 1 |
+| Indicator LEDs | 3 |
+| **Buttons** | **1** |
+| **Total** | **12 of 13** |
+
+Four buttons on four GPIOs would need sixteen pins and does not fit. So the
+buttons go on a **resistor ladder into one ADC channel**: four resistors, one pin,
+one spare left over.
+
+ADC1 only — GPIO0 to GPIO4 — because ADC2 is unusable while Wi-Fi is running.
+GPIO2 is a strapping pin, and GPIO0/GPIO1 are the 32 kHz crystal pins if one is
+ever fitted, so the ladder lands on **GPIO3 or GPIO4**. Neither is a strapping
+pin, so a button held at power-up cannot change the boot mode — which is what
+makes "hold `←` while powering up" a safe way to trigger a factory reset.
+
+**The part.** `TS-1187A-B-A-B`, LCSC **C318884**: JLCPCB *Basic*, $0.0197,
+1 683 297 in stock, 5.1 × 5.1 mm SMD, 1.6 N, 100 000 cycles, gold contacts,
+−30…+85 °C.
+
+The reason this part rather than another is that **the whole TS-1187A family
+shares one 5.1 × 5.1 mm four-pad footprint** and differs only in plunger height
+(1.5 to 3.0 mm) and force (1.6 N or 2.6 N). The board can be laid out now and the
+height and force chosen when the enclosure exists, with no board change. In stock
+today: 1.5 mm/1.6 N (Basic, $0.020), 1.7 mm/2.6 N ($0.040), 2.5 mm/2.6 N ($0.040),
+3.0 mm/2.6 N ($0.047).
+
+**Actuation through the enclosure — a mechanical decision, named here so it is not
+forgotten.** Three ways, in order of preference:
+
+1. **A thin flexure printed into the front panel**, 0.6–0.8 mm of PETG over each
+   switch. No holes, no loose parts, and nothing for dust to get through — which
+   matters next to a machine whose whole job is moving air through filters. Needs
+   a short plunger and a light switch, because the flexure adds its own force, so
+   it points at exactly the 1.5 mm / 1.6 N part above.
+2. Separate printed plungers in through-holes. Four loose parts, a tolerance stack
+   and a dust path.
+3. A 3 mm plunger poking through the front. Simple, but the front wall plus the
+   air gap has to come to under 3 mm and the stem is exposed.
+
+**No BOOT or RESET buttons.** The C3's native USB-Serial-JTAG resets the chip and
+enters download mode over USB with no buttons at all. EN and GPIO9 get test pads
+instead: no enclosure holes, no cost, and nothing on the front panel that is not
+for the user.
+
+**Capacitive touch was considered and rejected**, for two reasons and the second
+is the real one. **ESP32-C3 has no capacitive touch peripheral** — ESP32, S2 and
+S3 do, C3 does not — so it would need external touch ICs at about $0.06 a channel.
+More importantly, this is the only control the household has for its ventilation.
+A control with no tactile feedback, in a space with dust and the possibility of
+condensation, that can false-trigger or stop responding for reasons the user
+cannot see, is the wrong risk to take for the sake of a smooth front panel.
+
+**A rotary encoder was considered and rejected for now.** Turning through a
+nine-line list is a better interaction than pressing `−` sixteen times, and if the
+menu turns out deep it should be reconsidered. Against it: `EC11L1525G01` is $1.27
+against $0.08 for four switches — sixteen times the price of the entire button set
+— it is through-hole and so carries per-joint assembly cost, it needs a shaft, a
+knob and a large hole, and a detented encoder is the most wear-prone mechanical
+part that could be put on a board meant to last as long as the machine.
+
+**Consequences.**
+
+- Four resistors and one ADC channel instead of four GPIOs. Debouncing is done on
+  a converted value rather than an edge, and the firmware has to reject readings
+  that fall between ladder steps rather than round them to the nearest button.
+- The ladder cannot see two buttons at once. Nothing in this interface needs it.
+- **This tightened the case for revisiting the microcontroller.** On an ESP32-S3
+  there are pins to spare and the buttons would be four plain GPIOs. The C3 fits,
+  but with one pin left, and that is worth weighing when M2a closes the power
+  question and the C3-versus-S3 decision is finally taken.

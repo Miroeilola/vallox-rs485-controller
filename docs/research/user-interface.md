@@ -331,6 +331,13 @@ Total for the local interface: about **$4.15** per finished device, against $4.6
 for the rest of the board. That is a real fraction of the parts cost and a small
 fraction of what a built device costs.
 
+**Four buttons** — `−`, `+`, `OK`, `←` — on a resistor ladder into one ADC pin.
+`−` and `+` change fan speed directly on the home screen, which is the daily
+action and what the original panel had dedicated arrows for. The ladder is not a
+flourish: with the display, the bus and the indicators, ESP32-C3-MINI-1 has
+thirteen usable pins and four discrete button GPIOs do not fit. Part and reasoning
+in [`../../hardware/docs/decisions.md`](../../hardware/docs/decisions.md).
+
 **Keep the three indicator LEDs** — power, bus activity, fault. Six cents,
 readable from the doorway, and they answer the only question that matters when
 something is wrong without waking or lighting anything.

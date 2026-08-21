@@ -38,6 +38,12 @@ combination is known to work together.
   revised: it shows eight characters by three lines at arm's length, which is a
   readout rather than the menu the display was chosen to provide, and colour TFT
   costs three to five times less per square millimetre than mono OLED.
+- Buttons chosen rather than carried: four tactile switches on a resistor ladder
+  into one ADC pin, because the display, bus and indicators leave ESP32-C3-MINI-1
+  with thirteen usable pins and four discrete button GPIOs do not fit. Capacitive
+  touch rejected (C3 has no touch peripheral, and a no-feedback control should not
+  be the only way to run a household's ventilation); rotary encoder rejected on
+  cost and wear.
 - Measurement M2a: put an ammeter in series with the original panel's supply wire
   before removing it. Because that panel's regulator is linear, its input current
   is the rail's demonstrated capability — the cheapest available answer to the
