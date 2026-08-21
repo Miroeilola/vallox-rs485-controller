@@ -25,6 +25,12 @@ combination is known to work together.
   the firmware. Decodes telegrams into engineering units and reports the address
   and register census, which temperature register set a machine uses, and a free
   panel address.
+- Security position written before the firmware: threat model, OTA and rollback,
+  signed images, and the reasoning for leaving secure boot and flash encryption
+  off in the published build.
+
+### Changed
+- Hardware CI skips ERC and DRC until a KiCad project exists, instead of failing.
 
 ### Fixed
 - The worked example in the circulated protocol documentation states the checksum
