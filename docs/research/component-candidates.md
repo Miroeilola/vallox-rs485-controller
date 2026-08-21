@@ -81,8 +81,8 @@ it would protect nothing during normal operation.
 | — | Bulk, decoupling, dividers, LEDs, buttons | 0402/0603 basic parts | — | — | ~0.40 total | **basic** |
 
 Parts cost lands around **$4.65 per board**, with the module at $2.79 of it. The
-local interface adds $0.30 to the assembled board and $2.31 to the finished device
-— see below.
+local interface adds about $0.30 to the assembled board and about $4.15 to the
+finished device — see below.
 
 ### Why each of those
 
@@ -213,15 +213,27 @@ lifetime. Summary of what it lands on:
 
 | Ref | Function | Candidate | LCSC | Stock | $/pc |
 |---|---|---|---|---|---|
-| DS1 | 0.96" 128×64 OLED, SSD1315, I²C | HS96L03W2C03 | C5248080 | 2 467 | 2.314 |
-| J3 | FPC connector, 30P 0.5 mm | HC-FPC-05-10-30RLTAG | C5213742 | 5 932 | 0.179 |
+| DS1 | 2.0" 320×240 colour IPS, ST7789, SPI | HS20HS072RX | C5329582 | 657 | 3.772 |
+| J3 | FPC connector, 0.5 mm | HC-FPC-05-10-30RLTAG family | C5213742 | 5 932 | 0.179 |
 | SW1–3 | Tactile switch, 5.1 mm | TS-1187A-B-A-B | C318884 | 1 683 297 | 0.020 |
 | D3–5 | Indicator LEDs, 0603 | 19-217 family | C2986059 and family | — | 0.018 |
+| — | Backlight drive | open — boost driver ~$0.30, or a constant-current sink from a 5 V rail ~$0.05 | — | — | — |
 
-**Only $0.30 of that is on the assembled board.** The display is a bare glass panel
-with an FPC tail: the fab solders the connector, the display is plugged in
-afterwards. It is not part of the PCBA order, which means the same board takes
-either a display or nothing and the choice can be made at build time.
+A 0.96" OLED was the first choice and it was wrong: it shows eight characters by
+three lines at arm's length, which is a readout rather than a menu, and the reason
+for choosing a display at all was to present a menu. Colour TFT also costs three to
+five times less per square millimetre than mono OLED. The full arithmetic is in
+[user-interface.md](user-interface.md).
+
+**About $0.30 of this is on the assembled board**, plus the backlight drive. The
+display is a bare glass panel with an FPC tail: the fab solders the connector, the
+display is plugged in afterwards. It is not part of the PCBA order, which means
+the same board takes either a display or nothing.
+
+**The backlight is the open item.** Four white LEDs in parallel at 80 mA typical
+cannot run from 3.3 V. The cheap answer is a 5 V intermediate rail with a
+PWM-dimmed current sink, but that changes the power chain, so it is decided with
+M2a rather than assumed here.
 
 The three indicator LEDs stay regardless of the display decision — power, bus
 activity and fault, readable from the doorway, six cents, and they answer "is it

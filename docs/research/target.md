@@ -181,14 +181,17 @@ look at every day.
 Analysed in full, with live prices and the power arithmetic, in
 [user-interface.md](user-interface.md).
 
-Short version: **a 0.96" OLED that sleeps, three buttons, and three always-on
-indicator LEDs.** About $2.55 per finished device, of which only $0.24 lands on the
-assembled board — the display is a bare panel plugged into an FPC connector after
-assembly, so the same board takes either option.
+Short version: **a 2.0" 320 × 240 colour IPS, three buttons, and three always-on
+indicator LEDs.** About $4.15 per finished device, of which only about $0.30 lands
+on the assembled board — the display is a bare panel plugged into an FPC connector
+after assembly, so the same board takes either option or none.
 
 The reason is not the display itself. It is that the panel being removed could set
 the heating setpoint from the wall, and matching that with LEDs means rebuilding a
-2001 keypad. A display and three buttons is a menu.
+2001 keypad. A display and three buttons is a menu — but only if the display is
+big enough to show one. At arm's length a 0.96" OLED gives eight characters by
+three lines, which is not, and colour TFT costs three to five times less per square
+millimetre than mono OLED, so the bigger screen is also the cheaper one.
 
 The argument against is in the same file and it is a good one: the LEDs in the
 original panel outlived its electrolytics.

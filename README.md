@@ -72,7 +72,7 @@ out of source code, published measurements, an enclosure and a datasheet.
 | Supply voltage | 22 V DC measured at the panel terminal; range not yet measured |
 | Current consumption | — (measured, see `docs/measurements/`) |
 | Interfaces | RS-485 half duplex, 9600 8N1, Vallox DIGIT protocol · Wi-Fi 2.4 GHz |
-| Local interface | 0.96" 128×64 OLED (sleeps), 3 buttons, 3 indicator LEDs — proposed, see `docs/research/user-interface.md` |
+| Local interface | 2.0" 320×240 colour IPS, 3 buttons, 3 indicator LEDs — proposed, see `docs/research/user-interface.md` |
 | Mounting | Under the machine, replacing the original panel. No footprint to match |
 | Dimensions | — |
 | Operating temperature | — |
@@ -136,11 +136,12 @@ still an open question rather than a specification.
 
 ## What this does not do
 
-- **The display sleeps.** It is off until a button is pressed, and it stays off
-  the rest of the time. That is deliberate — a static readout burns into a
-  passive-matrix OLED inside about fourteen months of continuous use — but it does
-  mean the device looks dark when you glance at it. Three indicator LEDs stay lit
-  for power, bus activity and fault, and they are what answers "is it running".
+- **The display idles dimmed**, and goes to full brightness on a button press.
+  Three indicator LEDs stay lit for power, bus activity and fault, and they are
+  what answers "is it running" from the doorway.
+- **The board works with the display unplugged.** The display is a separate part
+  that plugs into an FPC connector after assembly, so a failed or unfitted display
+  never means a dead device.
 - **Home Assistant is the primary interface.** The local menu covers fan speed,
   the setpoints and diagnostics, and it is a fallback rather than the main event.
 - **It is not a safety device and it is not in any safety path.** The machine's

@@ -31,9 +31,13 @@ combination is known to work together.
 - First measurement report: the target panel identified as a Vallox DIGIT SE LED
   panel with photographs, its terminal block, its MAX487 transceiver and its
   linear supply, and 22 V measured on the supply pair.
-- Local interface analysis: LED bar against 0.96" OLED against colour TFT, costed
-  against live stock, with the power arithmetic, the OLED burn-in question and a
-  recommendation. Lands on a sleeping OLED, three buttons and three indicator LEDs.
+- Local interface analysis: LED bar against mono OLED against colour TFT, costed
+  against live stock, with the power arithmetic, the OLED burn-in question, the
+  legibility arithmetic and a recommendation. Lands on a 2.0" 320x240 colour IPS,
+  three buttons and three indicator LEDs. A 0.96" OLED was the first answer and was
+  revised: it shows eight characters by three lines at arm's length, which is a
+  readout rather than the menu the display was chosen to provide, and colour TFT
+  costs three to five times less per square millimetre than mono OLED.
 - Measurement M2a: put an ammeter in series with the original panel's supply wire
   before removing it. Because that panel's regulator is linear, its input current
   is the rail's demonstrated capability — the cheapest available answer to the

@@ -65,20 +65,27 @@ Larger alternatives, both needing their own footprint rather than dropping in:
 1.3" SH1106 (C7465997, $5.33) with a 29.4 × 14.7 mm active area, and 1.54"
 SSD1309 (C7465999, $6.46).
 
-### C — 1.14" colour IPS TFT, 240 × 135
+### C — Colour IPS TFT, ST7789 over SPI
 
-| Part | LCSC | Stock | $/pc |
-|---|---|---|---|
-| N114-2413THBIG01-H13, ST7789V, SPI | C2890618 | 421 | 2.536 |
-| FPC connector | — | — | ~0.18 |
-| Backlight driver, if the panel's LEDs are in series | — | — | ~0.30 plus an inductor |
+| Part | Size | Active area | LCSC | Stock | $/pc |
+|---|---|---|---|---|---|
+| N114-2413THBIG01-H13 | 1.14", 240×135 | 24.9 × 14.0 mm | C2890618 | 421 | 2.536 |
+| **HS20HS072RX** | **2.0", 320×240** | **40.8 × 30.6 mm** | **C5329582** | **657** | **3.772** |
+| HS24CG003-ARX | 2.4", 320×240 | 49.0 × 36.7 mm | C5329583 | 108 | 3.960 |
+| HS280S030RX | 2.8", 320×240 | 57.6 × 43.2 mm | C5329584 | 773 | 5.256 |
 
-**About $3.05, and possibly more.** The open question is the backlight: a 1.14"
-panel usually has two or three white LEDs in series, which needs 6–9 V and
-therefore a boost converter on a board whose whole supply argument is about
-efficiency. That has to be read out of the panel's own datasheet before this
-option can be costed honestly. Stock is 421 pieces, which is a coincidence rather
-than a supply.
+Plus an FPC connector at about $0.18 and three switches at $0.02.
+
+**The backlight needs a driver, and this is the one real complication.** From the
+datasheet for the 2.0" part: **four white LEDs in parallel, 80 mA typical.** White
+LED forward voltage is around 3.0–3.2 V, so a 3.3 V rail leaves no usable headroom,
+and parallel LEDs fed through one resistor will current-hog. Resolved either with a
+small boost driver (about $0.30 plus an inductor) or with a 5 V intermediate rail
+and a PWM-dimmed constant-current sink (about $0.05, but it changes the power
+chain). Costed properly in the recommendation below.
+
+The 2.4" has 108 pieces in stock, which is a coincidence rather than a supply. The
+2.0" and 2.8" are the two with real availability.
 
 ### D — E-paper
 
@@ -88,19 +95,116 @@ for a reason that has nothing to do with price: e-paper is reflective and needs
 ambient light, and this panel lives under a machine in a room that is dark unless
 somebody turns the light on. Ruled out.
 
+## Is 0.96" big enough? No — and the arithmetic says so plainly
+
+This file first recommended a 0.96" OLED. Working out the readable text size
+showed that to be wrong, so the recommendation changed. The reasoning is left in
+place rather than rewritten, because the arithmetic is the useful part.
+
+### How the numbers are derived
+
+Legibility is an angular quantity, not a linear one. A character subtending about
+**20 arcminutes** is comfortable to read; about 10 arcminutes is the edge of
+legibility. Twenty arcminutes works out to a character height of roughly
+**viewing distance ÷ 170**.
+
+Realistic viewing distance here: someone walks up to the machine, presses a
+button, and reads — so **arm's length, about 50 cm**. At 50 cm, a comfortable
+character is 2.9 mm tall.
+
+### What each display gives at arm's length
+
+Characters per line and lines per screen, at a font size that is comfortable at
+50 cm:
+
+| Display | Active area | Pitch | Chars × lines at 50 cm | $ | $/100 mm² | Stock |
+|---|---|---|---|---|---|---|
+| 0.96" OLED 128×64 | 21.7 × 10.9 mm | 0.170 mm | **8 × 3** | 2.31 | 0.98 | 2 467 |
+| 1.14" IPS 240×135 | 24.9 × 14.0 mm | 0.104 mm | 9 × 4 | 2.54 | 0.73 | 421 |
+| 1.3" OLED 128×64 | 29.4 × 14.7 mm | 0.230 mm | 11 × 4 | 5.33 | 1.23 | 632 |
+| 1.54" OLED 128×64 | 35.1 × 17.5 mm | 0.274 mm | 13 × 5 | 6.46 | 1.05 | 520 |
+| **2.0" IPS 320×240** | **40.8 × 30.6 mm** | 0.128 mm | **16 × 9** | **3.77** | **0.30** | **657** |
+| 2.4" TFT 320×240 | 49.0 × 36.7 mm | 0.153 mm | 19 × 10 | 3.96 | 0.22 | 108 |
+| 2.8" TFT 320×240 | 57.6 × 43.2 mm | 0.180 mm | 22 × 12 | 5.26 | 0.21 | 773 |
+
+**Eight characters by three lines is not a menu.** It is enough for `SPEED 3` and a
+temperature, and nothing else. The settings this device has to expose — heating
+setpoint, bypass, pre-heat, supply-fan stop, fan speed limits, service counter —
+have names that do not fit in eight characters, and a menu that scrolls three
+lines at a time through eight-character abbreviations is a worse interface than
+the LED bar it replaced.
+
+Single large values are a different story. A 32-pixel digit on the 0.96" is 5.4 mm
+and comfortable at 92 cm, so a fan-speed readout works fine. It is the *menu* that
+does not fit, and the menu is the reason a display was chosen over LEDs at all.
+
+### The price-per-area ladder is the real finding
+
+Mono OLED costs about **$1.00 per 100 mm²** and gets worse with size — the 1.3"
+is 1.8× the area of the 0.96" for 2.3× the price. Colour TFT costs **$0.21–0.30
+per 100 mm²**, three to five times better, and improves with size.
+
+The consequence is blunt: **the 2.0" colour IPS is 5.3× the screen area of the
+0.96" OLED for $1.46 more.** The 1.3" mono OLED is 1.8× the area for $3.02 more.
+Paying more for the smaller screen is not a trade-off, it is a mistake.
+
+### What changes with a TFT, in both directions
+
+**Better:**
+
+- **No burn-in.** This removes the sleep requirement, and with it the objection
+  that a sleeping display is dark exactly when someone glances over. The backlight
+  can idle dimmed and go to full brightness on a keypress, which is a strictly
+  better interaction than off/on.
+- Colour is not needed but it is not useless either: red for a fault, green for
+  running, at no extra cost.
+- IPS has a full viewing angle, which matters for a panel mounted under a machine
+  and therefore looked at from below or from the side.
+
+**Worse:**
+
+- **The backlight needs a driver.** Confirmed from the LCSC datasheet for
+  HS20HS072RX: **four white LEDs in parallel, 80 mA typical.** White LED forward
+  voltage is about 3.0–3.2 V, so there is no usable headroom from a 3.3 V rail and
+  parallel LEDs cannot be fed through a single resistor without current hogging.
+  Two ways out, and this needs deciding with the supply topology rather than after
+  it:
+  1. A small boost LED driver from 3.3 V — about $0.30 plus an inductor.
+  2. A **5 V intermediate rail** (22 V → 5 V buck → 3.3 V), with the backlight on a
+     PWM-dimmed constant-current sink from the 5 V. Headroom 1.9 V, a transistor
+     and two resistors, about $0.05 — but it changes the whole power chain, which
+     is a decision that belongs with M2a.
+- **Backlight power becomes the largest single load.** 80 mA at 5 V is 0.4 W
+  against an estimated 1.1 W budget. Dimmed to 20 % for the idle state it is
+  0.08 W. That is affordable, and it is another reason M2a matters.
+- Temperature rating is −20…+70 °C against the OLED's −40…+70 °C. Indoors in a
+  technical space, irrelevant.
+- Backlight LEDs degrade, roughly 30 000–50 000 hours at full current. Run dimmed,
+  that is decades. It is a slower failure than OLED burn-in by an order of
+  magnitude.
+
+**Firmware:** 320 × 240 in colour does not need a frame buffer for a status
+display — text and rectangles drawn straight over SPI use almost no RAM. It only
+becomes an ESP32-C3 memory question if a graphics library gets involved, which is
+a reason to keep the interface plain.
+
 ## The comparison that matters
 
 ### Cost, in context
 
-The delta between the cheapest and the nicest is about **$2.20 per device**. The
-board's parts come to roughly $4.65, so a display is a 45 % increase on the parts
-— and on a finished device with a PCB, assembly, an enclosure and shipping, it is
-somewhere near 8 %. Cost is real but it is not decisive, and pretending otherwise
-would be false precision.
+LEDs and buttons come to $0.36. A 2.0" colour TFT with its connector, switches and
+backlight drive comes to about $4.15. The rest of the board is about $4.65, so the
+display roughly doubles the parts cost — and on a finished device with a PCB,
+assembly, an enclosure and shipping, it is somewhere near 15 %.
 
-The more interesting cost fact is that **the display barely touches the PCBA
-order**: $0.24 of connector and switches. Whoever builds one can decide at
-assembly time whether to fit a display, and the same board takes either.
+That is a real number and it deserves to be said without softening. It is also not
+the number that decides, because the thing being bought is not a screen, it is the
+ability to set the machine's temperature setpoints without a network.
+
+The cost fact that matters structurally is that **the display barely touches the
+PCBA order**: about $0.30 of connector and switches, plus whatever the backlight
+drive turns out to be. Whoever builds one decides at assembly time whether to fit a
+display, and the same board takes either.
 
 ### Power, which turned out not to be the obstacle
 
@@ -143,26 +247,30 @@ fourteen months of continuous operation. A display showing a static fan speed on
 device that never sleeps will burn that image in, and it will do it inside the
 warranty of an appliance designed to last decades.
 
-The fix is straightforward and it is the right design anyway: **the display sleeps
-and wakes on a button press.** Off by default, on for thirty seconds when someone
-walks up and presses something. That removes burn-in as a concern, removes the
-display from the power budget entirely, and matches how the thing is actually
-used — nobody stands under a ventilation machine watching a temperature readout.
+For a mono OLED the fix is to sleep: off by default, on for thirty seconds when
+someone presses something. It works, and it means the display is dark the other
+99.9 % of the time — worth saying out loud, because "modern and stylish" usually
+means "lit".
 
-It does mean the display is dark the other 99.9 % of the time, which is worth
-saying out loud, because "modern and stylish" usually means "lit".
+**A TFT does not have this problem at all.** Liquid crystal does not burn in, and
+its backlight LEDs degrade over 30 000–50 000 hours at *full* current, which is an
+order of magnitude slower and slower still when dimmed. So a TFT idles dimmed and
+goes to full brightness on a keypress, which is a better interaction than off and
+on, and it removes the objection entirely rather than working around it.
+
+This is one of the reasons the recommendation ended up on a TFT rather than the
+OLED this file started with.
 
 ### Readability where it actually is
 
-- **LEDs** are readable across a dark room, from any angle, instantly, with no
-  interpretation. That is not nostalgia, it is what an indicator is for.
-- **A 0.96" OLED** has a 21.7 × 10.9 mm active area. Under a machine, that is a
-  get-close-and-read-it interface. Excellent contrast, fine in the dark, but small.
-- **A 1.14" TFT** is barely larger at 25 × 14 mm, and adds colour that this
-  application has no use for.
+Worked out in full above. The short version: **LEDs** are readable across a dark
+room from any angle with no interpretation, which is what an indicator is for and
+is not nostalgia. **A 0.96" OLED** is an 8 × 3 character interface at arm's length.
+**A 2.0" TFT** is 16 × 9 and a large fan-speed digit on it is readable from about
+two metres.
 
-If readability at distance were the goal, the answer would be LEDs or a 1.3"
-display, not a 0.96" one.
+The three indicator LEDs stay whichever display is fitted, because "is it alive"
+should be answerable from the doorway.
 
 ### Firmware, which is a cost too
 
@@ -204,45 +312,59 @@ machine with two buttons.
 
 ## Recommendation
 
-**Fit the 0.96" OLED, three buttons, and let the display sleep.**
+**A 2.0" 320 × 240 colour IPS, three buttons, and three indicator LEDs.**
 
-- $2.55 per finished device, of which $0.24 is on the assembled board. On a device
-  that costs perhaps €25 to build, that is not where the money is.
-- It is the only option that gives local parity with the panel being removed
-  without rebuilding a twenty-five-year-old keypad.
-- On-device diagnostics — Wi-Fi state, IP address, bus error counters — is worth
-  its price on its own in a technical space where the alternative is carrying a
-  laptop under a machine.
-- Sleeping removes burn-in and removes the display from the power budget.
-- The board takes either option, so this is reversible.
+`HS20HS072RX`, LCSC **C5329582**, $3.77, 657 in stock, active area
+40.8 × 30.6 mm, module 51.8 × 36.2 mm, ST7789 over SPI, −20…+70 °C.
 
-**Design the board so the LED bar is not excluded.** Three indicator LEDs — power,
-bus activity, fault — cost six cents, are readable from the doorway, and answer
-"is it alive" without waking anything. That is the part of option A worth keeping,
-and it is complementary rather than an alternative.
+- **It is the right size.** Sixteen characters by nine lines at arm's length is a
+  menu, a status page and a diagnostics screen. Eight by three is not.
+- **It is the best value on the board.** 5.3× the screen area of the 0.96" OLED
+  for $1.46 more, and cheaper per square millimetre than any mono OLED offered.
+- **It does not burn in**, so it idles dimmed instead of dark and answers "is the
+  machine running" from across the room without anyone touching it.
+- **It barely touches the PCBA.** The FPC connector and the switches are about
+  $0.30 of assembled parts; the display plugs in afterwards. The same board still
+  takes a smaller display, or none.
+
+Total for the local interface: about **$4.15** per finished device, against $4.65
+for the rest of the board. That is a real fraction of the parts cost and a small
+fraction of what a built device costs.
+
+**Keep the three indicator LEDs** — power, bus activity, fault. Six cents,
+readable from the doorway, and they answer the only question that matters when
+something is wrong without waking or lighting anything.
 
 ### The argument against, which is real
 
-The thing being replaced has LEDs that outlived its own electrolytics. An OLED
-fitted to a device meant to last as long as the machine will be the first thing to
-fail, and a sleeping display is dark exactly when someone glances at it to check
-the machine is running. If the goal were maximum service life with minimum
-attention, option A wins and it is not close.
+The thing being replaced has LEDs that outlived its own electrolytic capacitors,
+and they are still lit after about twenty-five years. Any display fitted here will
+be the first thing on this board to fail. If the goal were maximum service life
+with minimum attention, option A wins and it is not close.
 
-That argument loses here only because Home Assistant is the primary interface and
-the local one is a fallback and a diagnostic tool. If that assumption changes, so
-does the recommendation.
+That argument loses because Home Assistant is the primary interface and the local
+one is a fallback and a diagnostic tool — but it is why the three indicator LEDs
+stay regardless of what display is fitted, and why the board has to work with the
+display unplugged.
+
+### Open before this is final
+
+**The backlight drive.** Four parallel white LEDs at 80 mA cannot run from 3.3 V.
+Either a boost driver at about $0.30, or a 5 V intermediate rail with a
+constant-current sink at about $0.05 — and the second one changes the power chain,
+so it is decided together with M2a and not before.
 
 ## What would change the answer
 
-1. **M2a comes back low.** If the rail turns out to supply far less than the
-   inference above, option C goes first and the OLED's sleep behaviour stops being
-   a nicety.
-2. **The device turns out to be looked at often.** Then readability at distance
-   matters and a 1.3" display or an LED bar wins.
-3. **Local parity is declared unnecessary** — the household accepts that setpoints
-   are a Home Assistant thing. Then option A does everything needed for $0.36 and
-   the display is decoration.
+1. **M2a comes back low.** If the rail supplies far less than the inference above,
+   the backlight is the first thing that has to go, and the answer drops back to a
+   mono OLED that sleeps — or to LEDs.
+2. **Local parity is declared unnecessary** — the household accepts that setpoints
+   live in Home Assistant. Then option A does everything needed for $0.36 and any
+   display is decoration.
+3. **The viewing distance turns out to be much longer than arm's length.** If the
+   machine is high enough that the panel is read from two metres, no display in
+   this list is right and the answer is a large LED bar.
 
 ## New measurement this created
 

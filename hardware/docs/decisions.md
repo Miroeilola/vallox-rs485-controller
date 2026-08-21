@@ -294,7 +294,7 @@ against the pinout.
 
 ---
 
-### 2026-08-21 — Local interface: a sleeping OLED, three buttons, three LEDs
+### 2026-08-21 — Local interface: a sleeping OLED, three buttons, three LEDs — REVISED same day
 
 **Context.** With the panel removed, the machine has no local interface at all.
 The panel it replaces sits under the machine in a technical space, so there is no
@@ -343,3 +343,72 @@ feature to print well on an FDM part. The firmware acquires a menu, which is sco
 that competes with the protocol work, so it is built last and kept small. The
 three indicator LEDs stay regardless, because "is it alive" should not require
 waking anything.
+
+**Revised, same day — see the entry below.** The 0.96" size was chosen before
+anyone worked out how much text fits on it. It fits eight characters by three
+lines at arm's length, which is not a menu, and the decision above was made on
+the strength of being able to present a menu. Superseded rather than deleted,
+because the failure mode is instructive: the part was selected on price and
+category before the requirement was quantified.
+
+---
+
+### 2026-08-21 — Local interface, revised: a 2.0" colour IPS
+
+**Supersedes the entry above.** The reasoning there stands; only the size and the
+technology change.
+
+**Context.** The previous entry chose a 0.96" OLED because a display was needed to
+present a menu of named setpoints. Nobody had worked out how much text a 0.96"
+display actually shows.
+
+**The number that changed it.** Legibility is angular: a comfortable character
+subtends about 20 arcminutes, which is a character height of roughly viewing
+distance ÷ 170. At arm's length — 50 cm, because someone walks up and presses a
+button — that is 2.9 mm.
+
+| Display | Chars × lines at 50 cm | $ | $ per 100 mm² |
+|---|---|---|---|
+| 0.96" OLED | **8 × 3** | 2.31 | 0.98 |
+| 1.3" OLED | 11 × 4 | 5.33 | 1.23 |
+| 1.54" OLED | 13 × 5 | 6.46 | 1.05 |
+| **2.0" IPS** | **16 × 9** | **3.77** | **0.30** |
+| 2.8" TFT | 22 × 12 | 5.26 | 0.21 |
+
+Eight characters by three lines cannot show `SUPPLY FAN STOP` or a scrolling list
+of settings. It shows a fan speed and a temperature, which is what the LED bar it
+replaces already did — for a tenth of the price.
+
+**Decision.** `HS20HS072RX`, 2.0" 320 × 240 colour IPS, ST7789 over SPI, LCSC
+C5329582, $3.77, 657 in stock, active area 40.8 × 30.6 mm, −20…+70 °C. Three
+tactile switches and three indicator LEDs as before.
+
+**Reasoning.**
+
+1. **Size.** 16 × 9 characters is a menu, a status page and a diagnostics screen.
+   8 × 3 is a readout.
+2. **Value.** Colour TFT costs $0.21–0.30 per 100 mm² and mono OLED costs about
+   $1.00 and gets worse with size. The 2.0" is 5.3× the screen area of the 0.96"
+   for $1.46 more. Paying more for the smaller screen is not a trade-off.
+3. **No burn-in.** This removes the sleep requirement and with it the objection
+   that a sleeping display is dark exactly when someone glances at it. The
+   backlight idles dimmed and goes to full on a keypress.
+4. **Viewing angle.** IPS, full angle, on a panel mounted under a machine and
+   therefore read from below or from the side.
+
+**Consequences, and one of them is open.**
+
+- **The backlight needs a driver.** The datasheet gives four white LEDs in
+  parallel at 80 mA typical. Around 3.0–3.2 V forward, there is no headroom from
+  3.3 V and parallel LEDs cannot share one resistor without current hogging.
+  Either a boost driver at about $0.30 plus an inductor, or a **5 V intermediate
+  rail** with a PWM-dimmed constant-current sink at about $0.05. The second is
+  cheaper and better but it changes the whole power chain, so **it is decided
+  together with M2a, not before.**
+- Backlight power becomes the largest single load: 80 mA at 5 V is 0.4 W against
+  an estimated 1.1 W budget, or 0.08 W dimmed to 20 %. Another reason M2a matters.
+- The local interface now costs about $4.15 of a roughly $8.80 parts total. That
+  is a real fraction and it is stated plainly in `docs/research/user-interface.md`
+  rather than softened.
+- The board must work with the display unplugged, and the three indicator LEDs
+  stay, so that a failed or unfitted display never means a dead device.
