@@ -35,6 +35,7 @@ hardware/sim/out/
 # --- OS ---
 .DS_Store
 
-# --- host test build artefacts ---
+# --- host build artefacts ---
 firmware/test/host/run_tests
-firmware/test/host/*.dSYM/
+scripts/vlx-decode/vlx-decode
+*.dSYM/

@@ -1,0 +1,1 @@
+../../../firmware/components/vallox_protocol/vallox_protocol.c

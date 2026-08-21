@@ -11,6 +11,8 @@ back to where it entered.
 | `protocol.md` | Claims about the interface, each tagged with its confidence and how it was verified |
 | `measurement-plan.md` | What must be measured before the design can be trusted, and safety notes |
 | `risks.md` | What could stop the project, and the way around it |
+| `component-candidates.md` | Parts considered before the schematic exists, with live stock and the reasoning |
+| `user-interface.md` | Display or LEDs: the options costed against live stock, with the power arithmetic and the recommendation |
 
 ## Reliability ratings
 

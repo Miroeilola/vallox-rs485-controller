@@ -22,7 +22,21 @@ jobs:
         with:
           submodules: recursive
 
+      # The project is created at the hardware stage. Until then there is
+      # nothing to check, and a red badge on a repository whose schematic has
+      # not been drawn yet tells a reader nothing true.
+      - name: Is there a KiCad project yet
+        id: probe
+        run: |
+          if [ -f hardware/vallox-rs485-controller.kicad_sch ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No KiCad project in hardware/ yet - ERC and DRC skipped."
+          fi
+
       - name: Electrical rule check
+        if: steps.probe.outputs.exists == 'true'
         run: |
           kicad-cli sch erc \
             --output hardware/output/erc_report.json --format json \
@@ -30,6 +44,7 @@ jobs:
             hardware/vallox-rs485-controller.kicad_sch
 
       - name: Design rule check
+        if: steps.probe.outputs.exists == 'true'
         run: |
           kicad-cli pcb drc \
             --output hardware/output/drc_report.json --format json \
@@ -37,7 +52,7 @@ jobs:
             hardware/vallox-rs485-controller.kicad_pcb
 
       - name: Manufacturing outputs
-        if: success()
+        if: success() && steps.probe.outputs.exists == 'true'
         run: |
           mkdir -p hardware/manufacturing/gerber
           kicad-cli pcb export gerbers --output hardware/manufacturing/gerber hardware/vallox-rs485-controller.kicad_pcb
@@ -48,7 +63,7 @@ jobs:
           kicad-cli sch export pdf     --output hardware/manufacturing/vallox-rs485-controller-schematic.pdf hardware/vallox-rs485-controller.kicad_sch
 
       - name: Upload reports and outputs
-        if: always()
+        if: always() && steps.probe.outputs.exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: hardware-outputs

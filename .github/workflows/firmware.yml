@@ -5,9 +5,9 @@ name: firmware
 
 on:
   push:
-    paths: ['firmware/**', '.github/workflows/firmware.yml']
+    paths: ['firmware/**', 'scripts/**', '.github/workflows/firmware.yml']
   pull_request:
-    paths: ['firmware/**', '.github/workflows/firmware.yml']
+    paths: ['firmware/**', 'scripts/**', '.github/workflows/firmware.yml']
   workflow_dispatch:
 
 jobs:
@@ -20,6 +20,10 @@ jobs:
           cd firmware/test/host
           make
           ./run_tests
+      - name: Build the capture decoder
+        run: |
+          cd scripts/vlx-decode
+          make check
 
   build:
     runs-on: ubuntu-latest
