@@ -2,13 +2,21 @@
 
 KiCad 10 project for Vallox RS-485 Controller.
 
-**There is no KiCad project here yet, and that is deliberate.** Two measurements
-decide the power stage and neither is answerable from a document: whether the
-panel's 21 V rail is isolated from mains, and how much current it can supply.
-Drawing a schematic before those exist would mean drawing it twice. The plan is
+**Status: rev A schematic drawn, ERC clean, no PCB yet.** The schematic was drawn
+on 2026-08-22 ahead of the power-rail measurements (M1, M2a) so that there is
+something concrete to review; the power stage is therefore **provisional** and is
+marked as such in the title block. What M1/M2a can change: the regulator part
+(TPS54202 vs MP2459), the bulk capacitor value, and whether the backlight runs from
+a 5 V intermediate rail (as drawn) or a dedicated boost. Everything downstream of
+the 3.3 V rail is independent of those measurements. The measurement plan is
 [`../docs/research/measurement-plan.md`](../docs/research/measurement-plan.md);
-the parts that have been costed and the reasoning behind them are in
-[`../docs/research/component-candidates.md`](../docs/research/component-candidates.md).
+the parts and the reasoning are in
+[`../docs/research/component-candidates.md`](../docs/research/component-candidates.md)
+and every choice that needed a reason is in [`docs/decisions.md`](docs/decisions.md).
+
+The schematic is a single A3 sheet drawn with continuous wires — every connection
+can be followed by eye, and local labels only name nets, they never carry a
+connection. Power rails (+5V, +3V3, GND) use power symbols.
 
 | | |
 |---|---|
@@ -37,8 +45,8 @@ If symbols appear as missing, the submodule has not been initialised.
 
 | Check | Status | Evidence |
 |---|---|---|
-| ERC | — | `output/erc_report.json` |
-| DRC (CLI) | — | `output/drc_report.json` |
+| ERC | 0 errors, 1 warning (`lib_symbol_mismatch` on Q1, cosmetic) — 2026-08-22, KiCad 10.0.2 | `output/erc_report.json` |
+| DRC (CLI) | not applicable — no layout yet | `output/drc_report.json` |
 | DRC (GUI, custom rules) | — | run manually before ordering |
 | Board built and measured | — | `docs/measurements/` |
 

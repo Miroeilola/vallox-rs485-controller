@@ -15,8 +15,8 @@ description: |
   it.
 
 platform:
-  mcu: ESP32-S3                     # under review, see hardware/docs/decisions.md
-  target: esp32s3                   # ESP32-C3 proposed; blocked on measurement M2
+  mcu: ESP32-C3-WROOM-02-N4         # decided 2026-08-22, see hardware/docs/decisions.md
+  target: esp32c3
 
 # Electrical envelope. Fill from datasheets and measurements — never from memory.
 electrical:

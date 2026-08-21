@@ -25,6 +25,9 @@ jobs:
       # The project is created at the hardware stage. Until then there is
       # nothing to check, and a red badge on a repository whose schematic has
       # not been drawn yet tells a reader nothing true.
+      # Two probes, because the schematic exists before the board does. A board
+      # file with no outline is a placeholder, and DRC on it only reports that
+      # there is no outline - which is true and not a finding.
       - name: Is there a KiCad project yet
         id: probe
         run: |
@@ -33,6 +36,12 @@ jobs:
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
             echo "::notice::No KiCad project in hardware/ yet - ERC and DRC skipped."
+          fi
+          if [ -f hardware/vallox-rs485-controller.kicad_pcb ] && grep -q 'Edge.Cuts' hardware/vallox-rs485-controller.kicad_pcb; then
+            echo "board=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "board=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No board outline yet - DRC and manufacturing outputs skipped; ERC still runs."
           fi
 
       - name: Electrical rule check
@@ -44,23 +53,28 @@ jobs:
             hardware/vallox-rs485-controller.kicad_sch
 
       - name: Design rule check
-        if: steps.probe.outputs.exists == 'true'
+        if: steps.probe.outputs.board == 'true'
         run: |
           kicad-cli pcb drc \
             --output hardware/output/drc_report.json --format json \
             --severity-error --exit-code-violations \
             hardware/vallox-rs485-controller.kicad_pcb
 
-      - name: Manufacturing outputs
+      - name: Schematic outputs
         if: success() && steps.probe.outputs.exists == 'true'
+        run: |
+          mkdir -p hardware/manufacturing
+          kicad-cli sch export bom     --output hardware/manufacturing/vallox-rs485-controller-bom.csv hardware/vallox-rs485-controller.kicad_sch
+          kicad-cli sch export pdf     --output hardware/manufacturing/vallox-rs485-controller-schematic.pdf hardware/vallox-rs485-controller.kicad_sch
+
+      - name: Manufacturing outputs
+        if: success() && steps.probe.outputs.board == 'true'
         run: |
           mkdir -p hardware/manufacturing/gerber
           kicad-cli pcb export gerbers --output hardware/manufacturing/gerber hardware/vallox-rs485-controller.kicad_pcb
           kicad-cli pcb export drill   --output hardware/manufacturing/gerber hardware/vallox-rs485-controller.kicad_pcb
           kicad-cli pcb export pos     --output hardware/manufacturing/vallox-rs485-controller-all-pos.csv \
             --format csv --units mm --side both hardware/vallox-rs485-controller.kicad_pcb
-          kicad-cli sch export bom     --output hardware/manufacturing/vallox-rs485-controller-bom.csv hardware/vallox-rs485-controller.kicad_sch
-          kicad-cli sch export pdf     --output hardware/manufacturing/vallox-rs485-controller-schematic.pdf hardware/vallox-rs485-controller.kicad_sch
 
       - name: Upload reports and outputs
         if: always() && steps.probe.outputs.exists == 'true'

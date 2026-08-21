@@ -757,3 +757,124 @@ urgency.
   a cable that is never connected in service.
 - Test pads for EN and GPIO9 remain worth having, and are now the only external
   electrical access besides the terminal block.
+
+---
+
+### 2026-08-22 — Schematic rev A drawn before M1/M2a, power stage marked provisional
+
+**Context.** The plan was not to draw a schematic before the rail measurements.
+Miro asked for something concrete in KiCad now. Roughly two thirds of the design
+does not depend on those measurements at all, and the third that does can be
+redrawn as a component swap rather than a topology change.
+
+**Decision.** Draw the whole schematic now; mark the power stage provisional in
+the title block and here; list exactly what M1/M2a can change.
+
+**What M1 / M2a can still change.** The buck (TPS54202 → MP2459 if the rail is
+unregulated or exceeds ~24 V unloaded); the bulk capacitor (220 µF is calculated,
+not measured); the EN divider threshold; and whether the backlight is fed from a
+5 V intermediate rail (drawn) or a dedicated boost. Nothing downstream of 3.3 V.
+
+---
+
+### 2026-08-22 — 5 V intermediate rail with a 3.3 V LDO, provisionally
+
+**Context.** The backlight needs 2.8–3.2 V at 80 mA (HS20HS072RX datasheet §3.2)
+and cannot run from 3.3 V with any control. The bench needs the board to run from
+USB when no bus is connected. Both were open items deferred to M2a.
+
+**Options.** (a) Buck to 3.3 V plus a small boost for the backlight, USB VBUS
+diode-ORed into the buck input (4.7 V in is above the 4.5 V minimum). (b) Buck to
+5 V, ME6211C33 LDO to 3.3 V, backlight from 5 V through a resistor and a
+PWM-driven N-MOSFET, USB VBUS diode-ORed straight into the 5 V rail.
+
+**Decision.** (b), provisionally. The schematic is drawn this way.
+
+**Reasoning.** One regulator fewer to qualify (the LDO is a $0.05 SOT-23-5 part
+with 60 µA quiescent, ME6211C33M5G-N, C82942), USB bench power becomes trivial,
+and the backlight gets a real current path. The cost is efficiency on the logic
+rail: the LDO drops 1.7 V, which at a 25 mA Wi-Fi-idle average is about 42 mW,
+or ~2 mA from the 21 V bus. The boost option's own quiescent current is of the
+same order. M2a decides whether that 2 mA matters; if the rail is starved, the
+design flips to (a) and the change is contained in the power region.
+
+**Consequences.** Second regulator on the board. LDO dissipation at the Wi-Fi
+transmit peak (≈350 mA × 1.35 V ≈ 0.47 W) is momentary; at a sustained OTA
+download (~150 mA) it is ~0.2 W in SOT-23-5 — measured in bring-up, not assumed.
+
+---
+
+### 2026-08-22 — Buck details: 22 µH, 100k/13.3k feedback, 100k/15k EN divider
+
+- **VFB = 0.596 V** (TPS54202 datasheet SLVSDJ8, §6.5). 100 kΩ / 13.3 kΩ gives
+  5.08 V and is the pair TI uses in its own 5 V design example (§8.2).
+- **22 µH, not the 10 µH in the candidate list.** Inductor ripple
+  ΔI = Vout·(1−D)/(L·f) at 21 V in, 5 V out, 500 kHz: 10 µH → 0.76 A p-p, larger
+  than the load; 22 µH → 0.35 A. Same FNR6045S family, FNR6045S220MT, C168080,
+  2.2 A saturation, 116 mΩ.
+- **EN must not be tied to the input.** EN absolute maximum is 7 V (§5.1); the
+  rail is 21 V. 100 kΩ / 15 kΩ: 2.9 V at 22 V in, 3.7 V at the 28 V operating
+  maximum, and the converter starts at ≈ 9.3 V (1.21 V rising threshold, §6.5).
+  A 9 V start keeps a sagging bus from brown-out cycling the radio.
+
+---
+
+### 2026-08-22 — ESP32-C3 GPIO map, decided by wire order
+
+**Context.** On the WROOM-02 symbol fourteen I/Os sit on the left edge at 2.54 mm
+pitch and two on the right. If functions are not grouped by physical adjacency
+the schematic fills with crossings, and the same is true of the PCB.
+
+| GPIO | Function | Note |
+|---|---|---|
+| IO0 | TFT_MOSI (SDA) | |
+| IO1 | TFT_SCK (SCL) | |
+| IO2 | TFT_DC (RS) | strapping; 10 kΩ pull-up — DC is don't-care between transfers, so the pull-up costs nothing |
+| IO3 | TFT_CS | |
+| IO4 | BTN_ADC | **ADC1_CH4**. ADC1 is GPIO0–4 only; GPIO5 is ADC2_CH0 and ADC2 is unusable while Wi-Fi runs. A first draft had the ladder on IO5 and was caught in review |
+| IO5 | LED_PWR | |
+| IO6 | RS485_RX (RO) | |
+| IO7 | RS485_DE (DE and ~RE tied) | 10 kΩ pull-down keeps the driver off through reset |
+| IO8 | RS485_TX (DI) | strapping; 10 kΩ pull-up, and UART TX idles high anyway |
+| IO9 | BOOT test pad | strapping, internal weak pull-up (datasheet table 4-1) |
+| IO10 | LED_FAULT | |
+| IO18 / IO19 | USB D− / D+ | native USB-Serial-JTAG |
+| IO20 | LED_BUS | right side; flickers with the ROM boot log, which is fine for a bus LED |
+| IO21 | TFT_BL_PWM | right side; input at reset → backlight off until firmware says otherwise |
+
+**Strapping, from the module datasheet §4.1.** GPIO2 must read 1 at reset
+("recommended to pull this pin up due to glitches"); GPIO8 must read 1 for the
+joint download boot that the first USB flash relies on; GPIO9 has an internal
+weak pull-up. Hence the pull-ups on IO2 and IO8 and the test pad on IO9.
+
+**Button ladder.** 10 kΩ pull-up, switches to ground through 0 / 1.5 k / 3.3 k /
+6.8 kΩ: 0, 0.43, 0.82, 1.34 V pressed, 3.3 V idle. 100 nF on the node. The
+order of the four display lines (IO0–IO3) and the button line (IO4) matches the
+pin order on the FPC connector, which is why the schematic has no crossings there;
+the ADC constraint above is what fixed the button on IO4 rather than IO0.
+
+---
+
+### 2026-08-22 — Display tail is 12-pin: FH12-12S-0.5SH replaces the 30-pin connector
+
+**Context.** The candidate list carried a 30-pin FPC connector. The display
+datasheet (HS20HS072RX, §6) lists **12 pins**: GND, CS, RS, SCL, SDA, RST, NC,
+IOVCC, VCC, LED A, LED K, GND.
+
+**Decision.** Hirose FH12-12S-0.5SH (C88360, $0.44, 5 077 in stock) — footprint
+and 3D model ship with KiCad. Value field on J3 is the display part number.
+
+**Open.** FH12 is bottom-contact. The tail's contact side is read from the
+display's mechanical drawing before the order; if it is top-contact, the swap is
+to a double-sided part and a library addition.
+
+**Reset.** RST has a 10 kΩ / 1 µF RC from 3.3 V, no GPIO spent.
+
+---
+
+### 2026-08-22 — Symbol mirroring and a tool convention that was wrong
+
+J1 and U4 are mirrored (`mirror y`) so that field wiring enters from the left
+and bus pins face the terminal. The MCP's pin-position tool reports rotation 90
+mirrored relative to KiCad; the netlist, not the tool, is what was checked.
+Details in `layout-notes.md`.
