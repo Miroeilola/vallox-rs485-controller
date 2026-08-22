@@ -156,3 +156,33 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   - Module overhang means the panel needs a gap or cutout beside U1 — say so in
     the PCBWay remarks.
   - Logo (`mironet-mark-mono.svg`) not yet on the silkscreen; GUI image import.
+
+### 2026-08-22 — DS1 display glass placed, LEDs moved off the tail path
+
+- **Baseline.** Previous entry: DRC 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** `mironet-hw-lib` bumped to f3ddcca (own HS20HS072RX model and the
+  pad-less footprint `LCD_2.0in_HSD_HS20HS072RX_FPC-12P-0.5mm`). `DS1` placed at
+  (33.9, 26.1) rot 90 — exactly the reserved glass area, which is now a footprint
+  instead of a Dwgs.User rectangle; the COG ledge and tail face J3. The first
+  render showed the tail root (20.6 mm wide for the first ~10 mm from the glass
+  edge, at z ≈ 1.2 mm) running over x 59.8–69.6, y 15.8–36.4 — straight across the
+  FAULT LED and its legend. LED column moved up to y = 7.8 / 10.8 / 13.8 (D4/D6/D5,
+  resistors and legends with them) and H4 from (70, 3.5) to (66, 3.5) to make room;
+  D5's courtyard now ends 1.2 mm above the tail root's nominal edge (tail position
+  ±0.5 mm).
+- **Measured.** Glass 51.8 × 36.2 on the board at x 8–59.8, y 8–44.2; tail end at
+  x 80.5 in the straight-tail model, i.e. over J3 and R10/C9/R21 — it is the
+  unfolded pose; the real tail bends into J3 (see the contact-side note above).
+- **Did not work.** The library's 3D-model path convention (`${KIPRJMOD}/lib/…`) did
+  not resolve in this project layout (KiCad project in `hardware/`, submodule at
+  the repo root): the first render had no display and no error. The scratch test
+  in the library had the library symlinked beside the project file and could not
+  catch it. Fixed in the library (now `${KIPRJMOD}/../lib/…`, PR #4) and in DS1's
+  instance on this board.
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (unchanged set), parity clean + 4 holes (DS1 is board-only and exempt),
+  138 unconnected. Render read: display, tail path, LEDs clear.
+- **Open.** Tail contact side (decides J3's orientation); whether the tail is
+  folded over J3 or straight in; the straight-tail model overlaps J3's courtyard
+  region on purpose — KiCad did not flag a courtyard overlap between DS1's tail
+  courtyard and J3, worth understanding before relying on that check.
