@@ -983,3 +983,34 @@ against a sample with an ohmmeter before the backlight is powered. Verify
 FH12A's "No. 1" marking against the FH12 footprint's pad 1 on the Hirose drawing
 before ordering — the mirror above does not depend on it, but the silkscreen
 pin-1 mark on the board should match the part.
+
+---
+
+### 2026-08-22 — Power stage no longer provisional: TPS54202 stays, rail measured
+
+**Context.** The buck, bulk capacitor and EN divider were drawn provisionally on
+2026-08-22 pending M1/M2a, with the stated trigger "TPS54202 → MP2459 if the rail
+is unregulated or exceeds ~24 V unloaded".
+
+**Evidence.** M2a: the factory panel draws 450 mA continuous, 700 mA momentary at
+~22 V (`docs/measurements/2026-08-22-panel-current.md`). M1 no-load row: 22.8 V
+with the panel disconnected (`docs/measurements/2026-08-22-rail-voltage-no-load.md`).
+Instrument and mains voltage not yet recorded; the margins below do not depend
+on them.
+
+**Decision.** TPS54202 stays; 22 µH, 100k/13.3k feedback, 100k/15k EN divider
+unchanged. The 5 V intermediate rail with the ME6211 LDO stays: the board's 3.3 V
+load is unchanged and the rail-side budget (0.1–0.2 A against a demonstrated
+0.45–0.7 A) is no longer a constraint. Bulk 220 µF stays as calculated; the rail
+is stiff enough that it is now sized for the Wi-Fi burst, not for the source.
+
+**Reasoning.** 22.8 V unloaded × 1.10 for mains at +10 % ≈ 25 V, 3 V under the
+28 V operating maximum (SLVSDJ8 §6.3) and the EN divider then sits at 3.3 V
+against a 7 V absolute maximum. The rail rose only 0.8 V when ~10 W came off it,
+so it is not the soft 14 VA winding the documents describe — which is recorded in
+the research notes, not resolved, and not needed.
+
+**Consequences.** The "provisional" mark comes off the title block at the next
+schematic edit. Routing of the power corner is unblocked. Still open before
+ordering: full-load rail reading (fan 8, heating) for the lower end of the input
+range, and the instrument name for the datasheet.
