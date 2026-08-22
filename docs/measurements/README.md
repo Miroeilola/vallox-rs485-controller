@@ -10,6 +10,7 @@ The plan that produces the reports is
 |---|---|
 | [2026-08-21-panel-identification.md](2026-08-21-panel-identification.md) | M0 (partly) and the supply-voltage row of M1: which panel, what is on its terminals, 22 V on the pair |
 | [2026-08-22-panel-current.md](2026-08-22-panel-current.md) | M2a: the factory panel draws 450 mA continuous, 700 mA momentary — conditions still to be recorded |
+| [2026-08-22-rail-voltage-no-load.md](2026-08-22-rail-voltage-no-load.md) | M1, no-load row: 22.8 V with the panel disconnected; the buck stays TPS54202 |
 
 ## Instruments used
 

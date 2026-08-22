@@ -29,7 +29,7 @@ it is rated accordingly.
 | 12 | The bus has no arbitration; a client waits for ~100 ms of silence before transmitting | pvainio (implementation constant), inferred. Tom-Bom-badil uses 7 ms | `reverse-engineered` | Capture: measure the real inter-frame gap distribution before choosing this number. The manufacturer's 10 ms response window (claim 24) bounds how long a reply slot is |
 | 13 | Duplicate panel addresses put the machine into a bus-fault state | Vallox Digit2 SE manual | `manufacturer` | Not to be tested deliberately on the live machine |
 | 13b | Two controllers on this bus override each other, so a third-party client cannot coexist with a factory panel | Prior testing on the target machine | `measured, first-hand` | Established. It is why this device replaces the panel — see the decision record |
-| 20 | The supply pair carries 22 V on the target machine | Measured 2026-08-21, instrument and load state not recorded | `measured, conditions incomplete` | Repeat at no load and at full machine load, with the instrument recorded |
+| 20 | The supply pair carries 22 V loaded (~450 mA) and **22.8 V with the panel disconnected** on the target machine | Measured 2026-08-21 and 2026-08-22, instrument not recorded — [report](../measurements/2026-08-22-rail-voltage-no-load.md) | `measured, conditions incomplete` | Repeat at full machine load (fan 8, heating on) with the instrument and mains voltage recorded; the no-load end is done |
 | 26 | The factory panel draws 450 mA continuous and 700 mA momentary from the supply pair at ~22 V | Measured 2026-08-22 (M2a), instrument and load state not yet recorded — [report](../measurements/2026-08-22-panel-current.md) | `measured, conditions incomplete` | Repeat with the instrument, range and machine state recorded; read the no-load rail voltage in the same session |
 | 21 | The original panel's transceiver is a MAX487: 1/4 unit load, 48 kΩ, slew-rate limited to 250 kbps | Read off the board, plus the Analog Devices datasheet | `manufacturer` | Established. The replacement matches or betters it |
 | 14 | Temperatures are NTC 5 kΩ raw counts mapped through a fixed 256-entry table | windkh, pvainio, Tom-Bom-badil (identical tables) | `reverse-engineered` | Compare a reported value against a calibrated reference thermometer in the same airflow |
@@ -283,11 +283,14 @@ They are the reason the schematic is not being drawn yet.
    the terminal-to-earth measurement stays as the first thing done on the machine —
    as a check, no longer as a coin toss.
 3. **The range, not the centre.** 22 V measured, with the load state unrecorded.
-   The regulator's input range needs the no-load and full-load ends. *Estimate,
-   not a measurement:* 16 VAC nominal × 1.10 (mains at +10 %) × ~1.15 (no-load
-   regulation of a 14 VA transformer, ASSUMED) × √2 ≈ 28.6 V peak before the
-   rectifier drop — at the edge of the 28 V operating maximum the provisional buck
-   was chosen against. The no-load row of M1 decides whether the buck changes.
+   The regulator's input range needs the no-load and full-load ends. **No-load
+   end measured 2026-08-22: 22.8 V**, a 0.8 V rise over the loaded reading. The
+   earlier estimate of ~28.6 V peak (16 VAC × 1.10 × 1.15 × √2, regulation
+   assumed) is withdrawn — this rail is far stiffer than a 14 VA transformer into
+   a capacitor would be. Scaled for mains at +10 % the rail is ~25 V, inside the
+   provisional buck's 28 V operating maximum with margin; **the buck stays
+   TPS54202.** The full-load end (fan 8, heating on) is still unread but can
+   only be lower.
 4. **Whether the machine terminates and biases the bus, and whether the original
    panel did.** The replacement should present the same bus as the panel did, so
    this is a question about the original as much as about the machine. Both

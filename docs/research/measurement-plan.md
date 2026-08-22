@@ -53,7 +53,7 @@ depends on it — the register set, whether 0xB0/0xB1 exist, which address is fr
 | Terminal 5 (M) to protective earth, AC and DC | Same | As above |
 | Terminal 1 to terminal 2, machine idle | approx. 21 V DC, per the manual | Claim 2 vs claim 5 (24 V) |
 | Same, machine at fan speed 8, heating on | Sags by some amount | Lower end of the input range |
-| Same, factory panel disconnected | Rises by some amount | Upper end of the input range, no-load |
+| Same, factory panel disconnected | Rises by some amount | Upper end of the input range, no-load. **Done 2026-08-22: 22.8 V** ([report](../measurements/2026-08-22-rail-voltage-no-load.md)) — the buck stays |
 | Ripple on terminal 1–2, oscilloscope, AC coupled | Unknown | Whether the supply is regulated or a rectified transformer winding |
 | A and B to M, DC, bus idle | Inside −7…+12 V | Claim 4, and whether the bus is biased |
 | A–B differential, bus idle | Some hundreds of mV if biased, near 0 if not | Whether this board needs fail-safe biasing |
