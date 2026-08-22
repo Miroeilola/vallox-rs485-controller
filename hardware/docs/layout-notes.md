@@ -136,8 +136,19 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   board is routed — the workflow's DRC step uses `--exit-code-violations`, which
   returns 5 for unconnected items as well (verified locally).
 - **Open.**
-  - Display tail: exit edge and length assumed (short edge, toward J3); contact
-    side still open. If the tail exits elsewhere, only J3 moves.
+  - Display tail, **checked against the HSD outline drawing the same day**
+    (LCSC C5329582 datasheet, sheet "MODULE OUTLINE DIMENSION"): it does leave the
+    short edge, centred (contact 1 edge 15.28 ± 0.5 from the glass side, 12 × 0.5
+    mm), 20.7 ± 0.5 mm long, flat between glass and backlight. So J3's position
+    holds, but a 20.7 mm tail does not go straight into a connector 2.8 mm from
+    the glass — it bends, and a fold flips the contact side. Contact side is the
+    open question: the drawing reads as viewer-side contacts (stiffener in the
+    back view), which with a bottom-contact FH12 means the tail folds over the
+    connector and J3 turns 180° (entry away from the glass, ~8 mm out); if the
+    contacts are on the back, the present orientation is right. Confirm from HSD
+    or a sample before ordering. Own 3D model and a mechanical footprint are in
+    mironet-hw-lib (PR #3, `LCD_2.0in_HSD_HS20HS072RX`); bump the submodule and
+    place `DS1` on the reserved area once merged.
   - Run F8 in the GUI once (Update PCB from Schematic, *delete footprints with no
     symbols* OFF) and confirm it reports no footprint add/remove.
   - Routing; then GND pour both sides with stitching, and the 15 mm antenna
