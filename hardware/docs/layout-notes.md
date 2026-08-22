@@ -234,3 +234,19 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   the glass into J3, LEDs clear.
 - **Open.** FH12A "No. 1" side vs footprint pad 1 (silk mark correctness);
   ohmmeter check of the mirror on a sample before powering the backlight; routing.
+
+### 2026-08-22 — Correction: J3 entry face really at 16.9 mm
+
+- **Did not work.** The previous entry placed J3 at (72.3, 25.92) rot 270 and claimed
+  an entry face 16.9 mm from the glass. Wrong: at rot 270 the insertion side points
+  toward −x, so the face sat at x 67.9 — 8.1 mm from the glass — and the 20.7 mm
+  tail had nowhere to go; Miro's render showed the tail running past the connector.
+  Lesson: after any connector rotation, read the entry-face coordinate back from
+  the courtyard, not from the intended number.
+- **Changes.** J3 → (81.1, 25.92) rot 270: courtyard x 76.16–84.14, entry face at
+  x 76.7 (16.9 mm from the glass edge), pads at x 82.95; the tail tip (x 80.5)
+  now ends inside the connector body. R10/C9/R21/R12 → column x 86.0 (y 21.3 /
+  23.5 / 25.7 / 27.9), R13 → (89.2, 27.9). Comment text corrected.
+- **Result.** DRC 0 errors, 8 warnings (the 7 known + 1 silk_overlap of two
+  reference texts in the relocated column, cosmetic), parity clean + 4 holes,
+  138 unconnected. Render read: tail straight from the glass into J3.

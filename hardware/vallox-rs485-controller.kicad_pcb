@@ -1467,11 +1467,11 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "1ab42040-f822-4da2-96e0-7d5128da4b2c")
-		(at 77.5 29.5)
+		(at 86 27.9)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R12"
-			(at 3.036905 0 0)
+			(at 0 1.7036 0)
 			(layer "F.SilkS")
 			(uuid "848af3e6-b649-490f-84a8-9f6f99a85b30")
 			(effects
@@ -1615,7 +1615,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "1ef3bb19-da11-4610-80cc-75066efa3258")
-		(at 78.5 26.7)
+		(at 86 25.7)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R21"
@@ -6584,11 +6584,11 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "6fb62bc0-1c54-4da8-a1c7-fa4348f535fe")
-		(at 77.5 31.5)
+		(at 89.2 27.9)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R13"
-			(at 0 1.7036 0)
+			(at 0 -1.7036 0)
 			(layer "F.SilkS")
 			(uuid "5c3a9f39-277a-4749-8042-46cb95cb2823")
 			(effects
@@ -7741,7 +7741,7 @@
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "8a682d6f-5c43-4f3f-a78b-db8d4baf9cf9")
-		(at 78.5 22.3)
+		(at 86 21.3)
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R10"
@@ -11132,7 +11132,7 @@
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "Q1"
-			(at -3.125 0 0)
+			(at 0 -2.6736 0)
 			(layer "F.SilkS")
 			(uuid "f6774e8d-c180-4135-91ee-66a474fa46b1")
 			(effects
@@ -11644,7 +11644,7 @@
 	(footprint "Connector_FFC-FPC:Hirose_FH12-12S-0.5SH_1x12-1MP_P0.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "cf24620b-0dae-4a9e-aae2-a7f011af6476")
-		(at 72.3 25.92 -90)
+		(at 81.1 25.92 -90)
 		(descr "Hirose FH12, FFC/FPC connector, FH12-12S-0.5SH, 12 Pins per row (https://www.hirose.com/product/en/products/FH12/FH12-24S-0.5SH(55)/)")
 		(tags "connector Hirose FH12 horizontal")
 		(property "Reference" "J3"
@@ -12117,7 +12117,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "dcdff348-3483-4fb5-b4e7-ad7e9a5ab0a0")
-		(at 78.5 24.5)
+		(at 86 23.5)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C9"
@@ -13146,7 +13146,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R5"
-			(at -2.655952 0 0)
+			(at 0 -1.7036 0)
 			(layer "F.SilkS")
 			(uuid "9bc40398-60a2-4dff-99b8-d09ecfc4af68")
 			(effects
@@ -13969,7 +13969,7 @@
 			)
 		)
 	)
-	(gr_text "DS1 glass rests on the board. Tail contacts face the viewer; J3 is a TOP-contact FH12A facing the glass, tail straight, entry 16.9 mm from the glass edge. Keep the tail path (y 23-29, x 60-77) below 0.8 mm."
+	(gr_text "DS1 glass rests on the board. Tail contacts face the viewer; J3 is a TOP-contact FH12A facing the glass, tail straight, entry face 16.9 mm from the glass edge (x 76.7). Keep the tail path (y 23-29, x 60-77) below 0.8 mm."
 		(at 33.9 46 0)
 		(layer "Cmts.User")
 		(uuid "204d8d56-6148-49d7-9eef-d631a3c6f81e")
