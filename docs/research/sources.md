@@ -26,6 +26,7 @@ The strongest sources in this project are not documents.
 | Analog Devices MAX481/483/485/487–491/MAX1487 datasheet | 2026-08-21 | MAX487: 48 kΩ receiver input, 1/4 unit load, up to 128 nodes, slew-rate limited to 250 kbps — the characteristics the replacement has to match | `manufacturer, quoted` |
 | Texas Instruments THVD1400 / THVD1420 datasheet, SLLSF78B, Dec 2020 rev. Oct 2021 | 2026-08-21 | Candidate transceiver: 1/8 unit load, integrated open/short/idle fail-safe, 500 kbps slew-limited, bus pins −16 V to +16 V absolute maximum, ±12 kV IEC contact ESD, 700–900 µA quiescent receiving | `manufacturer, read` |
 | Shenzhen Hansheng (HSD) HS20HS072RX specification, 20 pp., via LCSC C5329582 | 2026-08-22 | Outline 51.8 × 36.2 × 2.05 (glass 1.1), VA 33.6 × 46.6 = recommended window (note 8), AA 30.6 × 40.8, tail 20.7 ± 0.5 from the glass edge on the short side, 12 × 0.5 mm, backlight 4 white LEDs in parallel, −20…+70 °C; the basis of the library 3D model | `manufacturer, read` |
+| Hirose FH12 series catalogue (0.5 mm / 1 mm pitch FPC/FFC connectors), Jul 2026 edition, hirose.com | 2026-08-22 | FH12 = bottom contact, FH12A = top contact; one land/metal-mask table for both (12 P: A 5.5, B 11.1, C 7.5); standard height 2.0 mm; FPC 0.3 ± 0.03 thick at the contacts, stiffener ≥ 0.188, contact length 3.5 min | `manufacturer, read` |
 
 **`manufacturer, quoted` versus `manufacturer, read`.** The TI datasheet was
 retrieved and its tables read directly. The Analog Devices one was not: their

@@ -5507,6 +5507,12 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "J3 = FH12A top-contact; display tail straight, contacts up.\nTail contact k meets J3 pad 13-k, so the symbol is mirrored:\nJ3 pin 1 = display 12 (GND) ... J3 pin 12 = display 1 (GND)."
+		(exclude_from_sim no)
+		(at 226.06 69.85 0)
+		(effects (font (size 1.27 1.27)) (justify left bottom))
+		(uuid "7e2f1c0a-3b5d-4c8e-9a1f-2d4b6c8e0f13")
+	)
 	(symbol
 		(lib_id "Connector:Screw_Terminal_01x05")
 		(at 38.1 119.38 0)
@@ -7359,7 +7365,8 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x12")
-		(at 215.9 93.98 180)
+		(at 215.9 91.44 180)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7370,7 +7377,7 @@
 			(at 215.9 90.17 180)
 			(effects (font (size 1.27 1.27)))
 		)
-		(property "Value" "HS20HS072RX"
+		(property "Value" "FH12A-12S-0.5SH(55)"
 			(at 215.9 97.79 180)
 			(effects (font (size 1.27 1.27)))
 		)
@@ -7381,7 +7388,23 @@
 		(property "Datasheet" "~"
 			(at 215.9 93.98 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
+		)		(property "Manufacturer" "Hirose"
+			(at 215.9 93.98 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "MPN" "FH12A-12S-0.5SH(55)"
+			(at 215.9 93.98 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C596811"
+			(at 215.9 93.98 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "0.5 mm 12-pin FPC connector, TOP contact, for the display tail inserted straight with its contacts up; J3 pin k carries display pin 13-k (symbol mirrored)"
+			(at 215.9 93.98 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"

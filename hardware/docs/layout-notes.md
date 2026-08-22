@@ -205,3 +205,32 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   read: tail loops over J3 and enters from the right, LEDs clear.
 - **Open.** Confirm the FH12 FPC insertion height against the 0.45 mm return-run
   height in the model before trusting the loop clearance; routing.
+
+### 2026-08-22 — Straight tail: J3 → FH12A facing the glass, schematic J3 mirrored
+
+- **Baseline.** Previous entry: 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** Schematic: J3 symbol mirrored (`mirror x`, at 93.98 → 91.44 so the
+  pins land on the existing wires), value FH12A-12S-0.5SH(55), Manufacturer/MPN/
+  LCSC/Description fields added, a note text beside it. ERC unchanged (0 errors,
+  1 cosmetic), 47 nets, the NC flag now on J3 pin 6 (= display pin 7). Board:
+  J3 at (72.3, 25.92) rot 270 (entry face at x 76.7 = 16.9 mm from the glass
+  edge), pad nets re-synced from the new netlist (R11.2 renamed net), J3 value
+  and fields; DS1 back to the straight-tail footprint (lib 308db04, silk marks
+  removed from both variants); Q1 → (73.5, 33.9), R11 → (73.5, 37.2),
+  R10/C9/R21 → x 78.5. Comment text updated.
+- **Measured.** J3 pad 12 (y 28.67) GND ↔ tail contact 1 (28.67); pad 11 (28.17)
+  TFT_CS ↔ contact 2 (28.17); pad 2 (23.67) TFT_LED_K ↔ contact 11 (23.67); pad 1
+  (23.17) GND ↔ contact 12. Tail path: root x 59.8–69.6 / y 15.8–36.4, tongue
+  x 69.6–76.7 / y 22.7–29.2; the model's free tail extends to x 80.5 (it is the
+  as-delivered tail, the real one ends inside J3 at x ≈ 72.9).
+- **Did not work.** pcbnew Python: in one script the PAD wrappers came back as
+  raw swig objects after a footprint Remove/Add in the same run (`Pads()` not
+  iterable, `FindPadByNumber` without `SetNet`) — split into two runs, one for
+  nets and moves, one for the footprint swap. `FOOTPRINT.GetFieldByName` does
+  not exist in 10.0.2; `SetField` + `GetFields()` works.
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (6 × silk_edge_clearance on U1/J1/J2, 1 × lib_footprint_mismatch on
+  U1), parity clean + 4 holes, 138 unconnected. Render read: tail straight from
+  the glass into J3, LEDs clear.
+- **Open.** FH12A "No. 1" side vs footprint pad 1 (silk mark correctness);
+  ohmmeter check of the mirror on a sample before powering the backlight; routing.
