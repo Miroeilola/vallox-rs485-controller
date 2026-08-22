@@ -30,6 +30,7 @@ it is rated accordingly.
 | 13 | Duplicate panel addresses put the machine into a bus-fault state | Vallox Digit2 SE manual | `manufacturer` | Not to be tested deliberately on the live machine |
 | 13b | Two controllers on this bus override each other, so a third-party client cannot coexist with a factory panel | Prior testing on the target machine | `measured, first-hand` | Established. It is why this device replaces the panel — see the decision record |
 | 20 | The supply pair carries 22 V on the target machine | Measured 2026-08-21, instrument and load state not recorded | `measured, conditions incomplete` | Repeat at no load and at full machine load, with the instrument recorded |
+| 26 | The factory panel draws 450 mA continuous and 700 mA momentary from the supply pair at ~22 V | Measured 2026-08-22 (M2a), instrument and load state not yet recorded — [report](../measurements/2026-08-22-panel-current.md) | `measured, conditions incomplete` | Repeat with the instrument, range and machine state recorded; read the no-load rail voltage in the same session |
 | 21 | The original panel's transceiver is a MAX487: 1/4 unit load, 48 kΩ, slew-rate limited to 250 kbps | Read off the board, plus the Analog Devices datasheet | `manufacturer` | Established. The replacement matches or betters it |
 | 14 | Temperatures are NTC 5 kΩ raw counts mapped through a fixed 256-entry table | windkh, pvainio, Tom-Bom-badil (identical tables) | `reverse-engineered` | Compare a reported value against a calibrated reference thermometer in the same airflow |
 | 15 | Fan speed is a thermometer-coded bit mask, 1→0x01 … 8→0xFF | All four implementations | `reverse-engineered` | Capture while changing speed on the factory panel |
@@ -269,11 +270,12 @@ They are the reason the schematic is not being drawn yet.
    is a 230 V / 16 VAC, **14 VA** part (spare part 940130) and its secondary is fused
    **T800 mA** on the mainboard; everything low-voltage — mainboard, relays, the
    damper motor, up to 3 (1999: 7) panels, 5 CO₂ and 2 RH sensors, the LON
-   gateway — shares it. *Floor:* other people have run an ESP8266/ESP32 plus an
-   RS-485 transceiver from the +/− pair through a buck, in parallel with the
-   factory panel, for years (Creating Smart Home comments, lostcontrol/esphome-
-   helios-kwl). The original panel's own draw is still unmeasured and M2a remains
-   the cheapest way to turn the prior into a number.
+   gateway — shares it. *Floor, measured 2026-08-22 (M2a):* the factory panel
+   itself draws **450 mA continuous, 700 mA momentary** — about 10 W, which the
+   rail has delivered for two decades. The board needs 0.1–0.2 A at the rail. The
+   question is answered for design purposes; what is left is recording the
+   instrument and conditions, and the tension between ~10 W of panel and a 14 VA
+   / T800 mA document (see the report's *Deviations*).
 2. **Whether the rail is really isolated from mains.** Claim 3 is now
    `manufacturer`: four generations of Vallox diagrams draw a separate 16 VAC
    secondary and call it a protective-voltage winding. What a drawing cannot show

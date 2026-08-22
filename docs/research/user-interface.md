@@ -213,12 +213,18 @@ A linear regulator draws its output current at its input voltage, so the panel
 pulls whatever its 5 V circuitry needs *straight from the bus rail* — and the
 heatsink says that is on the order of a watt.
 
-Working backwards from the heatsink: about 1 W dissipated across a 17 V drop is
-roughly **60 mA**, so the rail has been delivering about **1.3 W** to this panel
-for twenty years.
+~~Working backwards from the heatsink: about 1 W dissipated across a 17 V drop is
+roughly 60 mA, so the rail has been delivering about 1.3 W to this panel for
+twenty years.~~ **Withdrawn 2026-08-22.** M2a measured the panel at **450 mA
+continuous, 700 mA momentary** (report:
+[`../measurements/2026-08-22-panel-current.md`](../measurements/2026-08-22-panel-current.md)),
+about **10 W** at 22 V — seven times the heatsink inference. Most of that current
+evidently does not pass through the small linear regulator; the LEDs are the
+likely consumer. The conclusion below gets stronger, not weaker.
 
-Our board uses a switching converter. At 85 % efficiency, that same 1.3 W becomes
-about **330 mA available at 3.3 V**. Against that budget:
+Our board uses a switching converter. At 85 % efficiency, 10 W at the rail would
+be about **2.5 A at 3.3 V** — far more than anything on this board can use, so
+the budget is no longer set by the rail at all. Against any sane budget:
 
 | Load | Typical at 3.3 V |
 |---|---|
@@ -231,9 +237,10 @@ about **330 mA available at 3.3 V**. Against that budget:
 6× advantage over the linear one it replaces, and that advantage is larger than
 the entire display budget.
 
-**This is arithmetic, not a measurement.** The 60 mA is inferred from a heatsink
-in a photograph. It is replaced by a real number in M2a below, and if that number
-comes back much smaller, this whole section is rewritten and option C dies first.
+**The rail side is now measured, not inferred** (M2a, conditions still to be
+recorded). What remains arithmetic is the board's own draw, which bring-up
+measures. The no-load rail *voltage* is now the open question that matters for the
+power stage — see measurement M1.
 
 ### Lifetime, where the LEDs win and it is not close
 

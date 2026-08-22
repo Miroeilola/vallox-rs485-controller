@@ -75,6 +75,14 @@ Sources in [sources.md](sources.md), the claim in [protocol.md](protocol.md) §3
 
 ## M2a — What the original panel draws
 
+**Done 2026-08-22: 450 mA continuous, 700 mA momentary** —
+[report](../measurements/2026-08-22-panel-current.md). Instrument, range, machine
+state and the trigger of the peak are still to be recorded; the report says so.
+**Do next, in the same position:** the rail voltage with the panel disconnected
+(M1's no-load row) — with ~10 W removed from an unregulated secondary the rail
+rises, and the provisional buck's 28 V operating maximum is what that reading is
+measured against.
+
 *Multimeter in series with the + conductor. Two minutes. Do this before the panel
 comes off the wall, because afterwards it is not connected to anything.*
 

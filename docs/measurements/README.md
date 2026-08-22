@@ -3,9 +3,13 @@
 Every claim about this device is backed by a measurement recorded here. One file
 per question, named `YYYY-MM-DD-<topic>.md`.
 
-**Nothing has been measured yet.** The plan that produces the first reports is
-[`../research/measurement-plan.md`](../research/measurement-plan.md), and the
-first two of them gate the schematic.
+The plan that produces the reports is
+[`../research/measurement-plan.md`](../research/measurement-plan.md).
+
+| Report | Answers |
+|---|---|
+| [2026-08-21-panel-identification.md](2026-08-21-panel-identification.md) | M0 (partly) and the supply-voltage row of M1: which panel, what is on its terminals, 22 V on the pair |
+| [2026-08-22-panel-current.md](2026-08-22-panel-current.md) | M2a: the factory panel draws 450 mA continuous, 700 mA momentary — conditions still to be recorded |
 
 ## Instruments used
 
@@ -15,7 +19,7 @@ probing. Model numbers go in as each instrument is first used, not later.
 
 | Instrument | Model | Used for |
 |---|---|---|
-| Multimeter, CAT III | not yet recorded | M1 — is the panel bus safe to touch, and what is on it |
+| Multimeter, CAT III | not yet recorded — used for the 22 V and the 450/700 mA readings, model to be added | M1 — is the panel bus safe to touch, and what is on it; M2a — panel current |
 | Oscilloscope | not yet recorded | M1 rail ripple, M3 bus waveform, M4 frame timing |
 | Differential or isolated probe | not yet recorded | M1, only if the rail turns out not to be isolated |
 | Electronic load or resistor decade | not yet recorded | M2 — how much current the 21 V rail can give |

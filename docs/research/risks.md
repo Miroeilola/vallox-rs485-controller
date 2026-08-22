@@ -48,7 +48,11 @@ that from this pair alongside the factory panel for years.
 4. Accept an external supply. This is the outcome that makes the board ordinary, so
    it is last.
 
-**Status:** open, gating. Measurement M2.
+**Status:** closed for design purposes 2026-08-22 — M2a measured the factory
+panel at 450 mA continuous / 700 mA momentary, two to four times what this board
+needs at the rail ([report](../measurements/2026-08-22-panel-current.md)).
+Conditions still to be recorded; M2 (loading the rail beyond the panel) is no
+longer needed to decide whether the board can be bus-powered.
 
 ## R3 — Writing the wrong register damages the machine
 
