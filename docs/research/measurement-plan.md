@@ -151,9 +151,14 @@ Items 4 and 5 are what turn the capture into a specification. Every button on th
 panel maps to a register write, and this is the only chance to see which.
 
 7. The panel disconnected for a few minutes with the machine running, then
-   reconnected: does the machine keep running, show a fault, or stop? One forum
-   voice says a unit with an SED panel "cannot be started at all" without it. The
-   replacement's installation procedure depends on the answer.
+   reconnected, then a power cycle with the panel off: does the machine keep
+   running, show a fault, or stop — and does it *start* without a panel? One
+   forum voice says a unit with an SED panel "cannot be started at all" without
+   it. Observed in passing on 2026-08-22 while reading the no-load rail: the
+   machine appeared to keep running normally with the panel disconnected
+   ([report](../measurements/2026-08-22-rail-voltage-no-load.md)). The start
+   question is untouched. The replacement's installation procedure depends on
+   the answer.
 
 **Already public, 2026-08-22** (claims 22–25 in [protocol.md](protocol.md)): the
 panel's steady-state poll set `A3, 29, 35, A3, 71` every ≈ 5–6 s, the mainboard's

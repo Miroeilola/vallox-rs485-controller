@@ -55,6 +55,12 @@ reaction to the missing panel.
   this does not change the decision.
 - Multimeter model still not recorded — same instrument as the M2a reading;
   one line in [README.md](README.md) when it is at hand.
-- What the machine did while the panel was disconnected (kept running, showed a
-  fault, stopped) was not recorded. That is item 7 of M3 and it decides the
-  installation procedure; if it was observed in passing, it belongs here.
+- What the machine did while the panel was disconnected: **observed in passing,
+  the machine appeared to keep running normally** for the duration of the
+  reading (fans audibly on; the measurer's own words were "I think it continued
+  normally"). Duration was short and nothing was checked deliberately, so this
+  is an observation, not the item-7 test of M3 — but it is the first evidence
+  on the question, and it runs against the one forum voice that said a unit with
+  an SED panel "cannot be started at all" without one. The deliberate
+  observation (a few minutes, then reconnect, then power-cycle with the panel
+  off) stays in M3.
