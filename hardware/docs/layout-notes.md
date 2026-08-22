@@ -186,3 +186,22 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   folded over J3 or straight in; the straight-tail model overlaps J3's courtyard
   region on purpose — KiCad did not flag a courtyard overlap between DS1's tail
   courtyard and J3, worth understanding before relying on that check.
+
+### 2026-08-22 — Tail fold modelled, J3 turned 180°
+
+- **Baseline.** Previous entry: 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** DS1 replaced by the `_TailFolded` footprint variant (same position,
+  lib c4b5665). J3 from rot 270 at (67, 26.1) to rot 90 at (64.9, 25.92): entry
+  face 9.5 mm from the glass edge, pin 1 at (63.05, 28.67) = model contact 1.
+  R10/C9/R21 column from x 73.5 to 75.5 (beside the loop, not under it). Comment
+  text updated. A silk pin-1 mark of the folded footprint landed on Q1's pad on
+  the first pass; removed from the library variant (lib PR #6) rather than by
+  moving Q1 — in the folded pose the mark is under the loop anyway.
+- **Measured.** Loop outer extent 12.3 mm from the glass edge (x = 72.1), top of
+  loop z ≈ 1.7 mm, return run at z ≈ 0.45 into J3; J3 body x 61.85–69.85, 1.5 mm
+  tall under the tail root at z ≈ 1.2–1.65 (root modelled rising to clear it).
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (same set as before), parity clean + 4 holes, 138 unconnected. Render
+  read: tail loops over J3 and enters from the right, LEDs clear.
+- **Open.** Confirm the FH12 FPC insertion height against the 0.45 mm return-run
+  height in the model before trusting the loop clearance; routing.

@@ -913,3 +913,33 @@ order and the board has the area for it; the original panel was 90 × 110 mm, so
 column at x = 63.8, cable entry on the right wall, ≥ 15 mm of non-metal around
 the antenna above the top edge, and a panel gap beside U1 for assembly. If the
 display tail turns out to exit another edge, J3 moves and nothing else does.
+
+---
+
+### 2026-08-22 — Display tail contacts face the viewer: tail folds over J3, J3 entry faces away from the glass
+
+**Context.** The FH12-12S-0.5SH is bottom-contact. Which face of the HS20HS072RX
+tail carries the contacts decides whether the tail goes straight into a connector
+facing the glass or folds over a connector facing away from it. The drawing
+suggested the viewer side; a third-party model said the back.
+
+**Evidence.** LCSC's two part photographs (C5329582 front and back): the front
+photo shows the gold contact fingers and the LED test pads on the viewer-side
+face of the tail; the back photo shows a black stiffener at the same spot and no
+metal. Two independent photos agree with the drawing's front view.
+
+**Decision.** Contacts face the viewer. The tail leaves the glass over J3, rises
+over the connector body, folds 180° and enters J3 from the side away from the
+glass. J3 is therefore rotated 180° from the first placement: insertion face
+toward +x, 9.5 mm from the glass edge (pads at x = 63.05, centre y = 25.92 so that
+connector pin 1 meets tail contact 1 at y = 28.67). Fold arithmetic: tail 20.7,
+insertion 3.8, bend radius 0.6 → fold axis 12.26 mm from the glass edge; entry
+distances between 8.2 and 10.8 mm keep the fold in the tongue and clear of the
+connector. Both poses are modelled in mironet-hw-lib; the board carries the
+`_TailFolded` variant so the enclosure fit check sees the loop (outer extent
+12.3 mm from the glass edge, top of the loop at z ≈ 1.7 mm).
+
+**Consequences.** Nothing may stand taller than about 1.2 mm under the tail
+root between the glass and J3, and the R10/C9/R21 column moved 2 mm right to sit
+beside the loop rather than under it. The straight-pose footprint stays in the
+library for incoming inspection; it is not what goes on a board with an FH12.
