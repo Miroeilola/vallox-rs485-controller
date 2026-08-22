@@ -50,6 +50,7 @@ Partly identified on 2026-08-21 — see
 | Panel controller | PLCC-44, part number hidden under a firmware label `00039C / 200298` |
 | Panels on the bus | one |
 | Supply at the terminal | **22 V DC measured**, load condition not recorded |
+| Panel supply source, by design | rectified **16 VAC** secondary of a 14 VA control transformer, fused T800 mA on the mainboard, shared with the mainboard and every bus accessory — from the Vallox diagrams of the Digit SE (1999) and later generations; this unit's own generation is not yet identified (M0) |
 | CO₂ sensors fitted | not determined |
 | %RH sensors fitted | not determined |
 | Fan type | not determined — AC (transformer-tapped) or DC (0xB0/0xB1 present) |
@@ -122,11 +123,25 @@ tapped windings, which is exactly why fan speed on this bus is a bit-mask
 `0x01, 0x03, 0x07 … 0xFF` rather than a number.
 
 The reading that matters for safety is the second half of the label: the 21 V panel
-supply is stated to come from a separate protective-voltage winding, not from the
-autotransformer's mains-referenced part. **That reading is from a low-resolution
-scan of a wiring diagram and it must be confirmed by measurement before anything
-is connected**, because if it is wrong, the panel bus is mains-referenced and the
-entire design changes.
+supply comes from a separate protective-voltage winding, not from the
+autotransformer's mains-referenced part.
+
+Re-read 2026-08-22, this is no longer a reading of a poor scan. The manual is a
+vector drawing, and at 600 dpi the Digit2 SE diagram shows the secondary as a
+separate winding across the core, entering the mainboard through its own connector
+beside `SULAKE T800mA`. The older Digit SE technical guide (12/99 — the generation
+with the LED panel being replaced here) goes further and draws **two** transformers:
+`M1 Säästömuuntaja suojajännitekäämillä` for the fans and a separate
+`M2 Muuntaja 230VAC/16VAC` for the control electronics, with the 16 V secondary
+fused T800 mA. The 121 SE guide (2011) prints `230VAC/16VAC` on the same label and
+the German ValloPlus manual (2015) calls the part `Schutzspannungstransformator`.
+16 VAC × √2 minus a rectifier drop is the "n. 21 VDC" on the terminal, and the
+transformer is sold as a spare part rated 14 VA. Sources in
+[sources.md](sources.md).
+
+**It is still confirmed by measurement before anything is connected** — a diagram
+shows the winding, not whether the mainboard ties its ground to protective earth
+— but the expected result is now documented, not guessed.
 
 ## The replacement replaces the panel
 

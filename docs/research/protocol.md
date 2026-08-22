@@ -17,16 +17,16 @@ it is rated accordingly.
 |---|---|---|---|---|
 | 1 | RS-485, half duplex, 9600 baud, 8 data bits, no parity, 1 stop bit | Vallox LON gateway note; all four implementations | `manufacturer` | Oscilloscope: measure one bit period, expect 104.2 µs ±2 % |
 | 2 | Panel supply is approx. 21 VDC on terminals 1(+) / 2(–) | Vallox Digit2 SE manual | `manufacturer` | Multimeter, machine idle and at fan speed 8, panel connected and disconnected |
-| 3 | The 21 V comes from a protective-voltage winding and is isolated from mains | Vallox Digit2 SE internal wiring diagram, low-resolution scan | `anecdotal` (reading of a poor scan) | Measure terminal 2 and terminal 5 to protective earth, AC and DC, before anything else is connected |
+| 3 | The 21 V comes from a protective-voltage (SELV) winding and is transformer-isolated from mains | Four generations of Vallox wiring diagrams, all vector drawings read at 600 dpi (2026-08-22): Digit SE 12/99 p. 6 — a **separate** `M2 Muuntaja 230VAC/16VAC` whose secondary enters the mainboard through `SULAKE T800mA`; Digit2 SE 2008 p. 7 — one transformer with the fan autotransformer and a separate secondary across the core; 121 SE 2011 — `M1 Säästömuuntaja suojajännitekäämillä 230VAC/16VAC`; ValloPlus 350 SE DE 2015 — `Schutzspannungstransformator 230 VAC/16 VAC`. 16 VAC × √2 − rectifier ≈ 21 V. The panel wiring is described as a user-level job in every manual with no electrician requirement | `manufacturer` (design intent; a drawing cannot show an *absent* GND–PE bond) | Still measured before anything is connected: terminal 2 and 5 to protective earth, AC and DC; plus resistance 2→PE and 5→PE with the machine unplugged, which separates SELV from PELV |
 | 4 | Terminal 5 (M, cable screen) is the signal reference for A/B | Vallox Digit2 SE manual | `manufacturer` | Measure DC offset of A and B against M; expect an idle common-mode voltage inside the RS-485 −7…+12 V window |
-| 5 | Community reports 24 V, not 21 V, at the machine terminal | Creating Smart Home | `anecdotal` | Same measurement as claim 2. Design input range must cover both readings and their tolerance |
+| 5 | Community reports 24 V, not 21 V, at the machine terminal | Creating Smart Home; 23.7 V in a lampopumput.info report | `anecdotal` | Same measurement as claim 2. Explained if claim 3 holds: an unregulated rectified 16 VAC secondary reads 21–24 V depending on load and mains. Design input range must cover the no-load, high-mains end — see unknown 3 below |
 | 6 | Every telegram is exactly 6 bytes | All four implementations | `reverse-engineered` | Capture: byte-gap timing shows a clear inter-frame gap after every 6th byte |
 | 7 | Byte 0 (domain / system) is always 0x01 | All four implementations | `reverse-engineered` | Capture: histogram of byte 0 over a long capture |
 | 8 | Checksum is the low byte of the sum of the first five bytes | All four implementations | `reverse-engineered` | Capture: verify over thousands of frames, count failures |
 | 9 | Mainboard is 0x11; 0x10 addresses all mainboards | All four implementations | `reverse-engineered` | Capture: source-address histogram |
 | 10 | Panels are 0x21…0x29, 0x20 addresses all panels, LON module is 0x28 | windkh; ioBroker (states panels 1–9) | `reverse-engineered` | Capture with the factory panel connected — its address will appear |
 | 11 | A poll is a frame with byte 3 = 0x00 and byte 4 = the register wanted | All four implementations | `reverse-engineered` | Capture: panel startup burst, then reply correlation |
-| 12 | The bus has no arbitration; a client waits for ~100 ms of silence before transmitting | pvainio (implementation constant), inferred | `reverse-engineered` | Capture: measure the real inter-frame gap distribution before choosing this number |
+| 12 | The bus has no arbitration; a client waits for ~100 ms of silence before transmitting | pvainio (implementation constant), inferred. Tom-Bom-badil uses 7 ms | `reverse-engineered` | Capture: measure the real inter-frame gap distribution before choosing this number. The manufacturer's 10 ms response window (claim 24) bounds how long a reply slot is |
 | 13 | Duplicate panel addresses put the machine into a bus-fault state | Vallox Digit2 SE manual | `manufacturer` | Not to be tested deliberately on the live machine |
 | 13b | Two controllers on this bus override each other, so a third-party client cannot coexist with a factory panel | Prior testing on the target machine | `measured, first-hand` | Established. It is why this device replaces the panel — see the decision record |
 | 20 | The supply pair carries 22 V on the target machine | Measured 2026-08-21, instrument and load state not recorded | `measured, conditions incomplete` | Repeat at no load and at full machine load, with the instrument recorded |
@@ -37,6 +37,10 @@ it is rated accordingly.
 | 17 | CO₂ is two bytes, 0x2B high and 0x2C low, polled low-then-high by the panel | kotope, windkh | `reverse-engineered` | Only if the target unit has a CO₂ sensor |
 | 18 | Broadcast 0x91 / 0x8F suspend and resume bus traffic during CO₂ sensor exchanges, sent twice | windkh | `reverse-engineered` | Capture: look for these register ids in a long capture on a unit with CO₂ sensors |
 | 19 | Writing an unknown register or an out-of-range value can damage the unit | Vallox documentation, as quoted by pvainio | `anecdotal` | Not verifiable — treated as true and handled by a firmware allow-list |
+| 22 | The factory panel polls `0xA3, 0x29, 0x35, 0xA3, 0x71` as a group every ≈ 5–6 s | Five independent captures read 2026-08-22: openHAB (timestamped, ≈ 5.15 s), Home Assistant community, Creating Smart Home comments, MySensors (windkh), protocol document Annex B (Helios terminal, "every 6 seconds approx") | `reverse-engineered` (captures on other installations, LCD panels and a Helios terminal; the LED panel is represented only through pvainio's code) | Capture on the target machine: confirm the set and the period for *this* LED panel |
+| 23 | The mainboard broadcasts `0x2B 0x2C 0x35 0x34 0x32 0x33` to 0x20 at ≈ 130 ms spacing, then `0x2A`, about every 12 s | Protocol document Annex B ("every 12 seconds broadcasts the important registers"); openHAB and HA captures | `manufacturer` (period) / `reverse-engineered` (contents) | Capture: period and contents on the target machine; one Digit SE capture also shows `0x49–0x5C` broadcasts that no document lists |
+| 24 | A requester waits at most 10 ms for a response, resends, and enters fault mode after 10 unanswered requests | Vallox protocol document 2011 (read 2026-08-22, translation) | `manufacturer` | Capture: measure the poll-to-reply latency the mainboard actually achieves, and what the replacement has to achieve when the mainboard polls *it* |
+| 25 | Writes use a send/acknowledge service: the receiver answers with the checksum byte of the received packet | Vallox protocol document 2011 (read 2026-08-22, translation). None of the four implementations waits for the acknowledge | `manufacturer` | Capture while the factory panel writes (button press): look for the single-byte acknowledge after the 6-byte frame |
 
 ## Frame format
 
@@ -260,26 +264,44 @@ pick the first raw value that reaches or exceeds the requested temperature.
 These are the items that no source answers and that decide the electrical design.
 They are the reason the schematic is not being drawn yet.
 
-1. **How much current the supply rail can give.** Still no number. The original
-   panel runs from it through a linear regulator on a heatsink, so the rail was
-   built to source at least a panel's worth of current through a 17 V drop — that
-   is a good prior and not a measurement. It decides the bulk capacitor and it is
-   the last thing standing between this design and a schematic.
-2. **Whether the rail is really isolated from mains.** Claim 3. The original panel
-   is not isolated either, which says what has hung on this wall for two decades
-   but does not say what is safe to connect a laptop to.
+1. **How much current the supply rail can give.** Still no measured number, but
+   the envelope is now documented (2026-08-22). *Ceiling:* the control transformer
+   is a 230 V / 16 VAC, **14 VA** part (spare part 940130) and its secondary is fused
+   **T800 mA** on the mainboard; everything low-voltage — mainboard, relays, the
+   damper motor, up to 3 (1999: 7) panels, 5 CO₂ and 2 RH sensors, the LON
+   gateway — shares it. *Floor:* other people have run an ESP8266/ESP32 plus an
+   RS-485 transceiver from the +/− pair through a buck, in parallel with the
+   factory panel, for years (Creating Smart Home comments, lostcontrol/esphome-
+   helios-kwl). The original panel's own draw is still unmeasured and M2a remains
+   the cheapest way to turn the prior into a number.
+2. **Whether the rail is really isolated from mains.** Claim 3 is now
+   `manufacturer`: four generations of Vallox diagrams draw a separate 16 VAC
+   secondary and call it a protective-voltage winding. What a drawing cannot show
+   is whether the mainboard ties GND to PE somewhere (PELV rather than SELV), so
+   the terminal-to-earth measurement stays as the first thing done on the machine —
+   as a check, no longer as a coin toss.
 3. **The range, not the centre.** 22 V measured, with the load state unrecorded.
-   The regulator's input range needs the no-load and full-load ends.
+   The regulator's input range needs the no-load and full-load ends. *Estimate,
+   not a measurement:* 16 VAC nominal × 1.10 (mains at +10 %) × ~1.15 (no-load
+   regulation of a 14 VA transformer, ASSUMED) × √2 ≈ 28.6 V peak before the
+   rectifier drop — at the edge of the 28 V operating maximum the provisional buck
+   was chosen against. The no-load row of M1 decides whether the buck changes.
 4. **Whether the machine terminates and biases the bus, and whether the original
    panel did.** The replacement should present the same bus as the panel did, so
    this is a question about the original as much as about the machine. Both
    termination and bias are footprinted and unfitted until it is answered.
 5. **The real inter-frame timing.** How long the gap between frames is, how fast
    the machine answers a poll, and therefore how long the driver may stay enabled
-   after the last stop bit.
-6. **What the factory panel's traffic looks like.** Now for a different reason
-   than before: this device has to take over that conversation, so the capture is
-   the specification for what it must say and how often.
+   after the last stop bit. The manufacturer's document gives a 10 ms response
+   window (claim 24) and one timestamped capture shows 3–130 ms logger-side
+   latency; bit-level timing is published nowhere.
+6. **What the factory panel's traffic looks like.** The steady state is now
+   public (claims 22–23): which registers it polls and how often. What no source
+   shows is the start-up burst, the exact write sequence of a *Vallox LED panel*
+   button press (and whether the acknowledge byte of claim 25 appears), the
+   undocumented `0x49–0x5C` broadcasts one Digit SE capture contains, and what the
+   machine does with no panel on the bus at all. Those are what the capture on
+   this machine is for.
 7. **Which temperature register set this machine uses** — 0x32…0x35 or 0x58…0x5C.
 8. **Which registers this machine actually answers**, since the replacement has to
    provide every setting the panel could reach.
