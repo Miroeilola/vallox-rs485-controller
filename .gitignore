@@ -37,6 +37,8 @@ hardware/sim/out/
 
 # --- host build artefacts ---
 firmware/test/host/run_tests
+firmware/test/host/run_tests_*
+firmware/test/host/*.dSYM
 scripts/vlx-decode/vlx-decode
 *.dSYM/
 
