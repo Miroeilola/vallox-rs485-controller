@@ -85,7 +85,9 @@ jobs:
           npx --yes @gltf-transform/cli@4.4.2 optimize public/board-raw.glb public/board.glb \
             --compress meshopt --simplify false --flatten false --texture-compress false
           rm public/board-raw.glb
-          ls -la public/board.glb
+          npx --yes @gltf-transform/cli@4.4.2 optimize ../mechanical/glb/enclosure.glb public/enclosure.glb \
+            --compress meshopt --simplify false --flatten false --texture-compress false
+          ls -la public/board.glb public/enclosure.glb
       - name: WebAssembly + Vite build
         run: |
           cd simulator

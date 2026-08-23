@@ -67,3 +67,8 @@ simulator/.kicad-3d/
 simulator/test_hal_web
 simulator/test-results/
 simulator/playwright-report/
+
+# regenerable mechanical outputs (scripts in mechanical/draft/ rebuild these)
+mechanical/step/pcb.step
+mechanical/step/enclosure-assembly-draft.step
+mechanical/stl/*-draft.stl

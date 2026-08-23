@@ -1096,3 +1096,36 @@ R5–R7 carry `dnp yes`; the board footprints carry the same fields and the DNP 
 (feeder fee each): U1, U2, U3, U4, R4, R11, F1/F2, L1, J1, J2, J3, SW1–4, D4, D6
 and C1 — 16 types. Re-check stock at the pre-order gate: SW1–4 (1 421), U1 (3 702),
 J3 (366 on 2026-08-22).
+
+### 2026-08-24 — Enclosure: two-part shell, membrane buttons, single-axis stack
+
+**Context.** The board (rev A, routed) needed its first enclosure so the project
+can show a complete device, the simulator can render the case, and Fusion has
+real geometry to start from. The panel lives under the machine in a technical
+room: no size constraint, but dust from the adjacent blower argued against
+openings.
+
+**Options.** One deep tray with a flat lid, or a shallow base with a shaped
+cover; buttons as holes with separate caps, or printed membranes over the
+tactile switches; USB-C exposed through the wall or kept inside.
+
+**Decision.** Shallow base + cover with an L-shaped raised section over the two
+tall parts (C1 10.5 mm, J1 13.8 mm — heights read from the STEP models, not
+datasheets alone). Printed membranes (0.6 mm, Ø4 nub, 0.3 mm gap) over the
+PTS645 switches — the 1.6 N variant was chosen for exactly this. USB-C stays
+inside (recovery = open the cover; OTA rollback is the primary path). Cover
+screws M3×8 countersunk into heat-set inserts; the top-right post sits on the
+right wall at y=18 because a corner post would put a steel screw 13.6 mm from
+the antenna (≥15 mm rule). 8 mm antenna bay past the top edge, 14 mm wiring bay
+on the right with a 7 mm cable slot and zip-tie anchors.
+
+**Reasoning.** Every clearance is computed by `mechanical/draft/enclosure.py`
+and checked by a boolean interference test against the populated pcb.step
+(0 collisions; table in the script output). The single-axis stack (base → board
+→ cover → screws) keeps assembly and the exploded documentation view trivial.
+
+**Consequences.** Fusion takes over from the STEPs; the draft scripts stay as
+the dimensional record. Membrane stiffness (0.6 mm PETG over Ø11) is untested —
+first print decides. The blister roof needs supports when the cover prints
+face-down. The screw model uses nominal DIN 965 numbers; verify against the
+actual fastener before drawings.

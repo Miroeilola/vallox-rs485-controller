@@ -1,5 +1,14 @@
 # Enclosure
 
+**Current state (2026-08-24): parametric draft, not yet taken over by Fusion.**
+`draft/enclosure.py` (build123d) generates the two-part shell from the board file:
+`step/enclosure-base-draft.step`, `step/enclosure-cover-draft.step`, and
+`draft/screws.py` the M3×8 countersunk screw. `draft/export-enclosure-glb.py`
+produces `glb/enclosure.glb` for the browser simulator, and `render/` holds the
+scene used for the renders and the exploded-view animation in `docs/images/`.
+The draft clears every measured component with margins printed by the script;
+membrane-button feel, print tolerances and the final look are Fusion-stage work.
+
 **Fusion 360 is the master for this enclosure.** The STEP files here are the
 published source; `.f3d` files are not committed because they require Fusion,
 while STEP opens in every CAD system.

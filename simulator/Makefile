@@ -64,7 +64,11 @@ public/board.glb: $(PCB)
 	$(GLTF_TRANSFORM) optimize public/board-raw.glb public/board.glb \
 	  --compress meshopt --simplify false --flatten false --texture-compress false
 	rm -f public/board-raw.glb
-glb: public/board.glb
+public/enclosure.glb: ../mechanical/glb/enclosure.glb
+	mkdir -p public
+	cp $< $@
+
+glb: public/board.glb public/enclosure.glb
 
 test_hal_web: $(CORE_SRCS) $(WEB_SRCS) test/test_hal_web.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
