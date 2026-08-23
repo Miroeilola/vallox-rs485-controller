@@ -1731,3 +1731,34 @@ gh pr create --title "feat(sim): S1 — machine emulator, HAL contract and host 
 **Placeholder scan:** none; the two header-name lookups (`VLX_STATUS_HEATING`, `VLX_STATUS_FAULT`, a `vlx_fault_t` member) are explicit instructions to read the existing header, with the rule to use its exact macro.
 
 **Type consistency:** `vlx_machine_t` fields used in Tasks 3–7 (`reply_delay_ms`, `pending*`, `broadcast_*`, `p.*`, `t_*`, `service_elapsed_ms`, `have_tick`, `last_tick_ms`) are all declared in Task 2's header. `membus_machine_read/write`, `hal_host_*` names match between Task 1 and Task 7. `send_and_tick` helper defined in Task 2 is used unchanged in Tasks 3 and 6.
+
+## Corrections made during execution
+
+- 0x29 (fan speed) is writable. The plan's register table and `k_regs` entry
+  marked it read-only; protocol.md lists it under "Control — read and write",
+  and `vlx_register_is_write_allowed()` has exactly this one entry. Fixed by
+  moving 0x29 into the writable settings block and writing/reading it directly
+  in the e2e and unit tests, instead of going through 0xA9 as a workaround.
+- Frost protection reads its threshold from 0xA8 (NTC table, a writable
+  setting) and drives bit 3 of 0x08 (IO_MULTI_2, `VLX_IO2_SUPPLY_FAN_OFF`) as
+  the output. The plan wrote a boolean 0/1 into 0xA8 itself, which both
+  clobbers a user setting and would decode as a nonsense NTC temperature on a
+  real panel.
+- 0xB2 (defrost hysteresis) is `setpoint + x/3`, so 0x03 = 1 °C — a plain
+  fraction of a degree, not an NTC-table lookup. The plan ran it through
+  `vlx_temp_table()`.
+- Register-map rows are `implementations`-class, not `manufacturer`.
+  protocol.md prefaces the whole register map "Compiled from four
+  implementations. The Read/Write column is what the sources claim, not what
+  has been tested" — that preface applies to every row, including the ones
+  that also appear in Vallox's own numbered claims list.
+- The poll-answer delay counts from the tick that *hears* the frame
+  (`pending_scheduled` latches the due time on the first tick after
+  `pending_armed`), not from the moment `vlx_machine_feed()` was called.
+- `VLX_MACHINE_NEVER` also withholds the write acknowledge, not just poll
+  answers — a never-answering machine is silent end to end.
+- `VLX_REG_STATUS` defaults to `VLX_STATUS_POWER | VLX_STATUS_WINTER_MODE`
+  (power on, heat recovery on), not an all-zero idle register.
+- `vlx_machine_reg_set()` only changes registers already known from the
+  register table; writing an unknown register is a no-op and does not teach
+  the model that register, matching what a real write would do on the bus.

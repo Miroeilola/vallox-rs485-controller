@@ -18,8 +18,7 @@ jobs:
       - name: Build and run host tests
         run: |
           cd firmware/test/host
-          make
-          ./run_tests
+          make test
       - name: Build the capture decoder
         run: |
           cd scripts/vlx-decode
