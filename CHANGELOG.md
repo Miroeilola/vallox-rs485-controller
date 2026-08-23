@@ -48,6 +48,18 @@ combination is known to work together.
   before removing it. Because that panel's regulator is linear, its input current
   is the rail's demonstrated capability — the cheapest available answer to the
   project's central open question.
+- Firmware: `vallox_machine`, a host-side emulator of the Vallox mainboard —
+  register table, poll and write handling, temperature physics and periodic
+  broadcasts — plus `panel_hal.h`, the contract the panel UI sees on the device,
+  in host tests and in the browser, and a host memory bus so both sides of the
+  simulated link run in the same process (PR #11, PR #12).
+- Firmware: `panel_ui`, the panel's UI core — pre-rendered Inter fonts and a
+  dirty-rectangle renderer, English/Finnish texts behind one key enum, button
+  ladder decoding with debounce and repeat, `vlx_client` (shadow register map,
+  poll scheduler, write with acknowledge, bus fault), a data-driven page engine
+  (dashboard, lists, editors, status), five golden images covering the main
+  screens, and `panel_host`, a command-line runner that renders any state to a
+  PNG.
 
 ### Changed
 - **Scope: this replaces the original panel instead of joining the bus alongside
