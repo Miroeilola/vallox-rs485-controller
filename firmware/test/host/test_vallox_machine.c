@@ -281,6 +281,33 @@ static void test_time_scale_speeds_everything_up(void)
     CHECK(b.t_exhaust < a.t_exhaust);
 }
 
+static void test_fault_sets_register_and_status_bit(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    vlx_machine_fault(&m, VLX_FAULT_SUPPLY_AIR_SENSOR);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_FAULT), (uint8_t)VLX_FAULT_SUPPLY_AIR_SENSOR);
+    CHECK(vlx_machine_reg_get(&m, VLX_REG_STATUS) & VLX_STATUS_FAULT);
+    vlx_machine_fault_clear(&m);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_FAULT), 0);
+    CHECK(!(vlx_machine_reg_get(&m, VLX_REG_STATUS) & VLX_STATUS_FAULT));
+}
+
+static void test_panel_can_clear_fault_by_writing_zero_assumed(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    vlx_machine_fault(&m, VLX_FAULT_SUPPLY_AIR_SENSOR);
+    uint8_t w[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_FAULT, 0, w);
+    CHECK_EQ(send_and_tick(&m, w, 0, out, sizeof out), 1);     // acknowledged
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_FAULT), 0);
+    // but a non-zero write to the fault register is still refused
+    vlx_make_write(PANEL, MACHINE, VLX_REG_FAULT, 5, w);
+    CHECK_EQ(send_and_tick(&m, w, 1, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_FAULT), 0);
+}
+
 static void test_tick_runs_physics_and_updates_registers(void)
 {
     vlx_machine_t m;
@@ -317,5 +344,7 @@ int main(void)
     test_frost_protection_stops_supply_fan_and_releases_with_hysteresis();
     test_time_scale_speeds_everything_up();
     test_tick_runs_physics_and_updates_registers();
+    test_fault_sets_register_and_status_bit();
+    test_panel_can_clear_fault_by_writing_zero_assumed();
     return REPORT();
 }

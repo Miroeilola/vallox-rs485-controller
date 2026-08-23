@@ -14,6 +14,17 @@ static void queue_bytes(vlx_machine_t *m, const uint8_t *b, size_t n)
     m->pending_armed = true;
 }
 
+// Acknowledge = the checksum byte of the frame we received (protocol.md claim 25).
+// A never-answering machine withholds it too.
+static void acknowledge(vlx_machine_t *m, const vlx_frame_t *f)
+{
+    if (m->reply_delay_ms == VLX_MACHINE_NEVER) return;
+    uint8_t raw[VLX_FRAME_LEN];
+    vlx_frame_t copy = *f;
+    vlx_frame_encode(&copy, raw);
+    queue_bytes(m, &raw[5], 1);
+}
+
 static void answer_poll(vlx_machine_t *m, const vlx_frame_t *f)
 {
     uint8_t reg = f->value;                 // a poll carries the wanted register in value
@@ -26,14 +37,15 @@ static void answer_poll(vlx_machine_t *m, const vlx_frame_t *f)
 
 static void handle_write(vlx_machine_t *m, const vlx_frame_t *f)
 {
+    if (f->reg == VLX_REG_FAULT) {
+        if (f->value != 0) return;            // ASSUMED: only clearing is meaningful
+        vlx_machine_fault_clear(m);
+        acknowledge(m, f);
+        return;
+    }
     if (!m->known[f->reg] || !m->writable[f->reg]) return;   // silently: nothing documents a NAK
     m->regs[f->reg] = f->value;
-    if (m->reply_delay_ms == VLX_MACHINE_NEVER) return;       // R7: never also withholds the acknowledge
-    // Acknowledge = the checksum byte of the frame we received (protocol.md claim 25).
-    uint8_t raw[VLX_FRAME_LEN];
-    vlx_frame_t copy = *f;
-    vlx_frame_encode(&copy, raw);
-    queue_bytes(m, &raw[5], 1);
+    acknowledge(m, f);
 }
 
 static const uint8_t k_broadcast_set[] = {0x2B, 0x2C, 0x35, 0x34, 0x32, 0x33, 0x2A};
@@ -129,5 +141,14 @@ void    vlx_machine_reg_set(vlx_machine_t *m, uint8_t reg, uint8_t value)
     m->known[reg] = true;
 }
 
-void vlx_machine_fault(vlx_machine_t *m, vlx_fault_t code) { (void)m; (void)code; }   // Task 6
-void vlx_machine_fault_clear(vlx_machine_t *m) { (void)m; }                           // Task 6
+void vlx_machine_fault(vlx_machine_t *m, vlx_fault_t code)
+{
+    m->regs[VLX_REG_FAULT] = (uint8_t)code;
+    m->regs[VLX_REG_STATUS] |= VLX_STATUS_FAULT;
+}
+
+void vlx_machine_fault_clear(vlx_machine_t *m)
+{
+    m->regs[VLX_REG_FAULT] = 0;
+    m->regs[VLX_REG_STATUS] &= (uint8_t)~VLX_STATUS_FAULT;
+}
