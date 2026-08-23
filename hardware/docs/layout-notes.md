@@ -284,3 +284,48 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   (R13/R21 refs overlap, J1/U1/J2 edge clips are the placement's); GUI F8 pass
   once; "provisional" mark off the title block; GUI-DRC before ordering.
   `routes.json` covers passes 1–2 only — the board file is the source of truth.
+
+### 2026-08-23 — Review of the autorouted nets, sourcing fields, J1 drill, silk tidy
+
+- **Baseline.** Routed board: DRC 0 errors / 8 warnings (6 × silk_edge_clearance
+  on U1/J1/J2, 1 × lib_footprint_mismatch U1, 1 × silk_overlap R13/R21 refs),
+  0 unconnected, parity clean + 4 holes. Live GUI board = file (460 tracks,
+  83 vias, 65 footprints). ERC 0 errors / 1 cosmetic.
+- **Review of the Freerouting nets, by eye** (F.Cu and B.Cu exported with the
+  zones unfilled, MCU cluster at 50 px/mm). F.Cu: three signal tracks cross under
+  U1's body between the pin rows and the GND paddle, plus one long diagonal from
+  the module's right-hand column down to the USB corner; none enters the antenna
+  area (off-board) and DRC clearance holds. B.Cu: a three-track bundle runs along
+  the top edge at 1.3–3 mm under the western part of the module and under
+  C10/C11, cutting the B.Cu pour there; the decoupling return for C10/C11 is on
+  F.Cu to the adjacent module GND pins, so it was left. Legal, not pretty —
+  recorded, not reworked for rev A.
+- **Changes.** Schematic: Manufacturer/MPN/LCSC on all 56 lines that lacked them
+  (new workspace script `kicad-sch-set-fields.py` from `docs/parts-revA.csv`),
+  `dnp yes` on R5/R6/R7, title block comment 4 "Power stage confirmed by M1/M2a",
+  date 2026-08-23. Board (file route, KiCad closed): J1 pads drill 1.3 → 1.6 mm
+  (DB128V pin, see decisions); R13 reference from above the part (overlapping
+  R21's) to below it at (89.2, 29.6); D3 reference from (89.5, 29.7) to the left
+  of the diode at (84.9, 33.2) so R13's could take its place; footprint fields and
+  DNP synced from the same CSV (so F8 has nothing left to change but confirm);
+  title block comment 4 "Routed rev A …", date 2026-08-23.
+- **Measured.** J1: pin 0.80 × 1.00 mm → diagonal 1.28 mm; old drill 1.3, new 1.6
+  (datasheet value), annular ring 0.5 mm. D3 ref first try at (85.5, 32.4) hit
+  D3's own silk outline; (84.9, 33.2) is clear of J3's courtyard (ends at
+  y 32.025) and of the diode silk.
+- **Did not work.** MCP `lib_search_components` cannot parse value queries
+  ("10k 0603" matched 510 kΩ; "10kΩ" returned nothing) — the jlcsearch JSON
+  endpoint (`/resistors/list?resistance=…&package=…&json=true`, with a
+  User-Agent header) answers correctly. MCP `lib_get_component_details` reported
+  C25804 as stock 0 / not Basic while the same source's list shows 37 M / Basic.
+  The MCP LED list caps at 100 rows and its colour filter returns nothing.
+- **Result.** `kicad-cli pcb drc --severity-all --schematic-parity`: 0 errors,
+  8 warnings — 6 × silk_edge_clearance, 2 × lib_footprint_mismatch (U1 known, J1
+  new and intentional), silk_overlap gone; 0 unconnected; parity clean + 4 holes.
+  ERC unchanged 0 / 1, 47 nets, same four single-node nets. BOM export: 57/57
+  lines with MPN and LCSC, DNP attribute on R5–R7. Top view read: refs clear.
+- **Open.** GUI F8 once (expect: no changes); GUI DRC with the project's
+  `.kicad_dru`; stock re-check at order (SW1–4, U1, J3); LED brightness at
+  bring-up; J1 silkscreen still draws the MKDS outline (0.4 mm narrower than the
+  DB128V body) — cosmetic; the display-tail ohmmeter check before backlight power;
+  `hardware/routing/routes.json` still covers passes 1–2 only.

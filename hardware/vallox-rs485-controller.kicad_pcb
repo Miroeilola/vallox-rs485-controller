@@ -9,13 +9,13 @@
 	(paper "A4")
 	(title_block
 		(title "Vallox RS-485 Controller")
-		(date "2026-08-22")
+		(date "2026-08-23")
 		(rev "A (draft)")
 		(company "Mironet")
 		(comment 1 "Replacement panel for Vallox DIGIT SE, bus-powered, ESP32-C3")
 		(comment 2 "github.com/Miroeilola/vallox-rs485-controller")
 		(comment 3 "Designer: Miro Eilola")
-		(comment 4 "Placement only - not routed. Power stage provisional until M1/M2a")
+		(comment 4 "Routed rev A. Power stage confirmed by M1/M2a: 22.8 V unloaded, panel load 450 mA")
 	)
 	(layers
 		(0 "F.Cu" signal)
@@ -155,6 +155,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d6e918e3-995d-47e9-9919-9385df959971")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL10A106KP8NNNC"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2b39ff66-4d9d-4ff1-9a9c-4488f6f6cd28")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C19702"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "264abf06-1c4b-4da6-84a5-f7013949af56")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -307,6 +343,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "JK"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0040066d-daa8-49db-805c-a38b48d20d02")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "JK-mSMD010-60"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8794e9ac-8615-4515-83cf-c1ee3d606fb2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C1884489"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cbbee994-748b-4663-951e-7fc10bc5a0a2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/3dce4274-23d5-457e-a14b-90f8a68576c0")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -455,6 +527,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "32f5f9fa-b0d6-49df-98ae-086ab144e63c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF5101T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6f2b4fc4-b8aa-4c35-a716-d0ee67a05b73")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C23186"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "30fe92ee-6641-4d24-85a3-2a435cbe7089")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/c4b2af35-7c5c-42a1-be67-5dcda4e4ac9b")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -599,6 +707,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Texas Instruments"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "273d73cc-a178-474d-a865-e6bf769b6797")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "TPS54202DDCR"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "fab8231c-adf3-45e9-816c-49b33be16dac")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C191884"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2d4f55ad-02f2-4419-9742-d1d92f416324")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -937,6 +1081,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "C&K"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "14a2befd-ff22-4051-9b2a-f491ee138ef6")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "003c7524-feb2-47cf-a2f3-9793621e6014")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C221880"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1d6bc4ce-9c13-4298-9df1-c3600ee2d761")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/b3c8869f-0c8f-4c4a-9426-2fe33c224612")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -1230,6 +1410,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "99fe1930-859b-4c87-ab7a-1f95f89a0ed7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4c511530-c375-467d-adec-6799f8d830f1")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "666ee4e0-8f3c-482e-8988-bc2d7985c359")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/bd6d6494-10b4-48fb-85e3-5681392ae4cf")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -1374,6 +1590,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e7f848b9-904e-44bb-b983-d415c3c1418e")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "497bd8e8-52bb-4ce5-93ff-b2abc7060685")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4394a34a-d9d4-4504-9a2c-6a697ba98c3e")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -1526,6 +1778,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2734ee46-23db-431a-96f5-cafcdce04fa7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1000T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cdca0833-8fde-4d07-9d74-3e72ff41b641")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C22775"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "46f94526-f97b-445b-8b56-4bbe1bbfe76a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/d816bab6-1e18-40cd-8f91-14981d8abfcf")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -1670,6 +1958,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "46004884-bda8-46e0-926f-cc87f87c0441")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c3aa7fbe-9e4e-4956-afd5-55a42b402131")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "795d7e43-5c1c-4fab-81fb-6209700d23f7")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -2194,6 +2518,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "fefc8af9-8d3d-463f-a6e1-83041392f835")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "aa324af8-0eca-49ba-9e9f-78c6f521200f")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9330ec4b-317c-443f-8cf8-a6a5d1fb18da")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/43d2be7b-665f-47c2-bb79-edd8fa607c34")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -2338,6 +2698,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d4226bc1-8013-48b0-be99-8dd16f62dd32")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL21A226MAQNNNE"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6f0f5b12-4410-4eee-ab45-e2fef274a63d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C45783"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8ea14508-bb3f-48bb-b24f-83d11a99c5bb")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -2490,6 +2886,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "YAGEO"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0180174f-8652-45b2-8a22-f9715bf850fb")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1139f5eb-a53b-47e8-867a-605af82c24b7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4d26f660-2cbe-4c59-88f7-f06a378424d8")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/46f6397d-7ea7-42dd-8f1a-91beb93893a8")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -2634,6 +3066,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "JK"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "19833ddb-1af8-4813-85df-b542354d73c4")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "JK-mSMD010-60"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6f90b426-c5e8-4480-8dff-b447e4ec7ce1")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C1884489"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "90d9b4c9-fc75-4f4b-961d-a0f090440b1c")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -2786,6 +3254,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "YAGEO"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "273f64fa-efa8-4033-9c86-cc6d7a1ebbd7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "63bdd57f-e72f-4514-aaff-3174d335180d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1bdce734-94ae-46b8-ab8a-3f69604e0b56")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/98f3bfab-5c27-4e69-9f5a-c08230d4954f")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -2919,6 +3423,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2eef7a52-d02f-45f3-abbb-c926ad8611ea")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "C&K"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a889d5b1-5af3-4c74-ab80-3cc53051954d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ace8252f-5119-4f61-81a9-b2f08b201ece")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C221880"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "57ee2c1d-a86a-498f-926a-f011c110bd65")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3219,6 +3759,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3d4f13ca-4763-4a30-a449-f7af4e25576b")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3a880466-a9bc-43e8-b5b6-9523dfe2bfe2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "48380f97-a71e-4972-83e4-8c12d402ab31")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/8b08aa18-e8f6-48f0-b0a9-9469b5af1975")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -3511,6 +4087,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "0f1f8389-092e-40b1-8b29-2118e8b2001c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "MDD"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "247a09fb-3404-440d-a63b-36bcb1c917f2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "SS34"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2398fe8e-df26-4e9a-95ec-ac676678acc8")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C8678"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d35e7cab-64f9-42f4-936d-9f1d2d3841ff")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3901,6 +4513,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Dorabo"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "df9aaf34-9a5e-4e37-9d4e-06873068b52a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "DB128V-5.08-5P-GN-S"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "af64dd59-8658-4242-8a24-7fafc27e5790")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C2927513"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6b5f5360-511d-4860-ad77-a42e87e5afcf")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/486200f1-0ca5-43a8-be57-04ea4bcca83e")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr through_hole)
@@ -4257,7 +4905,7 @@
 		(pad "1" thru_hole roundrect
 			(at 0 0 90)
 			(size 2.6 2.6)
-			(drill 1.3)
+			(drill 1.6)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(roundrect_rratio 0.096154)
@@ -4267,7 +4915,7 @@
 		(pad "2" thru_hole circle
 			(at 5.08 0 90)
 			(size 2.6 2.6)
-			(drill 1.3)
+			(drill 1.6)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
@@ -4276,7 +4924,7 @@
 		(pad "3" thru_hole circle
 			(at 10.16 0 90)
 			(size 2.6 2.6)
-			(drill 1.3)
+			(drill 1.6)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "Net-(J1-Pin_3)")
@@ -4285,7 +4933,7 @@
 		(pad "4" thru_hole circle
 			(at 15.24 0 90)
 			(size 2.6 2.6)
-			(drill 1.3)
+			(drill 1.6)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "Net-(J1-Pin_4)")
@@ -4294,7 +4942,7 @@
 		(pad "5" thru_hole circle
 			(at 20.32 0 90)
 			(size 2.6 2.6)
-			(drill 1.3)
+			(drill 1.6)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net "GND")
@@ -4360,6 +5008,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "33e8adfc-4665-42e8-b509-23a451c70a15")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Espressif Systems"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "876a7a5b-67a1-4126-aca2-52cad5f8522f")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "ESP32-C3-WROOM-02-N4"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "78910d4d-9a54-4622-93a3-553a0bc087f0")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C2934560"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9851497d-c0d9-49fb-a384-4bf463bbf712")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5224,6 +5908,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "276d36ca-9733-429e-83b2-c89eab5ccdf9")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "db9445b8-663e-4ecf-b707-c1902a800ef9")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b9e93ab5-4f5f-47f9-873f-ac29a0a01393")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/29918282-4828-4a27-8a5d-65afd5c405cf")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -5368,6 +6088,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3842e81a-c8b1-4316-a280-2e3a1d59cf5f")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF5101T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1bc27f79-c2d1-4c96-85d3-c85ac9f07e1d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C23186"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ca3407bb-914d-48c9-adfa-45e0ddd094bd")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -5520,6 +6276,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ee91ddb8-6049-4d7a-a045-4f50ed04060e")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL21A226MAQNNNE"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f8eaceeb-0c94-4419-86ca-ef5cd8d38427")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C45783"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7897dcd7-f713-41a0-9aa5-93d9bf510455")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/0b90f2a8-9684-4c55-b9e3-c182aff854b4")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -5664,6 +6456,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Nationstar"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3f36b7db-c67d-42d9-b6cc-6747d91380a6")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "NCD0603Y1"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0ea181a8-7a36-4fe5-9149-36138edf630a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C84268"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "33eda1e8-fd2d-4188-b79a-022fe5fb4497")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -5865,6 +6693,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "11bb4f20-597c-473c-a591-8b3aef54cdb3")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1501T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e6d0ff60-3e05-4e7f-9239-feeedd97fc72")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C22843"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "39fac765-77a6-499c-946a-c5cd6e03f5bc")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/5aba91fa-db2f-4c9b-a5b1-5a7bfafd1363")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -5998,6 +6862,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "f503aac0-7490-4ae5-b448-0abf24b9cc94")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "C&K"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e5041def-1e3d-40de-9c27-73d3e6efbaa5")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "459fbb63-1e1f-410c-9547-abb96c7507e9")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C221880"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6331acc3-8c77-4de3-a2ea-df85b1d96e8f")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6298,6 +7198,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Hongli Zhihui"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6d809fb5-a245-4cfc-a66a-e1b14fd2b681")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "KT-0603R"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "122a570b-ecf7-4ae1-b68a-b29a1f848200")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C2286"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "338f7791-b707-4921-8093-1be9f6482a46")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/c9f40fe7-bb5f-4129-b966-0efc4238f5f7")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -6495,6 +7431,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "YAGEO"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4ed48e1d-8fcb-45b5-879b-4c81ac8b5a63")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9f67ea89-9680-49f1-932c-992c58773e00")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "82cff562-4d39-4a87-ad66-32b858cce28f")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/c176931c-16d1-4548-b21a-d80598864098")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -6588,7 +7560,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R13"
-			(at 0 -1.7036 0)
+			(at 0 1.7 0)
 			(layer "F.SilkS")
 			(uuid "5c3a9f39-277a-4749-8042-46cb95cb2823")
 			(effects
@@ -6639,6 +7611,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "73fee51f-6d89-4e71-bbf4-a360249a1485")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d3afbfb1-9647-4e53-8d4b-3451406138b5")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5541bdcc-39cb-4a36-9c82-e297fc78a103")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -6787,6 +7795,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "ProTek Devices"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "00bb605e-e6a7-4071-88fc-e2cbe7b69667")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "PSM712-LF-T7"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7d278a51-1489-4b6b-bd4a-0c15236da6c9")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C32677"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "975903dc-05be-4b5a-b81f-258ee112d4bc")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -7159,6 +8203,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7905ea6e-ace8-432c-ba49-3e33d9a88ad4")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1003T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "71be2f1f-2388-4ee0-8153-e260a2d007b2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25803"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0e9a8a84-bd2f-4dff-9685-f42362ae16bd")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/ecb3c47d-3a36-4cd3-ae0c-866a6ed74d02")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -7307,6 +8387,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "07ecae0e-a24f-4821-b0dd-f30fe4d507de")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1332T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d2f64541-4d57-4857-9a94-6a5754ea3dc7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25952"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "940142ea-7be0-4b4a-8216-42376e7c0337")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/653862fc-4d68-4e1a-9988-cec7cbb7f90b")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -7451,6 +8567,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "XINGLIGHT"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e78dd18d-5600-4748-8257-69c2511587e7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "XL-1608SYGC-06"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "cbdf95eb-c934-4f63-8fb5-33918d9f23a6")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C965805"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f00a134f-188f-4f94-a53e-734529c6d319")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -7652,6 +8804,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "001f58ca-8b3d-47f1-946e-d3a57e5396c7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL10A105KB8NNNC"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6083de09-b144-48ce-bdbc-f520e9329e45")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C15849"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "257a7fc4-2756-40d3-97e8-a573d52ea7ba")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/6632314d-08d7-4e4b-a726-d4586c05467d")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -7796,6 +8984,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c33587e2-d25e-44d7-8c7d-4c200bfb4629")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8dd1f261-0c08-4eb1-8c25-de1d09c45308")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "be5ecce6-1460-405b-b83f-ce3995744d48")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -8051,6 +9275,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Texas Instruments"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "33de40d1-0b57-4a21-b4e1-c3338f6e3cd2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "THVD1400DR"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "0d331e81-65a6-4495-aacf-82bc2d14459c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C3235232"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e0abb752-3e69-4d1e-8d1e-94c044409101")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -8409,6 +9669,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Nichicon"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5396b2b2-6c65-4684-85e7-f39712215a03")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "UCD1V221MNL1GS"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "02f6c743-a600-4fd3-8bb5-c36bdb04b227")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C136294"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ce810550-3b25-47d2-82c2-479a88d69b69")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -8842,6 +10138,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Korean Hroparts Elec"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "bec46812-a0b6-4670-956c-bdf3bcc3f765")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "TYPE-C-31-M-12"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "da2708f6-989a-4f1f-90b0-d732d4537775")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C165948"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a874946b-5c88-4259-be0b-6bb812621821")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/307a08bd-8f7b-45c8-9806-507d20da0150")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -9248,6 +10580,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "836c6aaf-7cca-4f9a-8623-a56e85adaf42")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1502T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ec53d2b6-e203-49a4-9893-7b79512d05ca")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C22809"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "dc7bb9b2-0a71-4979-86a7-fa51cc2e35a5")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/34246b64-1ae8-4d3d-b5ab-e1dbf6ea7dd2")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -9392,6 +10760,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Microne"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "dfa780f3-f26f-41dd-8943-21f5cb25cb6c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "ME6211C33M5G-N"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f23f7315-2b7d-49d9-a8f9-af45c3f3b000")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C82942"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5ef62b9b-8087-4b80-9bd3-9888e75fa93a")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -9780,6 +11184,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5ee18e8d-d8a4-464a-b342-f97f9bd09d09")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7bd8f73a-d29d-41cd-a3a3-3d26e4459248")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d941ac55-86f4-4f31-994f-29c722dc4b04")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/07b81059-915a-43b5-af89-346fc9ece71c")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -9924,6 +11364,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "da37dbaa-32ad-4a96-a9ce-a237eb9e8b19")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF6801T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "85d115c2-bf64-45d1-8ccc-8cfcc9c33494")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C23212"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e8a76aca-9f27-4406-9e1f-e1b880d3416e")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -10168,6 +11644,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "c3d5d54d-9dba-4183-b11a-a1d227c935e2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "C&K"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "54d7fc58-5bf8-4d97-8ca6-6bbe0cae1a53")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ddd9f3e3-ffcd-41e4-b047-e53bc4d29849")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C221880"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8d8eef4c-67a9-4799-b270-5ff575bc8693")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10627,6 +12139,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f1f9ec00-ffd1-4111-9d77-b24f00a7dd12")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL21A225KBQNNNE"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5bd5c05f-6f9e-4704-8afb-1507278a5498")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C377773"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "16cede39-4ab4-415d-bc83-aef428e026c7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/7486dc08-4e0f-46cb-a381-972374146214")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -10775,6 +12323,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a5515cdd-0f89-4ea0-82b3-ed4cd50b5a23")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "1206W4F270JT5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "21274895-b635-4665-9028-1cf50b130527")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C17946"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1a8c2a79-7f0d-4781-a3a4-bca96570dad3")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/b31853a7-5199-4007-af33-1f75567d67aa")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -10868,7 +12452,7 @@
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D3"
-			(at 0 -2.7236 0)
+			(at -4.6 0.8 0)
 			(layer "F.SilkS")
 			(uuid "377daf7b-b471-4d10-b8db-6342e682a9b5")
 			(effects
@@ -10908,6 +12492,42 @@
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "490ae659-0c80-4a57-8e20-d0676225274e")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "MDD"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3d3b273a-8001-485d-b527-9e357d82344c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "SS34"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f8acf798-7c2a-4cc9-aab0-c9df2e232785")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C8678"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "fa88ba61-6560-4d97-a667-ab70046fa857")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11187,6 +12807,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Alpha & Omega Semiconductor"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3fa28e8a-c930-46ef-be15-b6a0187ca6a7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "AO3400A"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ef60c32f-98e7-4911-afbb-624e9ec80883")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C20917"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "b0290845-783b-42e0-81b3-cdcc52bb3e05")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -11559,9 +13215,45 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1b841d73-710c-4bb3-ac81-e6b9d9425394")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c40b5989-64de-4400-bae0-9fc3b5ff3595")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d529d0f4-304a-4188-9b14-afd8b8a94dbd")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/3528baf8-736d-45dd-87ca-1f7ab7505235")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -12180,6 +13872,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "415e3d93-b067-4792-9483-a90fa3a4632d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL10A105KB8NNNC"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "34811344-b99b-409d-a184-73476aa6960a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C15849"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8ca4e019-baf9-4957-b10a-19632fe1ce29")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/59e4e84c-af0d-443b-90fa-d5470da17236")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -12504,6 +14232,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4844fd9b-f8ab-408a-875d-b2617d783383")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "CL10A106KP8NNNC"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a41a97b2-60c2-4e7a-a5a3-32f3f6062173")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C19702"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "04a4e205-d78e-4a98-8bf9-d834436fa43b")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/d2f55c19-33ea-47ec-bb48-acccf81c9538")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -12652,9 +14416,45 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4c5e14c2-1f31-42bd-8add-a16c9c44bdbc")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "4fceccf2-51eb-474a-acb2-acff7a31cc77")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f138080c-caf2-4115-a73c-f05273638ab1")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/a2b7a332-d4fa-4576-a43b-e33d04543637")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -12796,6 +14596,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Changjiang Microelectronics"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7538c071-2e28-43d1-80af-595121c2e9d8")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "FNR6045S220MT"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6ee5ed04-dc88-47f4-a4fa-21535ecd525a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C168080"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "af0c51c3-2b50-49b0-8947-1bdcde2dc4b9")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -13057,6 +14893,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9a55557d-dac8-450f-a02d-ac0d083dd1df")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c813762d-2e03-470a-98b2-e61b298d9ab2")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "1e2a1a1b-f04f-4536-b179-f358f3f9eb54")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/06d0ea2e-3ec4-4020-9c70-c35f6a936012")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -13205,9 +15077,45 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9a7a8ae1-8203-4e65-ae8b-9b010170978c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1200T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "646f66ad-1535-40d9-b484-20d2b16492f7")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C22787"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "59f3f34d-cdab-443a-b33b-41bae1355c03")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/ed7b3f89-2efc-4042-9903-25859ee84bf3")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -13349,6 +15257,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "242918cf-7d7d-4c1d-bf57-5165f3b0b197")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1003T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "5c660de6-e93c-4f3d-a25b-914e32316bd4")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C25803"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d6cd12e9-2e45-4129-b84e-c0ddc7956754")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
@@ -13501,6 +15445,42 @@
 				)
 			)
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "f509622d-871e-4a97-b644-6679452d193a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "3a8b0489-a6d8-4577-a9d2-22766bf89129")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "609e1d35-390b-44b7-b250-8d64803c49be")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(path "/743eba30-999f-460c-9e85-95215e6f42c0")
 		(sheetfile "vallox-rs485-controller.kicad_sch")
 		(attr smd)
@@ -13645,6 +15625,42 @@
 			(effects
 				(font
 					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9a4d9f92-0c51-4ada-b123-72dcc43cd39d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "0603WAF3301T5E"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e945c2d1-4299-42f5-9a9f-8212ca568243")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C22978"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "2d9ea43f-88d4-40e5-b293-2264120bd0fe")
+			(effects
+				(font
+					(size 1.27 1.27)
 					(thickness 0.15)
 				)
 			)
