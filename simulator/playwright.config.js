@@ -9,7 +9,7 @@ const base = process.env.VITE_BASE ?? '/';
 // start"; no pixel comparison of the 3D view (spec §4).
 export default defineConfig({
   testDir: './e2e',
-  timeout: 180_000,
+  timeout: 300_000,   // slowest SwiftShader runners have hit 3.2 min wall clock
   retries: 0,
   reporter: [['list']],
   use: {
