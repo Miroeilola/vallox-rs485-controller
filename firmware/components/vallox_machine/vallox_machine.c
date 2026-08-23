@@ -28,11 +28,34 @@ static void handle_write(vlx_machine_t *m, const vlx_frame_t *f)
 {
     if (!m->known[f->reg] || !m->writable[f->reg]) return;   // silently: nothing documents a NAK
     m->regs[f->reg] = f->value;
+    if (m->reply_delay_ms == VLX_MACHINE_NEVER) return;       // R7: never also withholds the acknowledge
     // Acknowledge = the checksum byte of the frame we received (protocol.md claim 25).
     uint8_t raw[VLX_FRAME_LEN];
     vlx_frame_t copy = *f;
     vlx_frame_encode(&copy, raw);
     queue_bytes(m, &raw[5], 1);
+}
+
+static const uint8_t k_broadcast_set[] = {0x2B, 0x2C, 0x35, 0x34, 0x32, 0x33, 0x2A};
+#define BROADCAST_N (sizeof k_broadcast_set / sizeof k_broadcast_set[0])
+
+// One broadcast round: BROADCAST_N frames to 0x20, broadcast_spacing_ms apart,
+// starting broadcast_period_ms after the previous round started.
+static size_t run_broadcasts(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t max)
+{
+    if (m->broadcast_idx == 0) {
+        if (m->last_broadcast_ms == 0 && !m->have_tick) m->last_broadcast_ms = now_ms;  // first tick anchors the period
+        if ((int32_t)(now_ms - (m->last_broadcast_ms + m->broadcast_period_ms)) < 0) return 0;
+        m->last_broadcast_ms = now_ms;
+        m->next_broadcast_frame_ms = now_ms;
+    }
+    if ((int32_t)(now_ms - m->next_broadcast_frame_ms) < 0 || max < VLX_FRAME_LEN) return 0;
+    uint8_t reg = k_broadcast_set[m->broadcast_idx];
+    vlx_make_write(ME, VLX_ADDR_PANELS, reg, m->known[reg] ? m->regs[reg] : 0, out);
+    m->broadcast_idx++;
+    m->next_broadcast_frame_ms = now_ms + m->broadcast_spacing_ms;
+    if (m->broadcast_idx >= BROADCAST_N) m->broadcast_idx = 0;
+    return VLX_FRAME_LEN;
 }
 
 static void on_frame(const vlx_frame_t *f, void *ctx)
@@ -73,16 +96,18 @@ void vlx_machine_feed(vlx_machine_t *m, const uint8_t *bytes, size_t n)
 
 size_t vlx_machine_tick(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t max)
 {
+    size_t n = 0;
+    // first tick: anchor the broadcast clock before have_tick flips
+    n += run_broadcasts(m, now_ms, out + n, max - n);
     m->last_tick_ms = now_ms;
     m->have_tick = true;
     if (m->pending_armed && !m->pending_scheduled) {
         m->pending_due_ms = now_ms + m->reply_delay_ms;
         m->pending_scheduled = true;
     }
-    size_t n = 0;
-    if (m->pending_scheduled && (int32_t)(now_ms - m->pending_due_ms) >= 0 && m->pending_len <= max) {
-        memcpy(out, m->pending, m->pending_len);
-        n = m->pending_len;
+    if (m->pending_scheduled && (int32_t)(now_ms - m->pending_due_ms) >= 0 && m->pending_len <= max - n) {
+        memcpy(out + n, m->pending, m->pending_len);
+        n += m->pending_len;
         m->pending_len = 0;
         m->pending_armed = false;
         m->pending_scheduled = false;

@@ -137,6 +137,85 @@ static void test_write_then_poll_reads_back(void)
     CHECK_EQ(vlx_fan_speed_from_raw(f.value), 5);
 }
 
+static void test_reply_never_also_suppresses_the_acknowledge(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.reply_delay_ms = VLX_MACHINE_NEVER;
+    uint8_t w[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_HEAT_SETPOINT, vlx_temp_to_raw(20), w);
+    CHECK_EQ(send_and_tick(&m, w, 0, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_HEAT_SETPOINT), vlx_temp_to_raw(20));
+}
+
+// the output of a round is back-to-back frames; decode each six bytes
+static int count_frames_to_panels(const uint8_t *buf, size_t n, uint8_t *regs_out, int max)
+{
+    int k = 0;
+    for (size_t i = 0; i + VLX_FRAME_LEN <= n; i += VLX_FRAME_LEN) {
+        vlx_frame_t f;
+        if (vlx_frame_decode(buf + i, &f) && f.receiver == VLX_ADDR_PANELS && k < max) regs_out[k++] = f.reg;
+    }
+    return k;
+}
+
+static void test_reply_delay_holds_the_answer_until_due(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.reply_delay_ms = 10;
+    uint8_t poll[VLX_FRAME_LEN], out[32];
+    vlx_make_poll(PANEL, MACHINE, VLX_REG_STATUS, poll);
+    vlx_machine_feed(&m, poll, VLX_FRAME_LEN);
+    CHECK_EQ(vlx_machine_tick(&m, 100, out, sizeof out), 0);    // queued at 100, due 110
+    CHECK_EQ(vlx_machine_tick(&m, 105, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_tick(&m, 110, out, sizeof out), VLX_FRAME_LEN);
+}
+
+static void test_reply_never_means_silence(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.reply_delay_ms = VLX_MACHINE_NEVER;
+    uint8_t poll[VLX_FRAME_LEN], out[32];
+    vlx_make_poll(PANEL, MACHINE, VLX_REG_STATUS, poll);
+    vlx_machine_feed(&m, poll, VLX_FRAME_LEN);
+    CHECK_EQ(vlx_machine_tick(&m, 0, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_tick(&m, 5000, out, sizeof out), 0);
+}
+
+static void test_broadcast_round_every_12_s_in_documented_order(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t out[64], regs[16];
+    size_t total = 0; uint8_t all[256];
+    // walk 13 s in 10 ms ticks, collect everything sent
+    for (uint32_t t = 0; t <= 13000; t += 10) {
+        size_t n = vlx_machine_tick(&m, t, out, sizeof out);
+        if (n && total + n <= sizeof all) { memcpy(all + total, out, n); total += n; }
+    }
+    int k = count_frames_to_panels(all, total, regs, 16);
+    CHECK_EQ(k, 7);
+    const uint8_t expect[7] = {0x2B, 0x2C, 0x35, 0x34, 0x32, 0x33, 0x2A};
+    CHECK(k == 7 && memcmp(regs, expect, 7) == 0);
+}
+
+static void test_broadcast_frames_are_spaced_130_ms(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t out[64];
+    uint32_t first = 0, second = 0;
+    for (uint32_t t = 0; t <= 13000; t += 10) {
+        if (vlx_machine_tick(&m, t, out, sizeof out)) {
+            if (!first) first = t; else if (!second) second = t;
+        }
+    }
+    CHECK_EQ(first, 12000);
+    CHECK_EQ(second - first, 130);
+}
+
 int main(void)
 {
     test_poll_known_register_is_answered_with_its_value();
@@ -149,5 +228,10 @@ int main(void)
     test_write_to_read_only_register_is_ignored_silently();
     test_write_to_unknown_register_is_ignored_silently();
     test_write_then_poll_reads_back();
+    test_reply_never_also_suppresses_the_acknowledge();
+    test_reply_delay_holds_the_answer_until_due();
+    test_reply_never_means_silence();
+    test_broadcast_round_every_12_s_in_documented_order();
+    test_broadcast_frames_are_spaced_130_ms();
     return REPORT();
 }
