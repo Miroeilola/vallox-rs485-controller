@@ -96,11 +96,17 @@ void vlx_machine_feed(vlx_machine_t *m, const uint8_t *bytes, size_t n)
 
 size_t vlx_machine_tick(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t max)
 {
+    uint32_t prev_ms = m->last_tick_ms;
+    bool had_tick = m->have_tick;
     size_t n = 0;
     // first tick: anchor the broadcast clock before have_tick flips
     n += run_broadcasts(m, now_ms, out + n, max - n);
     m->last_tick_ms = now_ms;
     m->have_tick = true;
+    if (had_tick) {
+        uint32_t dt_ms = now_ms - prev_ms;
+        if (dt_ms > 0 && dt_ms < 10000) vlx_machine_physics_step(m, (float)dt_ms / 1000.0f);
+    }
     if (m->pending_armed && !m->pending_scheduled) {
         m->pending_due_ms = now_ms + m->reply_delay_ms;
         m->pending_scheduled = true;

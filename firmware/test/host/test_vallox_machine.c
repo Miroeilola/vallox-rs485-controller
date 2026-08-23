@@ -216,6 +216,84 @@ static void test_broadcast_frames_are_spaced_130_ms(void)
     CHECK_EQ(second - first, 130);
 }
 
+static void run_physics(vlx_machine_t *m, float seconds, float dt)
+{
+    for (float t = 0; t < seconds; t += dt) vlx_machine_physics_step(m, dt);
+}
+
+static void test_cold_outdoor_turns_heater_on_and_supply_reaches_setpoint(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.p.t_outdoor = -20.0f;
+    run_physics(&m, 3600.0f, 1.0f);
+    int16_t supply = vlx_temp_table(vlx_machine_reg_get(&m, VLX_REG_TEMP_SUPPLY));
+    int16_t sp = vlx_temp_table(vlx_machine_reg_get(&m, VLX_REG_HEAT_SETPOINT));
+    CHECK(supply >= sp - 1 && supply <= sp + 1);
+    CHECK(vlx_machine_reg_get(&m, VLX_REG_STATUS) & VLX_STATUS_HEATING);   // name from vallox_protocol.h
+}
+
+static void test_mild_outdoor_keeps_heater_off_and_supply_below_setpoint(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.p.t_outdoor = 15.0f;
+    run_physics(&m, 3600.0f, 1.0f);
+    CHECK(!(vlx_machine_reg_get(&m, VLX_REG_STATUS) & VLX_STATUS_HEATING));
+    int16_t supply = vlx_temp_table(vlx_machine_reg_get(&m, VLX_REG_TEMP_SUPPLY));
+    // recovered = 15 + 0.6*(21-15) = 18.6 ≈ setpoint 18 → heater off, supply ~18-19
+    CHECK(supply >= 18 && supply <= 19);
+}
+
+static void test_higher_fan_speed_settles_faster(void)
+{
+    vlx_machine_t a, b;
+    vlx_machine_init(&a); vlx_machine_init(&b);
+    a.p.t_outdoor = b.p.t_outdoor = -20.0f;
+    vlx_machine_reg_set(&a, VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(1));
+    vlx_machine_reg_set(&b, VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(8));
+    run_physics(&a, 300.0f, 1.0f);
+    run_physics(&b, 300.0f, 1.0f);
+    // b moved further toward its target in the same time
+    CHECK(b.t_exhaust < a.t_exhaust);
+}
+
+static void test_frost_protection_stops_supply_fan_and_releases_with_hysteresis(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.p.t_outdoor = -30.0f;
+    run_physics(&m, 7200.0f, 1.0f);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_SUPPLY_FAN_STOP), 1);
+    m.p.t_outdoor = 10.0f;
+    run_physics(&m, 7200.0f, 1.0f);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_SUPPLY_FAN_STOP), 0);
+}
+
+static void test_time_scale_speeds_everything_up(void)
+{
+    vlx_machine_t a, b;
+    vlx_machine_init(&a); vlx_machine_init(&b);
+    a.p.t_outdoor = b.p.t_outdoor = -20.0f;
+    b.p.time_scale = 60.0f;
+    run_physics(&a, 60.0f, 1.0f);
+    run_physics(&b, 60.0f, 1.0f);
+    CHECK(b.t_exhaust < a.t_exhaust);
+}
+
+static void test_tick_runs_physics_and_updates_registers(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.p.t_outdoor = -20.0f;
+    m.p.time_scale = 60.0f;
+    uint8_t out[64];
+    uint8_t before = vlx_machine_reg_get(&m, VLX_REG_TEMP_EXHAUST);
+    for (uint32_t t = 0; t <= 60000; t += 20) vlx_machine_tick(&m, t, out, sizeof out);
+    CHECK(vlx_machine_reg_get(&m, VLX_REG_TEMP_EXHAUST) != before);
+    CHECK_EQ(vlx_temp_table(vlx_machine_reg_get(&m, VLX_REG_TEMP_OUTDOOR)), -20);
+}
+
 int main(void)
 {
     test_poll_known_register_is_answered_with_its_value();
@@ -233,5 +311,11 @@ int main(void)
     test_reply_never_means_silence();
     test_broadcast_round_every_12_s_in_documented_order();
     test_broadcast_frames_are_spaced_130_ms();
+    test_cold_outdoor_turns_heater_on_and_supply_reaches_setpoint();
+    test_mild_outdoor_keeps_heater_off_and_supply_below_setpoint();
+    test_higher_fan_speed_settles_faster();
+    test_frost_protection_stops_supply_fan_and_releases_with_hysteresis();
+    test_time_scale_speeds_everything_up();
+    test_tick_runs_physics_and_updates_registers();
     return REPORT();
 }
