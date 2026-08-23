@@ -29,17 +29,25 @@ static void pump(uint32_t step_ms)
 
 // Capture struct + callback for panel_read: the parser API takes a callback,
 // so the capture is file scope (Apple clang rejects GCC nested functions
-// under -std=c11 -Werror).
+// under -std=c11 -Werror). Selective: a broadcast decoded in the same feed as
+// the answer must not be mistaken for it, so the caller fills in the expected
+// sender/receiver/reg before feeding, and the callback only latches a frame
+// that matches all three.
 struct read_cap {
+    uint8_t     want_sender;
+    uint8_t     want_receiver;
+    uint8_t     want_reg;
     vlx_frame_t fr;
-    bool ok;
+    bool        ok;
 };
 
 static void on_read_frame(const vlx_frame_t *fr, void *ctx)
 {
     struct read_cap *cc = ctx;
-    cc->fr = *fr;
-    cc->ok = true;
+    if (fr->sender == cc->want_sender && fr->receiver == cc->want_receiver && fr->reg == cc->want_reg) {
+        cc->fr = *fr;
+        cc->ok = true;
+    }
 }
 
 // Panel stub: poll a register, wait up to deadline_ms for the answer frame.
@@ -52,6 +60,9 @@ static bool panel_read(uint8_t reg, uint8_t *value, uint32_t deadline_ms)
     bool have = false;
     struct read_cap c;
     memset(&c, 0, sizeof c);
+    c.want_sender = MACHINE;
+    c.want_receiver = PANEL;
+    c.want_reg = reg;
     vlx_parser_init(&p, on_read_frame, &c);
     uint32_t t0 = hal_time_ms();
     while (hal_time_ms() - t0 < deadline_ms) {
@@ -59,7 +70,7 @@ static bool panel_read(uint8_t reg, uint8_t *value, uint32_t deadline_ms)
         uint8_t b[16];
         size_t n = hal_bus_read(b, sizeof b);
         if (n) vlx_parser_feed_buffer(&p, b, n);
-        if (c.ok && c.fr.sender == MACHINE && c.fr.receiver == PANEL && c.fr.reg == reg) {
+        if (c.ok) {
             have = true;
             break;
         }
@@ -68,7 +79,9 @@ static bool panel_read(uint8_t reg, uint8_t *value, uint32_t deadline_ms)
     return have;
 }
 
-// Panel stub: write, wait for the one-byte acknowledge.
+// Panel stub: write, wait for the one-byte acknowledge. A stray byte that does
+// not match the expected checksum must not end the wait early — keep reading
+// until the deadline, discarding anything that does not match.
 static bool panel_write(uint8_t reg, uint8_t value, uint32_t deadline_ms)
 {
     uint8_t f[VLX_FRAME_LEN];
@@ -78,7 +91,9 @@ static bool panel_write(uint8_t reg, uint8_t value, uint32_t deadline_ms)
     while (hal_time_ms() - t0 < deadline_ms) {
         pump(1);
         uint8_t b;
-        if (hal_bus_read(&b, 1) == 1) return b == f[5];
+        while (hal_bus_read(&b, 1) == 1) {
+            if (b == f[5]) return true;
+        }
     }
     return false;
 }
