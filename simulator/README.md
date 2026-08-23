@@ -74,7 +74,10 @@ it; nothing else touches pointers.
   view ×3 moves the fan speed and register 0x29, the keyboard works, the outdoor
   slider reaches the model, an injected fault lights the FAULT LED, no page
   errors. No pixel comparison of the 3D view (spec §4) — the goldens live in
-  `firmware/test/host`.
+  `firmware/test/host`. Waits are on observable state (`loop.frames`,
+  `sim.buttonMv()`), not wall-clock, because a slow runner may render at only a
+  few frames per second; `SMOKE_CPU_THROTTLE=8 npx playwright test` reproduces
+  a slow runner locally.
 
 ## Known gaps
 

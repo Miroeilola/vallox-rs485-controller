@@ -8,9 +8,31 @@
 // of the 3D view — that is the host goldens' job.
 import { test, expect } from '@playwright/test';
 
+// Wait on observable state, not wall-clock: the runner's SwiftShader may render at a
+// few frames per second, and the core only advances when a frame runs.
+async function framesAdvance(page, n = 2) {
+  const f = await page.evaluate(() => window.__vallox.loop.frames);
+  await page.waitForFunction((x) => window.__vallox.loop.frames >= x, f + n, { timeout: 30_000 });
+}
+async function untilReleased(page) {
+  await page.waitForFunction(() => window.__vallox.sim.buttonMv() === 3300, null, { timeout: 30_000 });
+  await framesAdvance(page, 2);                    // the debounce must see "none" before the next press
+}
+async function pressAndRelease(page, down, up) {
+  await down();
+  await framesAdvance(page, 3);                    // ≥ HAL_WEB_MIN_HOLD_SAMPLES ticks happen within these frames
+  await up();
+  await untilReleased(page);
+}
+
 test('simulator boots, draws, and a button press reaches the simulated machine', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  if (process.env.SMOKE_CPU_THROTTLE) {
+    // reproduces a slow CI runner locally: SMOKE_CPU_THROTTLE=8 npx playwright test
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: Number(process.env.SMOKE_CPU_THROTTLE) });
+  }
   await page.goto('./');
   await page.waitForFunction(() => window.__vallox && window.__vallox.loop.frames > 5, null, { timeout: 60_000 });
   // WASM runs and the display has pixels
@@ -33,32 +55,37 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   // press + (SW2) three times by clicking its hit box in the front view
   const before = await page.evaluate(() => window.__vallox.sim.fanSpeed());
   await page.evaluate(() => window.__vallox.scene.frontView(false));
-  await page.waitForTimeout(300);
+  await framesAdvance(page, 2);
   const pt = await page.evaluate(() => {
-    const s = window.__vallox.scene; const v = s.hits[1].position.clone().project(s.camera);
+    const s = window.__vallox.scene; s.camera.updateMatrixWorld(true);
+    const v = s.hits[1].position.clone().project(s.camera);
     const r = s.canvas.getBoundingClientRect();
     return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height };
   });
   for (let i = 0; i < 3; i++) {
-    await page.mouse.move(pt.x, pt.y); await page.mouse.down(); await page.waitForTimeout(120); await page.mouse.up(); await page.waitForTimeout(400);
+    await pressAndRelease(
+      page,
+      async () => { await page.mouse.move(pt.x, pt.y); await page.mouse.down(); },
+      () => page.mouse.up(),
+    );
   }
-  await page.waitForFunction((b) => window.__vallox.sim.fanSpeed() === b + 3, before, { timeout: 15_000 });
+  await page.waitForFunction((b) => window.__vallox.sim.fanSpeed() === b + 3, before, { timeout: 30_000 });
   expect(await page.evaluate(() => window.__vallox.sim.reg(0x29))).toBe([0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF][before + 2]);
 
   // keyboard: − once
-  await page.keyboard.down('ArrowLeft'); await page.waitForTimeout(120); await page.keyboard.up('ArrowLeft');
-  await page.waitForFunction((b) => window.__vallox.sim.fanSpeed() === b + 2, before, { timeout: 15_000 });
+  await pressAndRelease(page, () => page.keyboard.down('ArrowLeft'), () => page.keyboard.up('ArrowLeft'));
+  await page.waitForFunction((b) => window.__vallox.sim.fanSpeed() === b + 2, before, { timeout: 30_000 });
 
   // a key held across a window blur releases both the model and the 3D button
   const y0 = await page.evaluate(() => window.__vallox.scene.hits[0].position.y);
   await page.keyboard.down('ArrowLeft');
-  await page.waitForTimeout(80);
+  await framesAdvance(page, 3);
   expect(await page.evaluate(() => window.__vallox.scene.hits[0].position.y)).toBeLessThan(y0);
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-  await page.waitForTimeout(200);
+  await framesAdvance(page, 2);
   expect(await page.evaluate(() => window.__vallox.scene.hits[0].position.y)).toBeCloseTo(y0, 9);
   await page.keyboard.up('ArrowLeft');
-  await page.waitForTimeout(200);
+  await framesAdvance(page, 2);
   expect(await page.evaluate(() => window.__vallox.sim.buttonMv())).toBe(3300);
 
   // side panel: outdoor temperature reaches the model; fault injection lights the LED
@@ -70,7 +97,7 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   expect(await page.evaluate(() => window.__vallox.scene.leds[2].mat.color.getHex())).toBe(0xff3a3a);
   // language survives a reload through localStorage
   await page.locator('#in-lang').selectOption('1');
-  await page.waitForTimeout(300);
+  await framesAdvance(page, 3);
   await page.reload();
   await page.waitForFunction(() => window.__vallox && window.__vallox.loop.frames > 5, null, { timeout: 60_000 });
   expect(await page.evaluate(() => window.__vallox.sim.uiLang())).toBe(1);
