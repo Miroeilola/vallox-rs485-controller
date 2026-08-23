@@ -24,13 +24,24 @@ static void answer_poll(vlx_machine_t *m, const vlx_frame_t *f)
     queue_bytes(m, out, VLX_FRAME_LEN);
 }
 
+static void handle_write(vlx_machine_t *m, const vlx_frame_t *f)
+{
+    if (!m->known[f->reg] || !m->writable[f->reg]) return;   // silently: nothing documents a NAK
+    m->regs[f->reg] = f->value;
+    // Acknowledge = the checksum byte of the frame we received (protocol.md claim 25).
+    uint8_t raw[VLX_FRAME_LEN];
+    vlx_frame_t copy = *f;
+    vlx_frame_encode(&copy, raw);
+    queue_bytes(m, &raw[5], 1);
+}
+
 static void on_frame(const vlx_frame_t *f, void *ctx)
 {
     vlx_machine_t *m = (vlx_machine_t *)ctx;
     if (f->sender == ME) return;                                   // our own echo
     if (f->receiver != ME && f->receiver != VLX_ADDR_MAINBOARDS) return;
     if (vlx_frame_is_poll(f)) { answer_poll(m, f); return; }
-    // writes: Task 3
+    handle_write(m, f);
 }
 
 void vlx_machine_init(vlx_machine_t *m)

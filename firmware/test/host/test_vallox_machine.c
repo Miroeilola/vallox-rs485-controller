@@ -90,6 +90,53 @@ static void test_defaults_are_a_plausible_machine(void)
     CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_CO2_SENSORS_FITTED), 0);
 }
 
+static void test_write_updates_register_and_is_acknowledged_with_checksum(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t w[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_HEAT_SETPOINT, vlx_temp_to_raw(20), w);
+    size_t n = send_and_tick(&m, w, 0, out, sizeof out);
+    CHECK_EQ(n, 1);
+    CHECK_EQ(out[0], w[5]);                    // the acknowledge is the received checksum byte
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_HEAT_SETPOINT), vlx_temp_to_raw(20));
+}
+
+static void test_write_to_read_only_register_is_ignored_silently(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t before = vlx_machine_reg_get(&m, VLX_REG_TEMP_OUTDOOR);
+    uint8_t w[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_TEMP_OUTDOOR, 0x80, w);
+    CHECK_EQ(send_and_tick(&m, w, 0, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_TEMP_OUTDOOR), before);
+}
+
+static void test_write_to_unknown_register_is_ignored_silently(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t w[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, 0xC1, 0x01, w);
+    CHECK_EQ(send_and_tick(&m, w, 0, out, sizeof out), 0);
+    CHECK(!vlx_machine_reg_known(&m, 0xC1));
+}
+
+static void test_write_then_poll_reads_back(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t w[VLX_FRAME_LEN], p[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_FAN_SPEED_DEFAULT, vlx_fan_speed_to_raw(5), w);
+    send_and_tick(&m, w, 0, out, sizeof out);
+    vlx_make_poll(PANEL, MACHINE, VLX_REG_FAN_SPEED_DEFAULT, p);
+    CHECK_EQ(send_and_tick(&m, p, 1, out, sizeof out), VLX_FRAME_LEN);
+    vlx_frame_t f;
+    CHECK(vlx_frame_decode(out, &f));
+    CHECK_EQ(vlx_fan_speed_from_raw(f.value), 5);
+}
+
 int main(void)
 {
     test_poll_known_register_is_answered_with_its_value();
@@ -98,5 +145,9 @@ int main(void)
     test_poll_to_mainboard_broadcast_is_answered();
     test_feed_survives_garbage_and_chunking();
     test_defaults_are_a_plausible_machine();
+    test_write_updates_register_and_is_acknowledged_with_checksum();
+    test_write_to_read_only_register_is_ignored_silently();
+    test_write_to_unknown_register_is_ignored_silently();
+    test_write_then_poll_reads_back();
     return REPORT();
 }
