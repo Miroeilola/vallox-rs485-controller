@@ -10,6 +10,7 @@
 #define MONTH_MS (30u * 24u * 3600u * 1000u)
 
 static float lag(float x, float target, float alpha) { return x + alpha * (target - x); }
+static int16_t round_c(float x) { return (int16_t)(x + (x >= 0 ? 0.5f : -0.5f)); }
 
 void vlx_machine_physics_step(vlx_machine_t *m, float dt_s)
 {
@@ -41,10 +42,10 @@ void vlx_machine_physics_step(vlx_machine_t *m, float dt_s)
     }
 
     // publish through the NTC table so the panel decodes real raw bytes
-    m->regs[VLX_REG_TEMP_OUTDOOR] = vlx_temp_to_raw((int16_t)(m->p.t_outdoor + (m->p.t_outdoor >= 0 ? 0.5f : -0.5f)));
-    m->regs[VLX_REG_TEMP_EXTRACT] = vlx_temp_to_raw((int16_t)(m->t_extract + 0.5f));
-    m->regs[VLX_REG_TEMP_SUPPLY]  = vlx_temp_to_raw((int16_t)(m->t_supply  + (m->t_supply  >= 0 ? 0.5f : -0.5f)));
-    m->regs[VLX_REG_TEMP_EXHAUST] = vlx_temp_to_raw((int16_t)(m->t_exhaust + (m->t_exhaust >= 0 ? 0.5f : -0.5f)));
+    m->regs[VLX_REG_TEMP_OUTDOOR] = vlx_temp_to_raw(round_c(m->p.t_outdoor));
+    m->regs[VLX_REG_TEMP_EXTRACT] = vlx_temp_to_raw(round_c(m->t_extract));
+    m->regs[VLX_REG_TEMP_SUPPLY]  = vlx_temp_to_raw(round_c(m->t_supply));
+    m->regs[VLX_REG_TEMP_EXHAUST] = vlx_temp_to_raw(round_c(m->t_exhaust));
     if (heater_on) m->regs[VLX_REG_STATUS] |= VLX_STATUS_HEATING;
     else           m->regs[VLX_REG_STATUS] &= (uint8_t)~VLX_STATUS_HEATING;
 }
