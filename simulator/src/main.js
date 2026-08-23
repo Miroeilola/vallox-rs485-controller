@@ -40,9 +40,7 @@ async function main() {
     persistStoreIfDirty(sim);
   });
   loop.bindKeyboard(window);
-  // keyboard presses also sink the 3D button
-  window.addEventListener('keydown', (e) => { const i = { ArrowLeft: 0, ArrowRight: 1, Enter: 2, Backspace: 3 }[e.key]; if (i !== undefined && !e.repeat && !e.target.matches('input, select, textarea')) scene.pressByIndex(i, true); });
-  window.addEventListener('keyup', (e) => { const i = { ArrowLeft: 0, ArrowRight: 1, Enter: 2, Backspace: 3 }[e.key]; if (i !== undefined) scene.pressByIndex(i, false); });
+  loop.onButton.push((i, down) => scene.pressByIndex(i, down));
 
   document.getElementById('btn-front').addEventListener('click', () => scene.frontView());
   document.getElementById('btn-3q').addEventListener('click', () => scene.threeQuarterView());

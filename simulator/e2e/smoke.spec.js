@@ -45,6 +45,18 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   await page.keyboard.down('ArrowLeft'); await page.waitForTimeout(120); await page.keyboard.up('ArrowLeft');
   await page.waitForFunction((b) => window.__vallox.sim.fanSpeed() === b + 2, before, { timeout: 15_000 });
 
+  // a key held across a window blur releases both the model and the 3D button
+  const y0 = await page.evaluate(() => window.__vallox.scene.hits[0].position.y);
+  await page.keyboard.down('ArrowLeft');
+  await page.waitForTimeout(80);
+  expect(await page.evaluate(() => window.__vallox.scene.hits[0].position.y)).toBeLessThan(y0);
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await page.waitForTimeout(200);
+  expect(await page.evaluate(() => window.__vallox.scene.hits[0].position.y)).toBeCloseTo(y0, 9);
+  await page.keyboard.up('ArrowLeft');
+  await page.waitForTimeout(200);
+  expect(await page.evaluate(() => window.__vallox.sim.buttonMv())).toBe(3300);
+
   // side panel: outdoor temperature reaches the model; fault injection lights the LED
   await page.locator('#in-outdoor').fill('-20');
   expect(await page.evaluate(() => window.__vallox.sim.temp(0))).toBeCloseTo(-20, 1);

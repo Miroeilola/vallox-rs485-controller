@@ -93,6 +93,7 @@ export class BoardScene {
       return m;
     });
     this.pressedIdx = null; this.buttonNodes = [null, null, null, null];
+    this.sunk = [false, false, false, false];
     canvas.addEventListener('pointerdown', (e) => this._pointerDown(e));
     window.addEventListener('pointerup', () => this._pointerUp());
     window.addEventListener('pointercancel', () => this._pointerUp());
@@ -166,17 +167,17 @@ export class BoardScene {
     e.preventDefault();
     this.controls.enabled = false;          // a press is not an orbit
     this.pressedIdx = idx;
-    this._sink(idx, true);
     this.onPress(idx);
   }
   _pointerUp() {
     if (this.pressedIdx === null) return;
     const idx = this.pressedIdx; this.pressedIdx = null;
-    this._sink(idx, false);
     this.controls.enabled = true;
     this.onRelease(idx);
   }
   _sink(idx, down) {
+    if (this.sunk[idx] === down) return;
+    this.sunk[idx] = down;
     const dy = (down ? -PRESS_DEPTH_MM : PRESS_DEPTH_MM) * MM;
     this.hits[idx].position.y += dy;
     if (this.buttonNodes[idx]) this.buttonNodes[idx].position.y += dy;
