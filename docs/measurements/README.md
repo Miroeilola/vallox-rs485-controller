@@ -11,6 +11,7 @@ The plan that produces the reports is
 | [2026-08-21-panel-identification.md](2026-08-21-panel-identification.md) | M0 (partly) and the supply-voltage row of M1: which panel, what is on its terminals, 22 V on the pair |
 | [2026-08-22-panel-current.md](2026-08-22-panel-current.md) | M2a: the factory panel draws 450 mA continuous, 700 mA momentary — conditions still to be recorded |
 | [2026-08-22-rail-voltage-no-load.md](2026-08-22-rail-voltage-no-load.md) | M1, no-load row: 22.8 V with the panel disconnected; the buck stays TPS54202 |
+| [2026-08-23-spice-rev-a.md](2026-08-23-spice-rev-a.md) | **Simulated, not measured:** rev A analog islands before ordering — inrush, buck enable and ripple, backlight current, RS-485 miswire and surge, LED currents, button ladder |
 
 ## Instruments used
 
@@ -28,6 +29,7 @@ probing. Model numbers go in as each instrument is first used, not later.
 | Logic analyser | not yet recorded | M3, M4 — byte-level timing alongside the scope |
 | Reference thermometer | not yet recorded | Checking the NTC table against reality |
 | Infrared thermometer or thermocouple | not yet recorded | Temperature under load, enclosure closed |
+| Circuit simulator (not an instrument) | ngspice 47, netlists in `hardware/sim/` | Pre-order checks of the analog islands; every such result is labelled simulated |
 
 The RS-485 adapter is the one instrument whose behaviour has to be verified
 before it is used: it must be incapable of transmitting. That check happens on

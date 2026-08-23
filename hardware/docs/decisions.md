@@ -1096,3 +1096,35 @@ R5–R7 carry `dnp yes`; the board footprints carry the same fields and the DNP 
 (feeder fee each): U1, U2, U3, U4, R4, R11, F1/F2, L1, J1, J2, J3, SW1–4, D4, D6
 and C1 — 16 types. Re-check stock at the pre-order gate: SW1–4 (1 421), U1 (3 702),
 J3 (366 on 2026-08-22).
+
+---
+
+### 2026-08-23 — Rev A analog islands simulated before ordering; two findings accepted, one value left to bring-up
+
+**Context.** The workspace rule asks for the analog islands to be simulated while a
+fix is still a value change. Eight ngspice benches (`hardware/sim/`), results in
+`docs/measurements/2026-08-23-spice-rev-a.md`.
+
+**Evidence (simulated).** Inrush 11 A / 0.026 A²s at the measured 1.8 Ω source; EN
+start 9.3 V, 3.3 V on the pin at 25 V; buck ripple 2.8 mVpp, C1 RMS ≤ 96 mA;
+backlight 71–84 mA at 5.08 V, R11 up to 0.19 W; DC miswire puts 7–47 W into D2;
++1 kV surge 23 A / 21 V at U4 (IPP 17 A, abs max ±16 V), +500 V 11 A / 17.4 V;
+LEDs 1–1.9 mA; ladder steps ≥ 0.39 V.
+
+**Decisions.**
+- Rev A is ordered as drawn. The passive sizing (C1, L1, C4/C5, R1/R2, R3/R4, R22
+  ladder) is confirmed by the benches within their stated model limits.
+- **D2 is sacrificial under a supply-to-A/B miswire**; accepted for rev A and
+  written into the README's "what it does not do" when that is drafted. Rev B
+  candidate: a larger TVS, or a series element rated for the fault power.
+- **Surge beyond 500 V exceeds the SM712 and U4 ratings for microseconds**;
+  accepted for an in-house bus behind the machine. Rev B candidate: 10 Ω 0603 in
+  series between the TVS node and each U4 bus pin.
+- **R20 (PWR LED) stays 1 kΩ until bring-up**; if the yellow-green part is too faint
+  (≈ 3 mcd at 1.2 mA), 330 Ω on the same pad gives 3.6 mA. R11 stays 27 Ω 0.25 W;
+  a 0.5 W 1206 is the drop-in if the enclosure runs warm.
+
+**Consequences.** Bring-up measures what the benches could not: buck load-step
+with Wi-Fi bursts, start-up, actual LED brightness, R11 temperature in the
+enclosure. `hardware/sim/README.md` carries the model provenance so the reader
+knows which numbers are built from datasheets and which one is a substitute.

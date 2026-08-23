@@ -1,0 +1,38 @@
+* Q: What current does the display backlight get through R11 = 27 ohm from the
+*    5 V rail with Q1 (AO3400A) fully on, over the LED Vf window 2.8-3.2 V (HSD
+*    spec, 80 mA total) and over the rail corners 5.08 V (buck, +-2 %) and 4.6 V
+*    (USB-only bench supply through D3)? What does R11 dissipate, and how fast is
+*    the PWM edge through R12 = 100 ohm from a 3.3 V GPIO?
+.include models.lib
+.param VRAIL=5.08 VFOFF=0
+V5 p5 0 DC {VRAIL}
+R11 p5 leda 27
+* backlight string: exponential diode + Vf offset for the datasheet window
+DBL leda k1 BL_LED
+VOFF k1 ledk DC {VFOFF}
+* Q1 low side, gate from GPIO through R12, R13 pull-down
+MQ1 ledk g 0 0 AO3400A
+R12 gpio g 100
+R13 g 0 10k
+VGPIO gpio 0 PULSE(0 3.3 2u 10n 10n 50u 100u)
+.tran 5n 150u
+.control
+set wr_vecnames
+foreach vr 5.08 4.98 4.6
+  foreach vf -0.2 0 0.2
+    alterparam VRAIL=$vr
+    alterparam VFOFF=$vf
+    reset
+    run
+    let ibl = -i(v5)
+    let prr = ibl*ibl*27
+    meas tran ion AVG ibl from=40u to=50u
+    meas tran pr11 AVG prr from=40u to=50u
+    meas tran vled FIND v(leda) AT=45u
+    meas tran vds FIND v(ledk) AT=45u
+    meas tran tr WHEN ibl=0.9*ion RISE=1
+    echo VRAIL=$vr VFOFF=$vf : I_BL=$&ion A, V(LED)=$&vled V, Vds(Q1)=$&vds V, P(R11)=$&pr11 W, t(90% on)=$&tr s
+  end
+end
+.endc
+.end

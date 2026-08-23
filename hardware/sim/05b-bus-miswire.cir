@@ -1,0 +1,31 @@
+* Q: If the installer lands the 22.8 V panel supply on the A (or B) terminal, what
+*    current flows through the 100 mA PTC F1 (JK-mSMD010-60: Rmin 0.75 ohm, R1max
+*    15 ohm, Ihold 100 mA, Itrip 300 mA) into the SM712 clamp D2, and what does D2
+*    dissipate until the PTC trips? What does U4 (THVD1400, A/B abs max +-16 V) see?
+*    The PTC is swept over its cold resistance 0.75 / 3 / 15 ohm; the panel rail
+*    is modelled with the measured 1.8 ohm source resistance (the machine's own
+*    T800 mA fuse is upstream of that and is not modelled - it blows at these
+*    currents, which is part of the answer).
+.include models.lib
+.param RPTC=3
+VPAN src 0 DC 22.8
+* source stiffness from the rail measurement (0.8 V per 0.45 A)
+RSRC src pan 1.8
+RPTC pan a RPTC
+X1 a 0 SM712_LINE
+* U4 receiver input, 1/8 unit load ~96 k to mid-supply; negligible here
+RU4 a mid 96k
+VMID mid 0 DC 1.65
+.op
+.control
+foreach r 0.75 3 15
+  alterparam RPTC=$r
+  reset
+  run
+  let ia = -i(vpan)
+  let ptvs = v(a)*ia
+  let pptc = ia*ia*$r
+  echo RPTC=$r ohm : V(A)=$&v(a) V  I=$&ia A  P(D2)=$&ptvs W  P(F1)=$&pptc W
+end
+.endc
+.end

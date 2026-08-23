@@ -1,0 +1,35 @@
+* Q: When the field terminal is connected to a live 22.8 V panel rail, what peak
+*    current and charge does the board draw into C1 (220 uF) through D1, and can
+*    that stress the machine's T800 mA secondary fuse? Source stiffness from the
+*    measurements: 22.8 V unloaded, 22.0 V at 0.45 A -> ~1.8 ohm; swept 0.5/1.8/5 ohm.
+.include models.lib
+.param RSRC=1.8
+.param ESR1=0.30
+VPANEL pan 0 PWL(0 0  100u 0  101u 22.8)
+RSRC pan j1p RSRC
+D1 j1p vin SS34
+* C1 Nichicon UCD1V221MNL1GS: 220 uF, ESR ~0.3 ohm at 100 kHz (tan d 0.14 @120 Hz -> 0.85 ohm)
+C1 vin c1e 220u
+RESR1 c1e 0 ESR1
+C2 vin 0 2.2u
+* TPS54202 off below 9.3 V; EN divider load only during the charge
+R1 vin en 100k
+R2 en 0 15k
+.tran 0.2u 20m
+.control
+set wr_vecnames
+foreach r 0.5 1.8 5
+  alterparam RSRC=$r
+  reset
+  run
+  let isrc = -i(vpanel)
+  let i2 = isrc*isrc
+  meas tran ipk MAX isrc
+  meas tran t90 WHEN v(vin)=20.5 RISE=1
+  meas tran i2t INTEG i2 from=100u to=20m
+  meas tran q   INTEG isrc from=100u to=20m
+  meas tran i1ms FIND isrc AT=1.1m
+  echo RSRC=$r ohm : Ipk=$&ipk A  t(20.5V)=$&t90 s  i2t=$&i2t A2s  Q=$&q C  I(1ms)=$&i1ms A
+end
+.endc
+.end
