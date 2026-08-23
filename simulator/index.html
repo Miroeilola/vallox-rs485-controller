@@ -14,7 +14,7 @@
       <div id="view-tools">
         <button id="btn-front" type="button" title="Front view (F)">Front view</button>
         <button id="btn-3q" type="button" title="¾ view (V)">¾ view</button>
-        <label title="Reserved: the enclosure's STEP does not exist yet"><input id="chk-enclosure" type="checkbox" disabled> Enclosure</label>
+        <label title="Show the draft enclosure (Fusion 360 will supersede it)"><input id="chk-enclosure" type="checkbox" disabled> Enclosure</label>
         <span id="status-line" aria-live="polite">loading…</span>
       </div>
       <p id="view-hint">Click the buttons on the board, or use the keys ← → Enter Backspace. Drag to orbit, wheel to zoom.</p>
@@ -66,7 +66,7 @@
       <h2>Bus log <small id="log-count"></small></h2>
       <pre id="bus-log" aria-live="off"></pre>
 
-      <p class="note">Source and hardware: <a href="https://github.com/Miroeilola/vallox-rs485-controller">github.com/Miroeilola/vallox-rs485-controller</a>. three.js (MIT), Inter (OFL 1.1). Rendering is KiCad's GLB export of rev A; the enclosure arrives with its STEP.</p>
+      <p class="note">Source and hardware: <a href="https://github.com/Miroeilola/vallox-rs485-controller">github.com/Miroeilola/vallox-rs485-controller</a>. three.js (MIT), Inter (OFL 1.1). Rendering is KiCad's GLB export of rev A; the enclosure is the parametric draft from <code>mechanical/draft/</code>.</p>
     </aside>
   </main>
   <script type="module" src="/src/main.js"></script>
