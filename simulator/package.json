@@ -1,0 +1,21 @@
+{
+  "name": "vallox-panel-simulator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Browser simulator of the Vallox RS-485 controller's panel: the firmware's UI core and a simulated machine, compiled to WebAssembly, on the board's 3D model.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "vite": "7.3.6"
+  }
+}

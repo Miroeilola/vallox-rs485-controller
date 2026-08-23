@@ -1,0 +1,45 @@
+/* SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 Miro Eilola / Mironet */
+:root {
+  --bg: #15171c; --panel: #1e2128; --line: #2c3038; --fg: #e6e8ec; --muted: #9aa0aa; --accent: #6ec1ff;
+  --led-off: #3a3d44;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.4;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); }
+#app { display: grid; grid-template-columns: 1fr 380px; height: 100%; }
+#view-wrap { position: relative; min-width: 0; }
+#view { display: block; width: 100%; height: 100%; touch-action: none; }
+#view-tools { position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#view-tools button, #panel button { background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; font: inherit; }
+#view-tools button:hover, #panel button:hover { border-color: var(--accent); }
+#view-tools label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+#status-line { color: var(--muted); font-size: 12px; }
+#view-hint { position: absolute; bottom: 8px; left: 12px; margin: 0; color: var(--muted); font-size: 12px; }
+#panel { background: var(--panel); border-left: 1px solid var(--line); padding: 16px 18px 24px; overflow-y: auto; }
+#panel h1 { font-size: 18px; margin: 0 0 8px; font-weight: 600; }
+#panel h1 small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 6px; }
+#panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 18px 0 8px; }
+#panel h2 small { text-transform: none; letter-spacing: 0; margin-left: 6px; }
+.note { color: var(--muted); font-size: 12.5px; margin: 0 0 4px; }
+.note code { color: var(--fg); }
+a { color: var(--accent); }
+table.kv { width: 100%; border-collapse: collapse; }
+table.kv th { text-align: left; font-weight: 500; color: var(--muted); padding: 3px 8px 3px 0; width: 38%; vertical-align: top; }
+table.kv td { padding: 3px 0; font-variant-numeric: tabular-nums; }
+.controls label { display: block; margin: 6px 0; color: var(--muted); }
+.controls input[type=range] { width: 100%; }
+.controls select { width: 100%; margin-top: 2px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; font: inherit; }
+.controls output { float: right; color: var(--fg); }
+#display2d { width: 160px; height: 120px; image-rendering: pixelated; border: 1px solid var(--line); border-radius: 3px; background: #000; display: block; }
+.led { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; background: var(--led-off); color: #bbb; margin-right: 4px; }
+.led.on#led-pwr { background: #9dff3a; color: #123; }
+.led.on#led-bus { background: #ffd23a; color: #321; }
+.led.on#led-fault { background: #ff3a3a; color: #fff; }
+#bus-log { margin: 0; padding: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; height: 220px; overflow-y: auto; font: 11.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; }
+#bus-log .m2p { color: var(--accent); }
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; grid-template-rows: 55vh 1fr; }
+  #panel { border-left: none; border-top: 1px solid var(--line); }
+}
