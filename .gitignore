@@ -55,3 +55,14 @@ hardware/output/board-*.svg
 
 # --- git worktrees ---
 .worktrees/
+
+# --- browser simulator (generated) ---
+simulator/node_modules/
+simulator/dist/
+simulator/src/wasm/
+simulator/public/board.glb
+simulator/public/board-raw.glb
+simulator/public/enclosure.glb
+simulator/test_hal_web
+simulator/test-results/
+simulator/playwright-report/
