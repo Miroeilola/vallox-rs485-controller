@@ -6,6 +6,7 @@ Replacement bus controller for legacy Vallox ventilation units.
 
 [![hardware](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/hardware.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/hardware.yml)
 [![firmware](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/firmware.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/firmware.yml)
+[![simulator](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml)
 ![hardware revision](https://img.shields.io/badge/hardware-rev%20A-blue)
 ![license](https://img.shields.io/badge/license-MIT%20%2F%20CERN--OHL--S%20%2F%20CC--BY--SA-green)
 
@@ -44,6 +45,21 @@ keeps running at its last setting if the device fails, and every safety function
 frost protection, over-temperature, defrost — stays in the machine's own firmware
 where this device cannot reach it. But nothing changes the fan speed until the
 device is working again. Keep the original panel in a drawer.
+
+## Try it in the browser
+
+[![simulator](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml)
+
+**https://miroeilola.github.io/vallox-rs485-controller/** — the panel firmware's UI
+core and its machine emulator compiled to WebAssembly, drawn on the rev A board's
+3D model. Click the buttons, change the outdoor temperature, inject a fault,
+watch the bus log. It is the same C that will run on the device
+(`firmware/components/panel_ui`), not a look-alike.
+
+The machine behind it is **simulated** from [`docs/research/protocol.md`](docs/research/protocol.md)
+and nothing in it has been verified against a real unit yet; the first bus capture
+(M3) corrects the document, then the emulator, then the UI. Details and the build
+in [`simulator/README.md`](simulator/README.md).
 
 ### This is not the first attempt, and that is worth saying
 

@@ -1,0 +1,113 @@
+# Browser simulator: board GLB from KiCad, the UI core + machine model to
+# WebAssembly, Vite build, one Playwright smoke test, GitHub Pages from main.
+# Green here means "it builds and starts" — the machine is simulated and the
+# protocol is unverified until the M3 capture (README says so).
+name: simulator
+
+on:
+  push:
+    paths: ['simulator/**', 'firmware/components/**', 'hardware/vallox-rs485-controller.kicad_pcb', 'lib/**', '.github/workflows/simulator.yml']
+  pull_request:
+    paths: ['simulator/**', 'firmware/components/**', 'hardware/vallox-rs485-controller.kicad_pcb', 'lib/**', '.github/workflows/simulator.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simulator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  glb:
+    name: Board GLB (kicad-cli)
+    runs-on: ubuntu-latest
+    container:
+      image: kicad/kicad:10.0
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Export GLB with tracks, zones, pads, silkscreen and mask
+        run: |
+          mkdir -p simulator/public
+          kicad-cli pcb export glb --force --subst-models --no-dnp \
+            --include-tracks --include-zones --include-pads --include-silkscreen --include-soldermask \
+            --user-origin 0x0mm --output simulator/public/board-raw.glb hardware/vallox-rs485-controller.kicad_pcb
+          ls -la simulator/public/board-raw.glb
+      - uses: actions/upload-artifact@v4
+        with:
+          name: board-raw-glb
+          path: simulator/public/board-raw.glb
+          retention-days: 7
+
+  build:
+    name: WASM, site, smoke test
+    needs: glb
+    runs-on: ubuntu-latest
+    env:
+      VITE_BASE: /${{ github.event.repository.name }}/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: board-raw-glb
+          path: simulator/public
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: simulator/package-lock.json
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.8
+          actions-cache-folder: emsdk-cache
+      - name: Native tests of the browser host
+        run: make -C simulator test-c
+      - name: Optimise the GLB (meshopt, no simplification, node names kept)
+        run: |
+          cd simulator
+          npx --yes @gltf-transform/cli@4.4.2 optimize public/board-raw.glb public/board.glb \
+            --compress meshopt --simplify false --flatten false --texture-compress false
+          rm public/board-raw.glb
+          ls -la public/board.glb
+      - name: WebAssembly + Vite build
+        run: |
+          cd simulator
+          make wasm SIM_VERSION="$(git describe --tags --always 2>/dev/null || echo "$GITHUB_SHA" | cut -c1-7)"
+          npm ci --no-audit --no-fund
+          npx vite build
+          ls -la dist dist/assets
+      - name: Playwright smoke test
+        run: |
+          cd simulator
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            simulator/test-results/
+            simulator/playwright-report/
+          if-no-files-found: ignore
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: simulator/dist
+
+  deploy:
+    name: GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -30,3 +30,4 @@ licenses where they originate from third parties; see that repository. Manufactu
 SPICE models and datasheets are **not** redistributed here — the sources are cited in
 the documentation instead.
 - **Inter** (firmware/components/panel_ui/fonts/): © The Inter Project Authors, SIL Open Font License 1.1 — see fonts/OFL.txt.
+- **three.js** (simulator/, via npm): © three.js authors, MIT — https://github.com/mrdoob/three.js/blob/dev/LICENSE. Not vendored; fetched by `npm ci`.
