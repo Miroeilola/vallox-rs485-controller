@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Miro Eilola / Mironet
+#
 # Browser simulator: the panel UI core and the machine model compiled to
 # WebAssembly, drawn on the board's GLB with three.js. `make test` is what CI
 # runs (native C tests, WASM build, Vite build, Playwright smoke).
