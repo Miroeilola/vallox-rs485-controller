@@ -4,7 +4,7 @@ This project is released under three licenses, each covering a different kind of
 
 | Path | License | SPDX identifier |
 |---|---|---|
-| `firmware/`, `esphome/`, `scripts/` | MIT License | `MIT` |
+| `firmware/`, `esphome/`, `scripts/`, `simulator/` | MIT License | `MIT` |
 | `hardware/`, `mechanical/` | CERN Open Hardware Licence Version 2 – Strongly Reciprocal | `CERN-OHL-S-2.0` |
 | `docs/`, `README.md`, images | Creative Commons Attribution-ShareAlike 4.0 International | `CC-BY-SA-4.0` |
 

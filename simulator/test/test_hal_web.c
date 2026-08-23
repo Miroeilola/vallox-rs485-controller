@@ -65,7 +65,7 @@ static void test_flush_converts_rgb565_and_unions_dirty_rects(void)
     CHECK(!hal_web_take_dirty(&x, &y, &w, &h));
     CHECK_EQ(hal_web_flushes(), 2);
     // clipped at the edge: no write past the buffer, union clamped
-    uint16_t row[8]; memset(row, 0xFF, sizeof row);
+    uint16_t row[64]; memset(row, 0xFF, sizeof row);
     hal_display_flush(316, 238, 8, 8, row);
     CHECK(hal_web_take_dirty(&x, &y, &w, &h));
     CHECK_EQ(x, 316); CHECK_EQ(y, 238); CHECK_EQ(w, 4); CHECK_EQ(h, 2);

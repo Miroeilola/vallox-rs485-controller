@@ -40,7 +40,7 @@ export async function loadSim() {
     log(seq) {
       const p = fn.logEntry(seq); if (!p) return null;
       const b = M.HEAPU8.subarray(p, p + 12);
-      return { t: b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24), dir: b[4], raw: Array.from(b.subarray(5, 11)) };
+      return { t: (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24)) >>> 0, dir: b[4], raw: Array.from(b.subarray(5, 11)) };
     },
     storeEntries() {
       const out = []; const n = fn.storeCount();

@@ -104,6 +104,7 @@ Values still marked `—` have not been measured yet.
 | `hardware/` | KiCad 10 project, manufacturing outputs, order packages |
 | `firmware/` | ESP-IDF application and reusable components |
 | `esphome/` | ESPHome external component (Home Assistant users start here) |
+| `simulator/` | Browser simulator: the UI core and machine model in WebAssembly on the board's 3D model |
 | `mechanical/` | Enclosure: STEP source, STL for printing, drawings, print profiles |
 | `docs/` | Research, measurements, datasheet, images |
 
@@ -221,7 +222,7 @@ prices.
 
 | Path | License |
 |---|---|
-| `firmware/`, `esphome/`, `scripts/` | [MIT](LICENSES/MIT.txt) |
+| `firmware/`, `esphome/`, `scripts/`, `simulator/` | [MIT](LICENSES/MIT.txt) |
 | `hardware/`, `mechanical/` | [CERN-OHL-S-2.0](LICENSES/CERN-OHL-S-2.0.txt) |
 | `docs/`, README, images | [CC-BY-SA-4.0](LICENSES/CC-BY-SA-4.0.txt) |
 

@@ -13,6 +13,10 @@
 #include "vallox_machine.h"
 #include "vallox_protocol.h"
 
+_Static_assert(HAL_WEB_LOG_MAX == SIM_LOG_MAX, "log ring size");
+_Static_assert(HAL_WEB_LOG_ENTRY_BYTES == SIM_LOG_ENTRY_BYTES, "log entry layout");
+_Static_assert(HAL_WEB_STORE_MAX == SIM_STORE_MAX, "store size");
+
 #ifndef SIM_VERSION
 #define SIM_VERSION "dev"
 #endif

@@ -76,7 +76,7 @@ node_modules/.package-lock.json: package.json package-lock.json
 	touch $@
 build: node_modules/.package-lock.json src/wasm/panel.js
 	npx vite build
-smoke: node_modules/.package-lock.json
+smoke: build
 	npx playwright test
 test: test-c build smoke
 

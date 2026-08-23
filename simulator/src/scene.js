@@ -80,19 +80,22 @@ export class BoardScene {
       m.rotation.x = -Math.PI / 2; m.position.copy(toScene(l.x, l.y, 0.75)); m.name = l.name; scene.add(m);
       const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: l.colour, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.0 }));
       glow.scale.set(6 * MM, 6 * MM, 1); glow.position.copy(toScene(l.x, l.y, 1.2)); scene.add(glow);
-      return { ...l, mesh: m, mat, glow, on: false };
+      return { ...l, mesh: m, mat, glow, on: null };
     });
     this.setLeds(0);
 
     // buttons: invisible hit boxes from board coordinates
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
+    this.hitRestY = [];
     this.hits = BUTTONS.map((b) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(b.w * MM, 3 * MM, b.h * MM), new THREE.MeshBasicMaterial({ visible: false }));
       m.position.copy(toScene(b.x, b.y, b.top - 1.5)); m.userData.idx = b.idx; m.name = `hit-${b.name}`; scene.add(m);
+      this.hitRestY[b.idx] = m.position.y;
       return m;
     });
     this.pressedIdx = null; this.buttonNodes = [null, null, null, null];
+    this.buttonRestY = [null, null, null, null];
     this.sunk = [false, false, false, false];
     canvas.addEventListener('pointerdown', (e) => this._pointerDown(e));
     window.addEventListener('pointerup', () => this._pointerUp());
@@ -116,7 +119,15 @@ export class BoardScene {
     this.scene.remove(this.placeholder);
     this.scene.add(gltf.scene);
     this.board = gltf.scene;
-    for (let i = 0; i < 4; i++) this.buttonNodes[i] = gltf.scene.getObjectByName(BUTTONS[i].name) || null;
+    for (let i = 0; i < 4; i++) {
+      const node = gltf.scene.getObjectByName(BUTTONS[i].name) || null;
+      this.buttonNodes[i] = node;
+      if (node) {
+        this.buttonRestY[i] = node.position.y;
+        // a press held across the load (idx already sunk) must apply to the new node too
+        node.position.y = this.buttonRestY[i] + (this.sunk[i] ? -PRESS_DEPTH_MM * MM : 0);
+      }
+    }
     this.boardLoaded = true;
     return gltf;
   }
@@ -178,9 +189,9 @@ export class BoardScene {
   _sink(idx, down) {
     if (this.sunk[idx] === down) return;
     this.sunk[idx] = down;
-    const dy = (down ? -PRESS_DEPTH_MM : PRESS_DEPTH_MM) * MM;
-    this.hits[idx].position.y += dy;
-    if (this.buttonNodes[idx]) this.buttonNodes[idx].position.y += dy;
+    const off = down ? -PRESS_DEPTH_MM * MM : 0;
+    this.hits[idx].position.y = this.hitRestY[idx] + off;
+    if (this.buttonNodes[idx]) this.buttonNodes[idx].position.y = this.buttonRestY[idx] + off;
   }
   // Same as clicking the hit box, for the keyboard and the smoke test.
   pressByIndex(idx, down) { this._sink(idx, down); }

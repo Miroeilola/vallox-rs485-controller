@@ -38,7 +38,6 @@ table.kv td { padding: 3px 0; font-variant-numeric: tabular-nums; }
 .led.on#led-bus { background: #ffd23a; color: #321; }
 .led.on#led-fault { background: #ff3a3a; color: #fff; }
 #bus-log { margin: 0; padding: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; height: 220px; overflow-y: auto; font: 11.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; }
-#bus-log .m2p { color: var(--accent); }
 @media (max-width: 900px) {
   #app { grid-template-columns: 1fr; grid-template-rows: 55vh 1fr; }
   #panel { border-left: none; border-top: 1px solid var(--line); }

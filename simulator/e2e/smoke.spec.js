@@ -25,6 +25,10 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   await page.waitForFunction(() => window.__vallox.scene.boardLoaded || window.__vallox.boardError, null, { timeout: 60_000 });
   expect(await page.evaluate(() => window.__vallox.boardError)).toBeNull();
   expect(await page.evaluate(() => window.__vallox.scene.boardLoaded)).toBe(true);
+  // LED materials follow sim_leds(): PWR on, FAULT off at boot (the off colour must be applied on the first update)
+  const ledHex = await page.evaluate(() => window.__vallox.scene.leds.map((l) => l.mat.color.getHex()));
+  expect(ledHex[0]).toBe(0x9dff3a);
+  expect(ledHex[2]).toBe(0x2a2a2a);
 
   // press + (SW2) three times by clicking its hit box in the front view
   const before = await page.evaluate(() => window.__vallox.sim.fanSpeed());
@@ -63,6 +67,7 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   await page.locator('#in-fault').selectOption('5');
   await page.waitForFunction(() => (window.__vallox.sim.leds() & 4) === 4, null, { timeout: 15_000 });
   await expect(page.locator('#led-fault')).toHaveClass(/on/);
+  expect(await page.evaluate(() => window.__vallox.scene.leds[2].mat.color.getHex())).toBe(0xff3a3a);
   // language survives a reload through localStorage
   await page.locator('#in-lang').selectOption('1');
   await page.waitForTimeout(300);

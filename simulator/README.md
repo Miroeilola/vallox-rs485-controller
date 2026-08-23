@@ -3,8 +3,9 @@
 The controller's panel, running in a browser: the firmware's UI core
 (`firmware/components/panel_ui`) and its machine emulator (`vallox_machine`)
 compiled to WebAssembly with Emscripten, drawn on the rev A board's 3D model
-(KiCad's GLB export) with three.js. One C core, four hosts — this is the fourth
-(`docs/design/2026-08-23-panel-simulator-design.md`).
+(KiCad's GLB export) with three.js. One C core, four hosts in the design
+(ESP-IDF, ESPHome, host tests, browser) — this is the second one that exists,
+after the host tests (`docs/design/2026-08-23-panel-simulator-design.md`).
 
 **Live:** https://miroeilola.github.io/vallox-rs485-controller/ — built from
 `main` by `.github/workflows/simulator.yml`.
@@ -36,6 +37,7 @@ front; 0.1275 mm per pixel.
 ## Build
 
 ```
+git submodule update --init   # lib/mironet-hw-lib holds the DS1 display model the GLB export needs
 make glb      # public/board.glb from ../hardware (kicad-cli; CI does this in the kicad/kicad:10.0 container)
 make wasm     # src/wasm/panel.{js,wasm} with emcc (Emscripten 6.0.8 — brew install emscripten, or emsdk)
 make test-c   # native tests of c/hal_web.c and c/sim.c (no browser)

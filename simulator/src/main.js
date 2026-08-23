@@ -22,10 +22,20 @@ async function main() {
 
   const display = new Display(sim, document.getElementById('display2d'));
   const loop = new Loop(sim, display);
-  const scene = new BoardScene(document.getElementById('view'), display.canvas, {
-    onPress: (i) => loop.press(i), onRelease: (i) => loop.release(i),
-  });
-  display.onUpdate(() => { scene.displayTexture.needsUpdate = true; });
+
+  // A WebGLRenderer throws when the browser/GPU has no WebGL context. The 3D
+  // view is then unavailable, but the flat display, side panel, loop and
+  // keyboard must keep running — the simulator is still usable without it.
+  let scene = null;
+  let boardError = null;
+  try {
+    scene = new BoardScene(document.getElementById('view'), display.canvas, {
+      onPress: (i) => loop.press(i), onRelease: (i) => loop.release(i),
+    });
+  } catch (e) {
+    boardError = String(e);
+  }
+  if (scene) display.onUpdate(() => { scene.displayTexture.needsUpdate = true; });
 
   const panel = new SidePanel(sim, document.getElementById('panel'), {
     onRestart: () => { loop.releaseAll(); sim.init(); panel.applyControls(); },
@@ -34,20 +44,30 @@ async function main() {
   panel.applyControls();
 
   loop.onFrame.push(() => {
-    scene.setBacklight(sim.backlight());
-    scene.setLeds(sim.leds());
+    if (scene) { scene.setBacklight(sim.backlight()); scene.setLeds(sim.leds()); }
     panel.update();
     persistStoreIfDirty(sim);
   });
   loop.bindKeyboard(window);
-  loop.onButton.push((i, down) => scene.pressByIndex(i, down));
+  if (scene) loop.onButton.push((i, down) => scene.pressByIndex(i, down));
 
-  document.getElementById('btn-front').addEventListener('click', () => scene.frontView());
-  document.getElementById('btn-3q').addEventListener('click', () => scene.threeQuarterView());
-  window.addEventListener('keydown', (e) => { if (e.target.matches('input, select, textarea')) return; if (e.key === 'f') scene.frontView(); if (e.key === 'v') scene.threeQuarterView(); });
+  if (scene) {
+    document.getElementById('btn-front').addEventListener('click', () => scene.frontView());
+    document.getElementById('btn-3q').addEventListener('click', () => scene.threeQuarterView());
+    window.addEventListener('keydown', (e) => {
+      if (e.target.matches('input, select, textarea')) return;
+      const k = e.key.toLowerCase();
+      if (k === 'f') scene.frontView(); if (k === 'v') scene.threeQuarterView();
+    });
+  }
 
   loop.start();
-  window.__vallox = { sim, display, loop, scene, panel, boardError: null };
+  window.__vallox = { sim, display, loop, scene, panel, boardError };
+
+  if (!scene) {
+    say('3D view unavailable (no WebGL) — the flat display in the side panel is live');
+    return;
+  }
 
   const base = import.meta.env.BASE_URL;
   say('loading board model…');
