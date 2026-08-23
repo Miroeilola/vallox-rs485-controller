@@ -39,6 +39,9 @@ hardware/sim/out/
 firmware/test/host/run_tests
 firmware/test/host/run_tests_*
 firmware/test/host/*.dSYM
+firmware/test/host/panel_host
+firmware/test/host/golden/*.actual.png
+firmware/test/host/panel-*.png
 scripts/vlx-decode/vlx-decode
 *.dSYM/
 

@@ -19,6 +19,26 @@ jobs:
         run: |
           cd firmware/test/host
           make test
+      - name: Upload golden images and a rendered panel
+        if: always()
+        run: |
+          cd firmware/test/host
+          make panel_host || true
+          ./panel_host --ticks 150 --png panel-dashboard.png || true
+          ./panel_host --ticks 150 --fault 5 --lang fi --png panel-fault-fi.png || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: panel-renders
+          path: |
+            firmware/test/host/panel-*.png
+            firmware/test/host/golden/*.actual.png
+          if-no-files-found: ignore
+      - name: Host tests under ASan/UBSan
+        run: |
+          cd firmware/test/host
+          make clean
+          CFLAGS="-std=c11 -Wall -Wextra -Werror -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all" make test
       - name: Check the emulator's register table against protocol.md
         run: python3 scripts/check-machine-regs.py
       - name: Build the capture decoder
