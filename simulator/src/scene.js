@@ -112,10 +112,23 @@ export class BoardScene {
     renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
   }
 
+  // KiCad's GLB export marks every material metallic=1/roughness=1, which kills
+  // the diffuse colour: the white silkscreen and the mask render as faint
+  // environment reflections and the board looks washed out. Only the pad/copper
+  // materials are actually metal (exported with roughness < 0.9); the rest get
+  // their diffuse back here. Same correction as mechanical/render/render.html.
+  _fixKicadMaterials(root) {
+    root.traverse((o) => {
+      if (!o.isMesh || !o.material) return;
+      const m = o.material;
+      if (m.roughness >= 0.95) { m.metalness = 0.07; m.roughness = 0.62; }
+    });
+  }
   async loadBoard(url) {
     const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
     const gltf = await loader.loadAsync(url);
     gltf.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    this._fixKicadMaterials(gltf.scene);
     this.scene.remove(this.placeholder);
     this.scene.add(gltf.scene);
     this.board = gltf.scene;
@@ -135,6 +148,15 @@ export class BoardScene {
   async loadEnclosure(url) {
     const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
     const gltf = await loader.loadAsync(url);
+    // Shell parts carry no material (glTF default = metallic white); the glyph
+    // inlays carry their colours. Give the shell a plastic look, keep the glyphs.
+    gltf.scene.traverse((o) => {
+      if (!o.isMesh || !o.material) return;
+      const m = o.material;
+      const coloured = m.color && (m.color.r < 0.98 || m.color.g < 0.98 || m.color.b < 0.98);
+      if (coloured) { m.metalness = 0.0; m.roughness = 0.55; }
+      else { m.metalness = 0.0; m.roughness = 0.45; m.color.set(0xc8cbd0); }
+    });
     this.enclosure = gltf.scene; this.enclosure.visible = false; this.scene.add(this.enclosure);
     this.enclosureLoaded = true;
     return gltf;

@@ -32,6 +32,15 @@ screw = import_step(os.path.join(STEP, "m3x8-countersunk-draft.step")).solids()[
 for x, y in POSTS:
     parts.append(Pos((x, -y, RIM_Z_PLUS_PLATE - STANDOFF)) * screw)
 
+# Colored glyph inlays filling the cover engravings (the print's colour-change
+# layers); same geometry source as the cut, shifted into the board frame.
+from build123d import Color
+from glyphs import glyph_solids
+DISH_FLOOR = RIM_Z_PLUS_PLATE - 0.5
+for g, color in glyph_solids(DISH_FLOOR - STANDOFF, 0.25):
+    g.color = Color(color)
+    parts.append(g)
+
 export_gltf(Compound(children=parts), OUT, binary=True,
             linear_deflection=0.05, angular_deflection=0.3)
 print(f"{OUT}: {os.path.getsize(OUT)} bytes, {len(parts)} parts")
