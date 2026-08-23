@@ -169,6 +169,15 @@ for x, y in SW_XY:
     pocket -= cyl(x, y, NUB_BOT, MEMBRANE_TOP - MEMBRANE_T + 0.05, 4.0)
     cover -= pocket
 
+# Button glyphs engraved 0.25 into the dish floors (colour inlay via a print
+# colour change on the first layers; the membrane keeps >= 0.35 under a stroke —
+# untested, first print decides; the simulator shows the same glyphs as inlays).
+from glyphs import glyph_solids
+DISH_FLOOR = RIM_Z + PLATE - DISH_T
+GLYPH_DEPTH = 0.25
+for g, _color in glyph_solids(DISH_FLOOR + 0.01, GLYPH_DEPTH + 0.01):
+    cover -= g
+
 for x, y in LED_XY:                      # LED view holes (light pipe later)
     cover -= cyl(x, y, RIM_Z - 0.1, RIM_Z + PLATE + 1, 2.0)
 
