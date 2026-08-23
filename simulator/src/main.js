@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2026 Miro Eilola / Mironet
 //
-// Wiring: WASM module → Display (2D canvas) → Loop (time, keyboard) → side
-// panel. window.__vallox exposes the pieces for the smoke test and for poking
-// around in the console; nothing else reads it. (The 3D scene arrives in the
-// next task; until then the flat display in the side panel is the view.)
+// Wiring: WASM module → Display (2D canvas) → Loop (time, keyboard) → 3D scene
+// and side panel. window.__vallox exposes the pieces for the smoke test and for
+// poking around in the console; nothing else reads it.
 import { loadSim } from './sim.js';
 import { Display } from './display.js';
 import { Loop } from './loop.js';
+import { BoardScene } from './scene.js';
 import { SidePanel } from './panel.js';
 import { restoreStore, persistStoreIfDirty } from './store.js';
 
@@ -22,16 +22,53 @@ async function main() {
 
   const display = new Display(sim, document.getElementById('display2d'));
   const loop = new Loop(sim, display);
+  const scene = new BoardScene(document.getElementById('view'), display.canvas, {
+    onPress: (i) => loop.press(i), onRelease: (i) => loop.release(i),
+  });
+  display.onUpdate(() => { scene.displayTexture.needsUpdate = true; });
+
   const panel = new SidePanel(sim, document.getElementById('panel'), {
     onRestart: () => { loop.releaseAll(); sim.init(); panel.applyControls(); },
     onLang: () => {},
   });
   panel.applyControls();
-  loop.onFrame.push(() => { panel.update(); persistStoreIfDirty(sim); });
+
+  loop.onFrame.push(() => {
+    scene.setBacklight(sim.backlight());
+    scene.setLeds(sim.leds());
+    panel.update();
+    persistStoreIfDirty(sim);
+  });
   loop.bindKeyboard(window);
+  // keyboard presses also sink the 3D button
+  window.addEventListener('keydown', (e) => { const i = { ArrowLeft: 0, ArrowRight: 1, Enter: 2, Backspace: 3 }[e.key]; if (i !== undefined && !e.repeat && !e.target.matches('input, select, textarea')) scene.pressByIndex(i, true); });
+  window.addEventListener('keyup', (e) => { const i = { ArrowLeft: 0, ArrowRight: 1, Enter: 2, Backspace: 3 }[e.key]; if (i !== undefined) scene.pressByIndex(i, false); });
+
+  document.getElementById('btn-front').addEventListener('click', () => scene.frontView());
+  document.getElementById('btn-3q').addEventListener('click', () => scene.threeQuarterView());
+  window.addEventListener('keydown', (e) => { if (e.target.matches('input, select, textarea')) return; if (e.key === 'f') scene.frontView(); if (e.key === 'v') scene.threeQuarterView(); });
+
   loop.start();
-  window.__vallox = { sim, display, loop, panel };
-  say(`firmware ${sim.version()} · 3D view not built yet`);
+  window.__vallox = { sim, display, loop, scene, panel, boardError: null };
+
+  const base = import.meta.env.BASE_URL;
+  say('loading board model…');
+  try {
+    await scene.loadBoard(`${base}board.glb`);
+    say(`rev A · firmware ${sim.version()}`);
+  } catch (e) {
+    window.__vallox.boardError = String(e);
+    say('board model missing (run `make glb`) — showing a plain slab');
+  }
+  // the enclosure toggle is armed only if an enclosure.glb exists next to the board
+  const chk = document.getElementById('chk-enclosure');
+  try {
+    const head = await fetch(`${base}enclosure.glb`, { method: 'HEAD' });
+    if (head.ok && (head.headers.get('content-type') || '').includes('model')) {
+      await scene.loadEnclosure(`${base}enclosure.glb`);
+      chk.disabled = false; chk.addEventListener('change', () => scene.setEnclosureVisible(chk.checked));
+    }
+  } catch { /* none: stays disabled */ }
 }
 
 main().catch((e) => { say(`failed: ${e}`); console.error(e); throw e; });
