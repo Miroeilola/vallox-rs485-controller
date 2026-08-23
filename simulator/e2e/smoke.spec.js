@@ -47,6 +47,9 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   await page.waitForFunction(() => window.__vallox.scene.boardLoaded || window.__vallox.boardError, null, { timeout: 60_000 });
   expect(await page.evaluate(() => window.__vallox.boardError)).toBeNull();
   expect(await page.evaluate(() => window.__vallox.scene.boardLoaded)).toBe(true);
+  // the GLB must carry the footprint bodies: the export keeps the SW1..SW4 node names, and a
+  // bare board (no 3D library where kicad-cli ran — the first deploy shipped one) has none
+  expect(await page.evaluate(() => window.__vallox.scene.buttonNodes.map((n) => !!n))).toEqual([true, true, true, true]);
   // LED materials follow sim_leds(): PWR on, FAULT off at boot (the off colour must be applied on the first update)
   const ledHex = await page.evaluate(() => window.__vallox.scene.leds.map((l) => l.mat.color.getHex()));
   expect(ledHex[0]).toBe(0x9dff3a);
