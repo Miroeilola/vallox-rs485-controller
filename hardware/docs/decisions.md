@@ -1039,3 +1039,60 @@ it stays hand-made and documented.
 toolchain; the method lives in the workspace. Autorouted tracks run under the
 module's pin field and along the right margin — legal by DRC, to be reviewed by
 eye before ordering. `routes.json` is no longer the whole truth; the board file is.
+
+---
+
+### 2026-08-23 — Rev A parts locked: every schematic line carries Manufacturer, MPN and LCSC
+
+**Context.** Only J3 had sourcing fields; 56 lines had value and footprint only, and
+the DNP parts R5/R6/R7 were marked in the value text, not the attribute. The order
+gate (`/pcba-order`) reads the schematic, so the schematic has to be the BOM.
+
+**Evidence.** Every code was checked against the JLCPCB catalogue on 2026-08-23
+(MCP `lib_get_component_details` / jlcsearch): MPN, package, stock, Basic/Extended.
+The list is `hardware/docs/parts-revA.csv` (the file the fields were written from).
+Where the MCP detail lookup disagreed with the catalogue list (C25804 reported
+stock 0 / not Basic; the list shows 37 M / Basic) the list was taken and the
+discrepancy noted — re-check at the pre-order gate as the rules require anyway.
+
+**Decisions.**
+- Passives: UNI-ROYAL 0603 1 % resistors, Basic, except R4 13.3 kΩ (C25952,
+  Extended — TI's 5.08 V feedback value kept rather than rounding to a Basic 13 kΩ,
+  which would give 5.18 V and 81 mA in the backlight) and R11 27 Ω 1206
+  (C17946, Extended, 0.25 W for the 0.17 W backlight dissipation). Ceramics:
+  Yageo 100 nF 50 V X7R (C14663), Samsung 10 µF/10 V (C19702), 1 µF/50 V
+  (C15849), 2.2 µF/50 V 0805 (C377773), 22 µF/25 V 0805 (C45783) — all Basic.
+  Bulk C1: Nichicon UCD1V221MNL1GS, 220 µF/35 V, 8 × 10 mm, 300 mA ripple
+  (C136294) — chosen over cheaper no-name SMD cans for the datasheet and the
+  second source; the 35 V rating is 71 % of the 25 V worst-case rail.
+- Semiconductors and modules as in the research notes: U1 C2934560, U2 C191884,
+  U3 ME6211 C82942, U4 THVD1400 C3235232, D1/D3 SS34 C8678, D2 PSM712-LF-T7
+  C32677, Q1 AO3400A C20917, F1/F2 JK-mSMD010-60 C1884489, J2 TYPE-C-31-M-12
+  C165948, SW1–4 PTS645SM43SMTR92LFS C221880. **L1 is the 22 µH FNR6045S220MT
+  (C168080, 2.2 A sat, 116 mΩ)** — the schematic's 22 µH, not the 10 µH the
+  candidates table still lists.
+- **Indicator LEDs** (new decision): the LED sits behind 1 kΩ from a 3.3 V GPIO,
+  so an InGaN "green" (Vf 2.6–3.6 V, e.g. the 19-217/GHC C2986059 in the research
+  notes) would pass 0–0.3 mA and not light. PWR = yellow-green XL-1608SYGC-06
+  (575 nm, Vf 2.2 V, C965805); BUS = yellow NCD0603Y1 (595 nm, Vf 1.6–2.6 V,
+  C84268); FAULT = red KT-0603R (Vf 1.8–2.4 V, C2286, Basic). Drive is 0.9–1.5 mA;
+  brightness in the machine room is judged at bring-up and R20/R26/R27 can go
+  down to 470 Ω without a layout change.
+- **J1 = Dorabo DB128V-5.08-5P-GN-S (C2927513, 19 115 in stock, $0.56).** Screw
+  terminal, side wire entry, 5.08 mm pitch, 2.5 mm² / 22–12 AWG, M2.5 screws.
+  No Phoenix MKDS 1,5/5 exists in the JLCPCB catalogue (only 2-pole). The
+  datasheet (Dorabo customer drawing DB128V-5.08-XXP-C-S, 2022-10-27) gives pin
+  0.80 × 1.00 mm and a recommended PCB hole of Ø1.60 mm; the MKDS footprint on the
+  board had Ø1.3 mm, smaller than the pin's 1.28 mm diagonal. **J1's five pads now
+  drill Ø1.6 mm (pad Ø2.6 kept, 0.5 mm annular ring)** — a board-instance change
+  that DRC reports as `lib_footprint_mismatch` on J1, accepted. Body 10.2 mm deep
+  vs the footprint's 9.92: the wire-entry face sits 0.12 mm inside the board edge
+  and the back 0.4 mm further inboard than the MKDS outline; nothing is within
+  0.4 mm behind J1.
+
+**Consequences.** `kicad-cli sch export bom` now yields 57 lines with MPN and LCSC,
+R5–R7 carry `dnp yes`; the board footprints carry the same fields and the DNP flag
+(file route, what F8 would have done), schematic parity is clean. Extended parts
+(feeder fee each): U1, U2, U3, U4, R4, R11, F1/F2, L1, J1, J2, J3, SW1–4, D4, D6
+and C1 — 16 types. Re-check stock at the pre-order gate: SW1–4 (1 421), U1 (3 702),
+J3 (366 on 2026-08-22).

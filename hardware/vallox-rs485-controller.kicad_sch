@@ -5,13 +5,13 @@
 	(paper "A3")
 	(title_block
 		(title "Vallox RS-485 Controller")
-		(date "2026-08-22")
+		(date "2026-08-23")
 		(rev "A (draft)")
 		(company "Mironet")
 		(comment 1 "Replacement panel for Vallox DIGIT SE, bus-powered, ESP32-C3")
 		(comment 2 "github.com/Miroeilola/vallox-rs485-controller")
 		(comment 3 "Designer: Miro Eilola")
-		(comment 4 "Power stage provisional until measurements M1/M2a")
+		(comment 4 "Power stage confirmed by M1/M2a: 22.8 V unloaded, panel load 450 mA")
 	)
 	(lib_symbols
 	(symbol "Connector:Screw_Terminal_01x05"
@@ -5539,6 +5539,18 @@
 			(at 38.1 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Dorabo"
+			(at 38.1 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "DB128V-5.08-5P-GN-S"
+			(at 38.1 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C2927513"
+			(at 38.1 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5569,6 +5581,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 50.8 35.56 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "MDD"
+			(at 50.8 35.56 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "SS34"
+			(at 50.8 35.56 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C8678"
 			(at 50.8 35.56 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5605,6 +5629,18 @@
 			(at 58.42 43.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Nichicon"
+			(at 58.42 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "UCD1V221MNL1GS"
+			(at 58.42 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C136294"
+			(at 58.42 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5635,6 +5671,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 63.5 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 63.5 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL21A225KBQNNNE"
+			(at 63.5 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C377773"
 			(at 63.5 43.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5704,6 +5752,18 @@
 			(at 71.12 39.37 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 71.12 39.37 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1003T5E"
+			(at 71.12 39.37 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25803"
+			(at 71.12 39.37 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5734,6 +5794,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 71.12 49.53 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 71.12 49.53 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1502T5E"
+			(at 71.12 49.53 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C22809"
 			(at 71.12 49.53 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5770,6 +5842,18 @@
 			(at 93.98 40.64 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Texas Instruments"
+			(at 93.98 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "TPS54202DDCR"
+			(at 93.98 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C191884"
+			(at 93.98 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5800,6 +5884,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 109.22 33.02 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 109.22 33.02 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 109.22 33.02 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C14663"
 			(at 109.22 33.02 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5836,6 +5932,18 @@
 			(at 116.84 40.64 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Changjiang Microelectronics"
+			(at 116.84 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "FNR6045S220MT"
+			(at 116.84 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C168080"
+			(at 116.84 40.64 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5866,6 +5974,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 120.65 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 120.65 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1003T5E"
+			(at 120.65 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25803"
 			(at 120.65 43.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -5902,6 +6022,18 @@
 			(at 110.49 46.99 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 110.49 46.99 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1332T5E"
+			(at 110.49 46.99 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25952"
+			(at 110.49 46.99 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5935,6 +6067,18 @@
 			(at 129.54 44.45 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 129.54 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL21A226MAQNNNE"
+			(at 129.54 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C45783"
+			(at 129.54 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -5965,6 +6109,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 134.62 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 134.62 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL21A226MAQNNNE"
+			(at 134.62 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C45783"
 			(at 134.62 44.45 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6067,6 +6223,18 @@
 			(at 157.48 43.18 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Microne"
+			(at 157.48 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "ME6211C33M5G-N"
+			(at 157.48 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C82942"
+			(at 157.48 43.18 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6097,6 +6265,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 170.18 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 170.18 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL10A106KP8NNNC"
+			(at 170.18 44.45 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C19702"
 			(at 170.18 44.45 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6232,6 +6412,18 @@
 			(at 58.42 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "JK"
+			(at 58.42 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "JK-mSMD010-60"
+			(at 58.42 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C1884489"
+			(at 58.42 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6262,6 +6454,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 58.42 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "JK"
+			(at 58.42 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "JK-mSMD010-60"
+			(at 58.42 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C1884489"
 			(at 58.42 137.16 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6331,6 +6535,18 @@
 			(at 73.66 128.27 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "ProTek Devices"
+			(at 73.66 128.27 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "PSM712-LF-T7"
+			(at 73.66 128.27 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C32677"
+			(at 73.66 128.27 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6379,7 +6595,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "ed7b3f89-2efc-4042-9903-25859ee84bf3")
 		(property "Reference" "R5"
 			(at 86.36 119.38 0)
@@ -6394,6 +6610,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 86.36 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 86.36 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1200T5E"
+			(at 86.36 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C22787"
 			(at 86.36 123.19 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6445,7 +6673,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "3528baf8-736d-45dd-87ca-1f7ab7505235")
 		(property "Reference" "R6"
 			(at 93.98 111.76 0)
@@ -6460,6 +6688,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 93.98 115.57 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 93.98 115.57 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 93.98 115.57 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C21190"
 			(at 93.98 115.57 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6511,7 +6751,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "a2b7a332-d4fa-4576-a43b-e33d04543637")
 		(property "Reference" "R7"
 			(at 93.98 137.16 0)
@@ -6526,6 +6766,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 93.98 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 93.98 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 93.98 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C21190"
 			(at 93.98 140.97 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6560,6 +6812,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 116.84 132.08 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Texas Instruments"
+			(at 116.84 132.08 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "THVD1400DR"
+			(at 116.84 132.08 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C3235232"
 			(at 116.84 132.08 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6629,6 +6893,18 @@
 			(at 129.54 116.84 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "YAGEO"
+			(at 129.54 116.84 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 129.54 116.84 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C14663"
+			(at 129.54 116.84 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6692,6 +6968,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 139.7 135.89 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 139.7 135.89 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 139.7 135.89 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
 			(at 139.7 135.89 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6761,6 +7049,18 @@
 			(at 163.83 140.97 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 163.83 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 163.83 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
+			(at 163.83 140.97 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6824,6 +7124,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 297.18 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Espressif Systems"
+			(at 297.18 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "ESP32-C3-WROOM-02-N4"
+			(at 297.18 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C2934560"
 			(at 297.18 124.46 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -6893,6 +7205,18 @@
 			(at 292.1 92.71 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 292.1 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL10A106KP8NNNC"
+			(at 292.1 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C19702"
+			(at 292.1 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -6956,6 +7280,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 287.02 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 287.02 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 287.02 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C14663"
 			(at 287.02 92.71 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7058,6 +7394,18 @@
 			(at 279.4 92.71 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 279.4 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 279.4 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
+			(at 279.4 92.71 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7121,6 +7469,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 283.21 96.52 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 283.21 96.52 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL10A105KB8NNNC"
+			(at 283.21 96.52 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C15849"
 			(at 283.21 96.52 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7223,6 +7583,18 @@
 			(at 209.55 124.46 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 209.55 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 209.55 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C21190"
+			(at 209.55 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7253,6 +7625,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 201.93 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "XINGLIGHT"
+			(at 201.93 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "XL-1608SYGC-06"
+			(at 201.93 124.46 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C965805"
 			(at 201.93 124.46 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7319,6 +7703,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 247.65 113.03 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 247.65 113.03 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 247.65 113.03 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
 			(at 247.65 113.03 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7471,6 +7867,18 @@
 			(at 228.6 90.17 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 228.6 90.17 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 228.6 90.17 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
+			(at 228.6 90.17 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7501,6 +7909,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 269.24 97.79 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 269.24 97.79 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CL10A105KB8NNNC"
+			(at 269.24 97.79 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C15849"
 			(at 269.24 97.79 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7567,6 +7987,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 231.14 73.66 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 231.14 73.66 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "1206W4F270JT5E"
+			(at 231.14 73.66 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C17946"
 			(at 231.14 73.66 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7669,6 +8101,18 @@
 			(at 185.42 57.15 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 185.42 57.15 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 185.42 57.15 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
+			(at 185.42 57.15 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7732,6 +8176,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 213.36 64.77 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 213.36 64.77 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 213.36 64.77 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C14663"
 			(at 213.36 64.77 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7801,6 +8257,18 @@
 			(at 187.96 66.04 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "C&K"
+			(at 187.96 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 187.96 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C221880"
+			(at 187.96 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7831,6 +8299,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 193.04 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "C&K"
+			(at 193.04 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 193.04 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C221880"
 			(at 193.04 66.04 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7867,6 +8347,18 @@
 			(at 193.04 74.93 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 193.04 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1501T5E"
+			(at 193.04 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C22843"
+			(at 193.04 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7897,6 +8389,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 198.12 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "C&K"
+			(at 198.12 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 198.12 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C221880"
 			(at 198.12 66.04 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -7933,6 +8437,18 @@
 			(at 198.12 74.93 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 198.12 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF3301T5E"
+			(at 198.12 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C22978"
+			(at 198.12 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7966,6 +8482,18 @@
 			(at 203.2 66.04 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "C&K"
+			(at 203.2 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "PTS645SM43SMTR92LFS"
+			(at 203.2 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C221880"
+			(at 203.2 66.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -7996,6 +8524,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 203.2 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 203.2 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF6801T5E"
+			(at 203.2 74.93 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C23212"
 			(at 203.2 74.93 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -8098,6 +8638,18 @@
 			(at 265.43 137.16 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 265.43 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 265.43 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C21190"
+			(at 265.43 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8128,6 +8680,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 257.81 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Hongli Zhihui"
+			(at 257.81 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "KT-0603R"
+			(at 257.81 137.16 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C2286"
 			(at 257.81 137.16 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -8197,6 +8761,18 @@
 			(at 318.77 106.68 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 318.77 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1001T5E"
+			(at 318.77 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C21190"
+			(at 318.77 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8227,6 +8803,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 327.66 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "Nationstar"
+			(at 327.66 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "NCD0603Y1"
+			(at 327.66 106.68 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C84268"
 			(at 327.66 106.68 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -8296,6 +8884,18 @@
 			(at 318.77 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 318.77 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1000T5E"
+			(at 318.77 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C22775"
+			(at 318.77 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8326,6 +8926,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 327.66 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 327.66 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF1002T5E"
+			(at 327.66 123.19 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C25804"
 			(at 327.66 123.19 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -8395,6 +9007,18 @@
 			(at 340.36 119.38 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Alpha & Omega Semiconductor"
+			(at 340.36 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "AO3400A"
+			(at 340.36 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C20917"
+			(at 340.36 119.38 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8461,6 +9085,18 @@
 			(at 226.06 193.04 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "Korean Hroparts Elec"
+			(at 226.06 193.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "TYPE-C-31-M-12"
+			(at 226.06 193.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C165948"
+			(at 226.06 193.04 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8491,6 +9127,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 243.84 165.1 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "MDD"
+			(at 243.84 165.1 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "SS34"
+			(at 243.84 165.1 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C8678"
 			(at 243.84 165.1 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
@@ -8560,6 +9208,18 @@
 			(at 248.92 182.88 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 248.92 182.88 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF5101T5E"
+			(at 248.92 182.88 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C23186"
+			(at 248.92 182.88 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 		(instances
 			(project "vallox-rs485-controller"
 				(path "/ca3651fc-3cdd-4ea4-a1d8-ce55f0f94db0"
@@ -8590,6 +9250,18 @@
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 		(property "Datasheet" "~"
+			(at 248.92 187.96 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 248.92 187.96 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "MPN" "0603WAF5101T5E"
+			(at 248.92 187.96 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "LCSC" "C23186"
 			(at 248.92 187.96 0)
 			(effects (font (size 1.27 1.27)) (hide yes))
 		)
