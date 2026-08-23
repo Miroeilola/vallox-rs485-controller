@@ -2342,3 +2342,34 @@ Expected: `firmware`, `docs`, `simulator / Board GLB`, `simulator / WASM, site, 
 **Type consistency:** `sim_api.h` names ↔ `sim.js` `cwrap` names (35 exports, all present in both; the Makefile derives the export list from the header so a new export cannot be forgotten in the link step — it can only be forgotten in `sim.js`, where `cwrap` would throw at load); `hal_web_*` ↔ `sim.c`; `SIM_LOG_ENTRY_BYTES`/`HAL_WEB_LOG_ENTRY_BYTES` = 12 ↔ `sim.js` `log()` reads 12 bytes; `sim_leds()` bits ↔ `panel.js`/`scene.js` `bit` values ↔ `LEDS[].bit`; `sim_machine_flags()` bits ↔ `panel.js`; `window.__vallox` fields ↔ `smoke.spec.js`; DOM ids ↔ `panel.js`/`main.js`; `BUTTONS[].name` `SW1`… ↔ `scene.js` `getObjectByName`; `VITE_BASE` ↔ `vite.config.js`, `playwright.config.js`, `simulator.yml`.
 
 **Validated while writing (2026-08-23, Apple clang 21 + gcc-15 + emcc 6.0.8, Node 24 locally, three 0.185.1, vite 7.3.6, Playwright 1.62.1 with Chrome Headless Shell 151 on SwiftShader):** every file in this document was built and run from the scratchpad tree it was copied from: `make test-c` 98 checks, 0 failures (both compilers); `make wasm` 68.7 kB wasm; `make glb` 9.58 MB → 880 kB; `vite build`; the interim (Task 2) and final (Task 3) `smoke.spec.js` both `1 passed` (6 s and 13 s), also with `VITE_BASE=/vallox-rs485-controller/`; `make clean && make test` from a fresh `npm install` in 15 s; ¾ and front views screenshotted and inspected (dashboard right way up, fault banner, LEDs lit, buttons below the display). Two defects were found and fixed in that pass: `-sSTRICT` silently disabled `Module.locateFile` (Vite's hashed wasm URL 404'd to `index.html`; fixed with `-sINCOMING_MODULE_JS_API=locateFile`), and a 60 ms click at ~30 fps spanned one tick and never debounced (fixed with `HAL_WEB_MIN_HOLD_SAMPLES = 3`, tested). The CI workflow itself has not run anywhere yet — its first run is on the execution branch's PR; the action versions were read from the GitHub API on the day (`setup-emsdk` v14 with emsdk tag `6.0.8` exists; `upload-pages-artifact@v3`, `deploy-pages@v4`, `configure-pages@v5`, `download-artifact@v4` paired with the repo's `upload-artifact@v4`).
+
+## Corrections made during execution (2026-08-23)
+
+Recorded per the S1 convention, so the next plan learns from this one:
+
+1. **Makefile** — the plan's own Makefile block violated the plan's SPDX
+   constraint (no `#` header) and its `glb` recipe assumed `public/` exists,
+   which is false in a fresh clone. Fixed in Task 1 (`501f717`, `7035599`).
+2. **Button events** — the plan wired the keyboard's 3D sink through separate
+   listeners in `main.js`; a key held across a window blur released the model
+   (`Loop.releaseAll`) but left the scene's button sunk. Redesigned in the
+   Task 3 fix round: `Loop.onButton` hooks are the single source of
+   press/release, `scene._sink` is idempotent and absolute (`fc3f8c9`,
+   `72ba65f`), covered by a blur assertion in the smoke test.
+3. **Whole-branch review findings** (`72ba65f`): the FAULT LED plane never
+   received its off colour (`setLeds` early-out against the initial state —
+   the smoke test now asserts LED material colours at boot); an out-of-bounds
+   read in the clipping test; no-WebGL browsers lost the working 2D fallback;
+   `simulator/` missing from the licence and layout tables.
+4. **The smoke test measured wall-clock, CI measures frames** — on the
+   runner's SwiftShader (a few fps) fixed `waitForTimeout` calls merged the
+   three clicks into one press (the C host's minimum-hold "re-press during
+   pending release" path) and the camera was projected before its matrices
+   updated. Rewritten to wait on observable state (`fd33800`, `b63510c`);
+   `SMOKE_CPU_THROTTLE` reproduces a slow runner locally.
+5. **The `kicad/kicad:10.0` container has no packages3D library** — the first
+   deploy shipped a bare board; every footprint body was silently dropped
+   (`File not found` per model, exit 0). `tools/fetch-3d-models.py` now
+   fetches exactly the referenced models (tag 10.0.5) into a cached
+   `KICAD10_3DMODEL_DIR`, and the smoke test asserts the `SW1..SW4` nodes
+   exist in the loaded GLB — verified to fail on the bare export (PR #17).
