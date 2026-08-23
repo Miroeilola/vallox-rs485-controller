@@ -58,7 +58,7 @@ the same PR). `panel_host` renders any state to a PNG from the command line.
 
 ## Known gaps
 
-- Fault names exist for the six documented codes; others show `Fault N`.
+- Fault names exist for the six documented codes; others show `Code N`.
 - The acknowledge byte is matched by value within the 50 ms window; a
   broadcast byte equal to it would be mistaken for the ack (re-polled right
   after, so the shadow self-corrects).

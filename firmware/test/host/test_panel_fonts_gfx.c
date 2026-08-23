@@ -147,6 +147,25 @@ static void test_text_marks_one_dirty_rect_for_the_whole_string(void)
     CHECK_EQ(gfx_dirty_count(), 1);
 }
 
+static void test_text_dirty_rect_covers_a_glyph_drawn_left_of_the_pen(void)
+{
+    // 'j' has a negative xoff in every size: its first column is drawn one
+    // pixel left of the pen. The dirty rectangle's left edge must follow it,
+    // or that column never reaches the HAL.
+    hal_host_reset(); gfx_init(); gfx_flush();
+    const glyph_t *j = font_find_glyph(&font_inter_18, 'j');
+    CHECK(j->xoff < 0);
+    gfx_text(50, 50, &font_inter_18, 0xFFFF, "j");
+    gfx_flush();
+    int gy = 50 + font_inter_18.ascent - j->yoff;
+    int col = 50 + j->xoff;
+    CHECK_EQ(col, 49);
+    for (int r = 0; r < j->h; r++) {
+        int row = gy + r;
+        CHECK_EQ(hal_host_framebuffer()[row * HAL_DISPLAY_W + col], gfx_framebuffer()[row * HAL_DISPLAY_W + col]);
+    }
+}
+
 static void test_text_clips_at_the_right_edge_without_crashing(void)
 {
     hal_host_reset(); gfx_init(); gfx_flush();
@@ -204,6 +223,7 @@ int main(void)
     test_blend();
     test_text_draws_glyph_pixels_and_advances();
     test_text_marks_one_dirty_rect_for_the_whole_string();
+    test_text_dirty_rect_covers_a_glyph_drawn_left_of_the_pen();
     test_text_clips_at_the_right_edge_without_crashing();
     test_text_alignment_helpers();
     test_round_rect_corners_are_rounded();
