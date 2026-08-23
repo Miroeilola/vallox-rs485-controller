@@ -19,6 +19,8 @@ jobs:
         run: |
           cd firmware/test/host
           make test
+      - name: Check the emulator's register table against protocol.md
+        run: python3 scripts/check-machine-regs.py
       - name: Build the capture decoder
         run: |
           cd scripts/vlx-decode

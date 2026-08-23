@@ -35,6 +35,15 @@ first, then this model and the panel in the same PR.
 - The service (bit 7) and filter (bit 4) indicator bits of 0xA3 are never set; the month
   counter 0xAB decrements but the reminder indicator is not modelled.
 
+## Guard
+
+`scripts/check-machine-regs.py` (run by CI) cross-checks `vallox_machine_regs.h`
+against `docs/research/protocol.md`: writability per section, NTC-encoded
+registers in the degree table, and registers the document does not describe.
+It currently warns about 0x6C and 0x6E (flags 1 and 3): they are in
+`vallox_protocol.h` but protocol.md has no row for them, so the model answers
+them with 0 — a documented gap, not a claim.
+
 ## Using it
 
 ```c

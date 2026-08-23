@@ -25,7 +25,7 @@ static const vlx_machine_reg_t k_regs[] = {
     // measurements, read only
     { VLX_REG_IO_FAN_RELAYS,      false, 0x04, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_IO_MULTI_1,         false, 0x00, VLX_CONF_IMPLEMENTATIONS },
-    { VLX_REG_IO_MULTI_2,         false, 0x00, VLX_CONF_IMPLEMENTATIONS },
+    { VLX_REG_IO_MULTI_2,         true,  0x00, VLX_CONF_IMPLEMENTATIONS }, // bits 3 and 5 are R/W per protocol.md; written as a whole byte here
     { VLX_REG_RH_HIGHEST,         false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_CO2_HIGH,           false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_CO2_LOW,            false, 0x00, VLX_CONF_IMPLEMENTATIONS },
@@ -36,7 +36,6 @@ static const vlx_machine_reg_t k_regs[] = {
     { VLX_REG_FAULT,              false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_POST_HEAT_ON_CNT,   false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_POST_HEAT_OFF_CNT,  false, 0x00, VLX_CONF_IMPLEMENTATIONS },
-    { VLX_REG_POST_HEAT_TARGET,   false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     // flags
     { VLX_REG_FLAGS_1, false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_FLAGS_2, true,  0x00, VLX_CONF_IMPLEMENTATIONS },
@@ -44,7 +43,7 @@ static const vlx_machine_reg_t k_regs[] = {
     { VLX_REG_FLAGS_4, false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_FLAGS_5, false, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_FLAGS_6, true,  0x00, VLX_CONF_IMPLEMENTATIONS },
-    { VLX_REG_BOOST_MINUTES, true, 0x00, VLX_CONF_IMPLEMENTATIONS },
+    { VLX_REG_BOOST_MINUTES, false, 0x00, VLX_CONF_IMPLEMENTATIONS },   // read only per protocol.md (boost is started through 0x71 bit 5)
     // settings, writable
     { VLX_REG_STATUS,              true, (uint8_t)(VLX_STATUS_POWER | VLX_STATUS_WINTER_MODE), VLX_CONF_IMPLEMENTATIONS },   // power on, heat recovery on; CO2/RH control off (no sensors fitted)
     { VLX_REG_FAN_SPEED,           true, 0x07, VLX_CONF_IMPLEMENTATIONS }, // speed 3; protocol.md lists 0x29 read/write, and the write allow-list agrees
@@ -52,7 +51,7 @@ static const vlx_machine_reg_t k_regs[] = {
     { VLX_REG_SERVICE_INTERVAL,    true, 0x04, VLX_CONF_IMPLEMENTATIONS }, // months
     { VLX_REG_FAN_SPEED_DEFAULT,   true, 0x07, VLX_CONF_IMPLEMENTATIONS }, // 3
     { VLX_REG_PROGRAM,             true, 0x00, VLX_CONF_IMPLEMENTATIONS },
-    { VLX_REG_SERVICE_MONTHS_LEFT, true, 0x03, VLX_CONF_IMPLEMENTATIONS },
+    { VLX_REG_SERVICE_MONTHS_LEFT, false, 0x03, VLX_CONF_IMPLEMENTATIONS }, // read only per protocol.md; the physics counts it down
     { VLX_REG_RH_BASIC_LEVEL,      true, 0x00, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_DC_FAN_SUPPLY,       true, 0x64, VLX_CONF_IMPLEMENTATIONS }, // 100 %
     { VLX_REG_DC_FAN_EXHAUST,      true, 0x64, VLX_CONF_IMPLEMENTATIONS },
@@ -68,6 +67,7 @@ static const temp_reg_def_t k_temp_regs[] = {
     { VLX_REG_TEMP_EXHAUST,       false,  9, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_TEMP_EXTRACT,       false, 21, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_TEMP_SUPPLY,        false, 17, VLX_CONF_IMPLEMENTATIONS },
+    { VLX_REG_POST_HEAT_TARGET,   false, 18, VLX_CONF_IMPLEMENTATIONS }, // NTC-encoded per protocol.md; post-heating itself is not modelled
     { VLX_REG_HEAT_SETPOINT,      true,  18, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_PREHEAT_SETPOINT,   true,  -6, VLX_CONF_IMPLEMENTATIONS },
     { VLX_REG_BYPASS_SETPOINT,    true,  10, VLX_CONF_IMPLEMENTATIONS },
