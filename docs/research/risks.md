@@ -8,17 +8,22 @@ by how much damage the risk does if it lands, not by probability.
 **If true:** the project stops in its present form. A device that a user wires
 themselves cannot sit on a mains-referenced bus and also expose a network interface.
 
-**Evidence either way:** the manufacturer's own wiring diagram labels the supply
-transformer as having a protective-voltage winding, which says it is isolated. That
-reading comes from a low-resolution scan and is the weakest claim in
-[protocol.md](protocol.md) that matters.
+**Evidence either way:** four generations of Vallox wiring diagrams (Digit SE
+12/99, Digit2 SE 2008, 121 SE 2011, ValloPlus 350 SE 2015), read 2026-08-22 as the
+vector drawings they are, draw the panel supply as a separate 230 V / 16 VAC
+secondary and name it a protective-voltage winding; the 1999 guide for the LED-panel
+generation uses a physically separate control transformer. Every manual describes
+panel wiring as a user-level job. No community report of an earth-referenced
+adapter being damaged was found. What no document can show is a GND–PE bond on the
+mainboard (PELV), which is what the measurement is now for.
 
 **Way around:** measurement M1, before anything is connected. If it turns out to be
 mains-referenced, the honest outcome is to publish that finding — it is more useful
 to the community than a device would have been — and to redesign around a fully
 isolated front end with an external supply.
 
-**Status:** open, gating.
+**Status:** open as a check, no longer as a coin toss. Measurement M1 (voltage
+and, unplugged, resistance to PE) stays first.
 
 ## R2 — The 21 V rail cannot power a Wi-Fi radio
 
@@ -27,8 +32,12 @@ better than the existing breadboard solutions.
 
 **Why it is plausible:** the rail was specified to run a panel with an LCD and a
 keypad, plus up to five CO₂ sensors and two humidity sensors in the worst case. No
-document states its current limit. An ESP32-S3 transmitting draws a few hundred
-milliamps at 3.3 V in bursts.
+document states a current limit for the rail itself, but (2026-08-22) the control
+transformer is a 14 VA part and its secondary is fused T800 mA, shared with the
+mainboard, relays and damper motor — so the whole low-voltage side has well under
+0.65 A at 21 V to share. An ESP32 transmitting draws a few hundred milliamps at
+3.3 V in bursts, which is tens of milliamps at the rail; others have run exactly
+that from this pair alongside the factory panel for years.
 
 **Ways around, in order of preference:**
 
@@ -39,7 +48,11 @@ milliamps at 3.3 V in bursts.
 4. Accept an external supply. This is the outcome that makes the board ordinary, so
    it is last.
 
-**Status:** open, gating. Measurement M2.
+**Status:** closed for design purposes 2026-08-22 — M2a measured the factory
+panel at 450 mA continuous / 700 mA momentary, two to four times what this board
+needs at the rail ([report](../measurements/2026-08-22-panel-current.md)).
+Conditions still to be recorded; M2 (loading the rail beyond the panel) is no
+longer needed to decide whether the board can be bus-powered.
 
 ## R3 — Writing the wrong register damages the machine
 

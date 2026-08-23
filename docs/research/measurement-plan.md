@@ -53,15 +53,35 @@ depends on it — the register set, whether 0xB0/0xB1 exist, which address is fr
 | Terminal 5 (M) to protective earth, AC and DC | Same | As above |
 | Terminal 1 to terminal 2, machine idle | approx. 21 V DC, per the manual | Claim 2 vs claim 5 (24 V) |
 | Same, machine at fan speed 8, heating on | Sags by some amount | Lower end of the input range |
-| Same, factory panel disconnected | Rises by some amount | Upper end of the input range, no-load |
+| Same, factory panel disconnected | Rises by some amount | Upper end of the input range, no-load. **Done 2026-08-22: 22.8 V** ([report](../measurements/2026-08-22-rail-voltage-no-load.md)) — the buck stays |
 | Ripple on terminal 1–2, oscilloscope, AC coupled | Unknown | Whether the supply is regulated or a rectified transformer winding |
 | A and B to M, DC, bus idle | Inside −7…+12 V | Claim 4, and whether the bus is biased |
 | A–B differential, bus idle | Some hundreds of mV if biased, near 0 if not | Whether this board needs fail-safe biasing |
 
+| Terminal 2 and terminal 5 to protective earth, resistance, **machine unplugged** | Open circuit | SELV (floating) versus PELV (earthed on the mainboard). A voltage reading alone cannot tell them apart |
+
 **This step is the gate for everything else.** No further work happens until the
 first two rows are known.
 
+*Documentary support, 2026-08-22.* Four generations of Vallox wiring diagrams —
+Digit SE 12/99 (the LED-panel generation: a separate `M2 Muuntaja 230VAC/16VAC`,
+secondary fused T800 mA on the mainboard), Digit2 SE 2008, 121 SE 2011
+(`230VAC/16VAC`) and ValloPlus 350 SE 2015 (`Schutzspannungstransformator`) — all
+draw the panel supply as a separate secondary winding, and every manual describes
+panel wiring as a user-level job. The expected result of the first two rows is
+therefore "near 0 V", and the reading is a check on a documented design, not a
+coin toss. It is still taken first: a diagram cannot show an absent GND–PE bond.
+Sources in [sources.md](sources.md), the claim in [protocol.md](protocol.md) §3.
+
 ## M2a — What the original panel draws
+
+**Done 2026-08-22: 450 mA continuous, 700 mA momentary** —
+[report](../measurements/2026-08-22-panel-current.md). Instrument, range, machine
+state and the trigger of the peak are still to be recorded; the report says so.
+**Do next, in the same position:** the rail voltage with the panel disconnected
+(M1's no-load row) — with ~10 W removed from an unregulated secondary the rail
+rises, and the provisional buck's 28 V operating maximum is what that reading is
+measured against.
 
 *Multimeter in series with the + conductor. Two minutes. Do this before the panel
 comes off the wall, because afterwards it is not connected to anything.*
@@ -80,6 +100,16 @@ transmitting a single frame.
 
 **Result:** the demonstrated floor of the rail's capability, and with it the power
 budget in [user-interface.md](user-interface.md) stops being arithmetic.
+
+*What the documents already say, 2026-08-22.* The rail is an unregulated rectified
+16 VAC secondary of a **14 VA** control transformer (spare part 940130), fused
+**T800 mA** on the mainboard, and shared with the mainboard, its relays, the
+damper motor and every bus accessory Vallox allows (3 panels, 5 CO₂, 2 RH, LON).
+That is the designed ceiling for *everything*, not for one panel. On the other
+side, Creating Smart Home's readers and a Helios owner have run ESP8266/ESP32
+boards through a buck from this pair alongside the factory panel for years without
+a reported brown-out. The target board's 3.3 V budget sits inside that envelope;
+M2a still gives the number, and no document gives the panel's own draw.
 
 ## M2 — How much current can the rail give
 
@@ -120,8 +150,25 @@ Capture, with the factory panel connected and operating normally:
 Items 4 and 5 are what turn the capture into a specification. Every button on the
 panel maps to a register write, and this is the only chance to see which.
 
-**Verifies:** claims 1, 6, 7, 8, 9, 10, 11, 15, and which temperature register set
-this machine uses. From the oscilloscope trace: the bit period, the differential
+7. The panel disconnected for a few minutes with the machine running, then
+   reconnected, then a power cycle with the panel off: does the machine keep
+   running, show a fault, or stop — and does it *start* without a panel? One
+   forum voice says a unit with an SED panel "cannot be started at all" without
+   it. Observed in passing on 2026-08-22 while reading the no-load rail: the
+   machine appeared to keep running normally with the panel disconnected
+   ([report](../measurements/2026-08-22-rail-voltage-no-load.md)). The start
+   question is untouched. The replacement's installation procedure depends on
+   the answer.
+
+**Already public, 2026-08-22** (claims 22–25 in [protocol.md](protocol.md)): the
+panel's steady-state poll set `A3, 29, 35, A3, 71` every ≈ 5–6 s, the mainboard's
+≈ 12 s broadcast block to 0x20, and the manufacturer's 10 ms response window and
+send/acknowledge rule. Items 1 and 3 above therefore confirm; items 2, 4, 5 and 7,
+the acknowledge byte, and the undocumented `0x49–0x5C` broadcasts seen in one Digit
+SE capture are what nobody has published.
+
+**Verifies:** claims 1, 6, 7, 8, 9, 10, 11, 15, 22, 23, 24, 25, and which
+temperature register set this machine uses. From the oscilloscope trace: the bit period, the differential
 swing, the common-mode level, the rise time, and whether the idle state is properly
 biased.
 
