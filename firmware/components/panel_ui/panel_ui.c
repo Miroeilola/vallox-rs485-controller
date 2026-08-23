@@ -32,6 +32,7 @@ static frame_t *top(void) { return &s.stack[s.depth - 1]; }
 
 // ---- small helpers (no stdio in the core) -------------------------------------
 
+// Writes at most 12 characters plus the terminator; every caller's buffer is >= 16 bytes.
 static char *fmt_int(char *out, int v)
 {
     char tmp[12]; int n = 0; unsigned u = v < 0 ? (unsigned)(-v) : (unsigned)v;
@@ -90,6 +91,8 @@ static bool fault_active(uint32_t now, uint8_t *code)
 }
 
 // Localised fault name for a 0x36 code; writes into buf and returns it.
+// Code 0 means the status bit alone claims a fault but 0x36 was never seen
+// fresh with a real code — draw "--", not the misleading "Code 0".
 static const char *fault_text(uint8_t code, char *buf, size_t n)
 {
     text_key_t k;
@@ -100,7 +103,10 @@ static const char *fault_text(uint8_t code, char *buf, size_t n)
     case VLX_FAULT_EXTRACT_AIR_SENSOR: k = TXT_FAULT_EXTRACT_SENSOR; break;
     case VLX_FAULT_WATER_COIL_FROST:   k = TXT_FAULT_WATER_COIL_FROST; break;
     case VLX_FAULT_EXHAUST_AIR_SENSOR: k = TXT_FAULT_EXHAUST_SENSOR; break;
-    default: fmt_tpl(buf, n, text_get(TXT_FAULT_UNKNOWN), code); return buf;
+    default:
+        if (code == 0) return text_get(TXT_STALE);
+        fmt_tpl(buf, n, text_get(TXT_FAULT_UNKNOWN), code);
+        return buf;
     }
     buf[0] = '\0';
     str_cat(buf, n, text_get(k));

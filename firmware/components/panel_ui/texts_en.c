@@ -46,5 +46,5 @@ const char *const texts_en[TXT_COUNT] = {
     [TXT_FAULT_EXTRACT_SENSOR]   = "Extract air sensor",
     [TXT_FAULT_WATER_COIL_FROST] = "Water coil frost risk",
     [TXT_FAULT_EXHAUST_SENSOR]   = "Exhaust air sensor",
-    [TXT_FAULT_UNKNOWN]          = "Fault %d",
+    [TXT_FAULT_UNKNOWN]          = "Code %d",
 };

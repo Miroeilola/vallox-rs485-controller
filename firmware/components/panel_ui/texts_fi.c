@@ -46,5 +46,5 @@ const char *const texts_fi[TXT_COUNT] = {
     [TXT_FAULT_EXTRACT_SENSOR]   = "Poistoilma-anturi",
     [TXT_FAULT_WATER_COIL_FROST] = "Vesipatterin jäätymisvaara",
     [TXT_FAULT_EXHAUST_SENSOR]   = "Jäteilma-anturi",
-    [TXT_FAULT_UNKNOWN]          = "Vika %d",
+    [TXT_FAULT_UNKNOWN]          = "Koodi %d",
 };
