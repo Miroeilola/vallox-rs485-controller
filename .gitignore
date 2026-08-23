@@ -45,3 +45,5 @@ hardware/.kicad-mcp/
 hardware/.history/
 hardware/output/schematic-renders/
 hardware/output/netlist.net
+hardware/output/board-*.png
+hardware/output/board-*.svg

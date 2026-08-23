@@ -69,3 +69,263 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
   display shifted to IO0–IO3 and LED_PWR to IO5. The EN capacitor C13 now shares
   C11's ground point so that the RST capacitor C9 has room. Netlist re-checked
   pin by pin after the change.
+
+### 2026-08-22 — Rev A placement, first pass (no routing)
+
+- **Baseline.** Empty board file (59 bytes, 0 footprints). ERC unchanged from the
+  schematic session: 0 errors, 1 cosmetic warning. DRC: nothing to check.
+- **Changes.** The board was populated from the schematic netlist with KiCad's
+  bundled `pcbnew` Python (KiCad closed), not with the GUI *Update PCB from
+  Schematic*: the MCP server had no `pcb_write` tools this session (KiCad was not
+  open when it started, so IPC never came up) and the one MCP tool that does a
+  file-based transfer is the one the workspace rules forbid. Every footprint
+  carries its schematic symbol UUID as `path`, so a later F8 in the GUI should
+  reconcile to *no changes* beyond field text — that check is still to be run.
+  Outline 104 × 66 mm, 2 mm corner radius, four Ø3.2 mm NPTH at (3.5, 3.5),
+  (3.5, 62.5), (100.5, 62.5) and (70, 3.5). All 60 schematic parts placed on the
+  top side (single-sided assembly), 4 mounting holes added (H1–H4, no symbol).
+  Floor plan, left to right: display glass reserve 51.8 × 36.2 mm at
+  (8, 8)–(59.8, 44.2) with the four buttons centred under it (x = 14.5/27.5/40.5/
+  53.5, y = 52, 13 mm pitch, symmetric about the glass centre x = 33.9); the three
+  LEDs in a column right of the glass (x = 63.8, y = 10/14/18, PWR–BUS–FAULT);
+  J3 FPC connector at (67, 26.1) with its FPC entry facing the glass (lip at
+  x = 62.6, 2.8 mm from the glass edge); ESP32 module at (92, 7.1), antenna over
+  the top edge; USB-C flush with the right edge at y = 26; the 5-pole terminal at
+  the right edge with the wire-entry face flush with the edge (pins at x = 99.4,
+  y = 35.2…55.5, order from the top M B A − +); RS-485 front end between the
+  terminal and the module (fuses 3.5 mm from pins A/B, TVS next to pin M = GND);
+  buck in the bottom-right corner (input cap C2 pads 2.5 mm from U2 VIN/GND,
+  inductor pad 5.6 mm from the SW pin, bulk C1 beside them, D1 8 mm from J1 +).
+  Silkscreen: button legends, LED names, terminal pin names, board name, rev,
+  mironet.fi and the repo URL. Reference designators were auto-placed by a script
+  (0.8 mm, avoids pads, other courtyards, texts and the edge; rotated where a
+  column is dense) — 57/57 resolved, 47 without touching any courtyard.
+- **Measured.** Antenna placement follows the Espressif hardware design guide
+  (*Positioning a module on a base board*): the 6 mm antenna area hangs over the
+  board edge, feed point at the edge, the footprint's keep-out polygon lies
+  entirely off-board; the guide's 15 mm metal clearance is an enclosure input and
+  is written on Cmts.User next to the module. Nearest metal on the board: the
+  USB-C shell at ≥ 20 mm, the top-right mounting hole at (70, 3.5) is 13 mm from
+  the module body — use a plastic screw there if in doubt. Module thermal vias
+  changed on the board instance from Ø0.2 mm drill (library) to Ø0.3 mm drill /
+  Ø0.6 mm pad because the project rules set min hole 0.3 mm; hole-to-hole
+  0.48 mm, pad-to-pad 0.18 mm within the same GND paddle.
+- **Did not work.**
+  - `pcbnew.BOARD.GetDrawings()` is not iterable in KiCad 10.0.2's Python when the
+    board has content; the builder therefore always starts from the empty file.
+  - `PCB_TEXT.GetBoundingBox()` does not follow `SetTextAngleDegrees(90)` for
+    footprint reference fields in this binding — the reference placer computes
+    rotated boxes itself.
+  - The MCP placement gate FAILs on heuristics that do not hold here: it treats
+    U1's off-board antenna keep-out and J1/J2's edge-flush courtyards as "outside
+    board" and "overlap", measures decoupling distance to the module *centre*
+    (C10 is 3.0 mm from pin 1, 12.7 mm from the centre) and flags J3/JP1 for not
+    being at an edge. `kicad-cli pcb drc` is the authority, as the rules say.
+- **Result.** `kicad-cli pcb drc --severity-all --schematic-parity`: 0 errors,
+  7 warnings — 6 × `silk_edge_clearance` on U1/J1/J2 whose library silkscreen
+  crosses the edge by design, 1 × `lib_footprint_mismatch` on U1 (the thermal-via
+  change above); schematic parity: 0 mismatches, 4 extra footprints (H1–H4,
+  intentional); 138 unconnected items (not routed). The parity run caught two
+  things the first build got wrong: footprints written without their library
+  nickname (`CP_Elec_8x10.5` instead of `Capacitor_SMD:CP_Elec_8x10.5`) — every
+  part was reported as mismatched until the FPID was set — and TP1/TP2/JP1,
+  whose library footprints are *excluded from BOM* while the schematic symbols
+  were not; the symbols were set `in_bom no` (the right answer for test points and
+  a solder jumper) and ERC is unchanged at 0 errors, 1 cosmetic warning. Render and top-view SVG read
+  by eye: floor plan as intended. **CI will be red on this branch** until the
+  board is routed — the workflow's DRC step uses `--exit-code-violations`, which
+  returns 5 for unconnected items as well (verified locally).
+- **Open.**
+  - Display tail, **checked against the HSD outline drawing the same day**
+    (LCSC C5329582 datasheet, sheet "MODULE OUTLINE DIMENSION"): it does leave the
+    short edge, centred (contact 1 edge 15.28 ± 0.5 from the glass side, 12 × 0.5
+    mm), 20.7 ± 0.5 mm long, flat between glass and backlight. So J3's position
+    holds, but a 20.7 mm tail does not go straight into a connector 2.8 mm from
+    the glass — it bends, and a fold flips the contact side. Contact side is the
+    open question: the drawing reads as viewer-side contacts (stiffener in the
+    back view), which with a bottom-contact FH12 means the tail folds over the
+    connector and J3 turns 180° (entry away from the glass, ~8 mm out); if the
+    contacts are on the back, the present orientation is right. Confirm from HSD
+    or a sample before ordering. Own 3D model and a mechanical footprint are in
+    mironet-hw-lib (PR #3, `LCD_2.0in_HSD_HS20HS072RX`); bump the submodule and
+    place `DS1` on the reserved area once merged.
+  - Run F8 in the GUI once (Update PCB from Schematic, *delete footprints with no
+    symbols* OFF) and confirm it reports no footprint add/remove.
+  - Routing; then GND pour both sides with stitching, and the 15 mm antenna
+    clearance into the enclosure brief.
+  - Module overhang means the panel needs a gap or cutout beside U1 — say so in
+    the PCBWay remarks.
+  - Logo (`mironet-mark-mono.svg`) not yet on the silkscreen; GUI image import.
+
+### 2026-08-22 — DS1 display glass placed, LEDs moved off the tail path
+
+- **Baseline.** Previous entry: DRC 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** `mironet-hw-lib` bumped to f3ddcca (own HS20HS072RX model and the
+  pad-less footprint `LCD_2.0in_HSD_HS20HS072RX_FPC-12P-0.5mm`). `DS1` placed at
+  (33.9, 26.1) rot 90 — exactly the reserved glass area, which is now a footprint
+  instead of a Dwgs.User rectangle; the COG ledge and tail face J3. The first
+  render showed the tail root (20.6 mm wide for the first ~10 mm from the glass
+  edge, at z ≈ 1.2 mm) running over x 59.8–69.6, y 15.8–36.4 — straight across the
+  FAULT LED and its legend. LED column moved up to y = 7.8 / 10.8 / 13.8 (D4/D6/D5,
+  resistors and legends with them) and H4 from (70, 3.5) to (66, 3.5) to make room;
+  D5's courtyard now ends 1.2 mm above the tail root's nominal edge (tail position
+  ±0.5 mm).
+- **Measured.** Glass 51.8 × 36.2 on the board at x 8–59.8, y 8–44.2; tail end at
+  x 80.5 in the straight-tail model, i.e. over J3 and R10/C9/R21 — it is the
+  unfolded pose; the real tail bends into J3 (see the contact-side note above).
+- **Did not work.** The library's 3D-model path convention (`${KIPRJMOD}/lib/…`) did
+  not resolve in this project layout (KiCad project in `hardware/`, submodule at
+  the repo root): the first render had no display and no error. The scratch test
+  in the library had the library symlinked beside the project file and could not
+  catch it. Fixed in the library (now `${KIPRJMOD}/../lib/…`, PR #4) and in DS1's
+  instance on this board.
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (unchanged set), parity clean + 4 holes (DS1 is board-only and exempt),
+  138 unconnected. Render read: display, tail path, LEDs clear.
+- **Open.** Tail contact side (decides J3's orientation); whether the tail is
+  folded over J3 or straight in; the straight-tail model overlaps J3's courtyard
+  region on purpose — KiCad did not flag a courtyard overlap between DS1's tail
+  courtyard and J3, worth understanding before relying on that check.
+
+### 2026-08-22 — Tail fold modelled, J3 turned 180°
+
+- **Baseline.** Previous entry: 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** DS1 replaced by the `_TailFolded` footprint variant (same position,
+  lib c4b5665). J3 from rot 270 at (67, 26.1) to rot 90 at (64.9, 25.92): entry
+  face 9.5 mm from the glass edge, pin 1 at (63.05, 28.67) = model contact 1.
+  R10/C9/R21 column from x 73.5 to 75.5 (beside the loop, not under it). Comment
+  text updated. A silk pin-1 mark of the folded footprint landed on Q1's pad on
+  the first pass; removed from the library variant (lib PR #6) rather than by
+  moving Q1 — in the folded pose the mark is under the loop anyway.
+- **Measured.** Loop outer extent 12.3 mm from the glass edge (x = 72.1), top of
+  loop z ≈ 1.7 mm, return run at z ≈ 0.45 into J3; J3 body x 61.85–69.85, 1.5 mm
+  tall under the tail root at z ≈ 1.2–1.65 (root modelled rising to clear it).
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (same set as before), parity clean + 4 holes, 138 unconnected. Render
+  read: tail loops over J3 and enters from the right, LEDs clear.
+- **Open.** Confirm the FH12 FPC insertion height against the 0.45 mm return-run
+  height in the model before trusting the loop clearance; routing.
+
+### 2026-08-22 — Straight tail: J3 → FH12A facing the glass, schematic J3 mirrored
+
+- **Baseline.** Previous entry: 0 errors / 7 warnings, parity clean + 4 holes.
+- **Changes.** Schematic: J3 symbol mirrored (`mirror x`, at 93.98 → 91.44 so the
+  pins land on the existing wires), value FH12A-12S-0.5SH(55), Manufacturer/MPN/
+  LCSC/Description fields added, a note text beside it. ERC unchanged (0 errors,
+  1 cosmetic), 47 nets, the NC flag now on J3 pin 6 (= display pin 7). Board:
+  J3 at (72.3, 25.92) rot 270 (entry face at x 76.7 = 16.9 mm from the glass
+  edge), pad nets re-synced from the new netlist (R11.2 renamed net), J3 value
+  and fields; DS1 back to the straight-tail footprint (lib 308db04, silk marks
+  removed from both variants); Q1 → (73.5, 33.9), R11 → (73.5, 37.2),
+  R10/C9/R21 → x 78.5. Comment text updated.
+- **Measured.** J3 pad 12 (y 28.67) GND ↔ tail contact 1 (28.67); pad 11 (28.17)
+  TFT_CS ↔ contact 2 (28.17); pad 2 (23.67) TFT_LED_K ↔ contact 11 (23.67); pad 1
+  (23.17) GND ↔ contact 12. Tail path: root x 59.8–69.6 / y 15.8–36.4, tongue
+  x 69.6–76.7 / y 22.7–29.2; the model's free tail extends to x 80.5 (it is the
+  as-delivered tail, the real one ends inside J3 at x ≈ 72.9).
+- **Did not work.** pcbnew Python: in one script the PAD wrappers came back as
+  raw swig objects after a footprint Remove/Add in the same run (`Pads()` not
+  iterable, `FindPadByNumber` without `SetNet`) — split into two runs, one for
+  nets and moves, one for the footprint swap. `FOOTPRINT.GetFieldByName` does
+  not exist in 10.0.2; `SetField` + `GetFields()` works.
+- **Result.** kicad-cli DRC `--severity-all --schematic-parity`: 0 errors, 7
+  warnings (6 × silk_edge_clearance on U1/J1/J2, 1 × lib_footprint_mismatch on
+  U1), parity clean + 4 holes, 138 unconnected. Render read: tail straight from
+  the glass into J3, LEDs clear.
+- **Open.** FH12A "No. 1" side vs footprint pad 1 (silk mark correctness);
+  ohmmeter check of the mirror on a sample before powering the backlight; routing.
+
+### 2026-08-22 — Correction: J3 entry face really at 16.9 mm
+
+- **Did not work.** The previous entry placed J3 at (72.3, 25.92) rot 270 and claimed
+  an entry face 16.9 mm from the glass. Wrong: at rot 270 the insertion side points
+  toward −x, so the face sat at x 67.9 — 8.1 mm from the glass — and the 20.7 mm
+  tail had nowhere to go; Miro's render showed the tail running past the connector.
+  Lesson: after any connector rotation, read the entry-face coordinate back from
+  the courtyard, not from the intended number.
+- **Changes.** J3 → (81.1, 25.92) rot 270: courtyard x 76.16–84.14, entry face at
+  x 76.7 (16.9 mm from the glass edge), pads at x 82.95; the tail tip (x 80.5)
+  now ends inside the connector body. R10/C9/R21/R12 → column x 86.0 (y 21.3 /
+  23.5 / 25.7 / 27.9), R13 → (89.2, 27.9). Comment text corrected.
+- **Result.** DRC 0 errors, 8 warnings (the 7 known + 1 silk_overlap of two
+  reference texts in the relocated column, cosmetic), parity clean + 4 holes,
+  138 unconnected. Render read: tail straight from the glass into J3.
+
+### 2026-08-23 — Rev A routed: power, RS-485 and USB by hand, the 24 signal nets by Freerouting
+
+- **Baseline.** Placement entry: DRC 0 errors / 8 warnings, 138 unconnected.
+- **Method.** Three passes. (1) Power stage, 3V3 trunk and GND pour by hand as a
+  file route (`hardware/routing/build_routes.py` → `routes.json`, applied with the
+  workspace `scripts/kicad-pcb-route.py`, KiCad closed): 21 V input, buck hot loop
+  (SW over the top of C2, BOOT, EN/FB dividers with R1/R3 turned 180°), 5 V to the
+  LDO / backlight / USB OR-diode with two short B.Cu jumpers, 3V3 trunk west of J3
+  then x 78.6 in the MCU cluster, GND pour F+B with 38 stitch vias. (2) RS-485
+  front end and USB-C by hand, JP1 turned 180°. (3) The remaining 24 signal nets
+  (display SPI, UART to the transceiver, buttons, LEDs, EN/BOOT, backlight) by
+  **Freerouting 2.3.0**: DSN exported from a copy with zones and tracks removed
+  (`routing/bare.dsn`), session `routing/board3.ses` routed with the hand routes
+  present as fixed obstacles, and only those 24 nets' tracks and vias copied onto
+  the hand-routed board (pcbnew Python). Freerouting's 0.15 mm neck-downs widened
+  to the 0.20 mm minimum before DRC.
+- **Measured.** kicad-cli DRC `--severity-all --schematic-parity`: **0 errors, 8
+  warnings (the baseline set), 0 unconnected**, parity clean + 4 holes. Tracks
+  ≈ 500, vias ≈ 83. Render read: hand-routed corner as designed; autorouted signal
+  tracks are diagonal and pass under the module's pin field and along the right
+  margin — legal, not pretty.
+- **Did not work.** Freerouting does not recognise T-junctions in pre-routed
+  copper as connected, so a DSN with the hand routes reports them "unrouted", and
+  importing the resulting SES back loses vias (55 unconnected). The working
+  hybrid is to import the session into a scratch copy and copy only the new nets'
+  items. A session from a bare board merged blind onto the hand routing gave ~70
+  crossings (it never saw the obstacles). Fully autorouted board (`cand`) was DRC
+  clean but discarded the hot-loop design — not taken.
+- **Open.** Hand review of the autorouted nets: tracks under U1's pin field on
+  F.Cu (keep or pull to B.Cu), B.Cu view not yet inspected; silkscreen tidy
+  (R13/R21 refs overlap, J1/U1/J2 edge clips are the placement's); GUI F8 pass
+  once; "provisional" mark off the title block; GUI-DRC before ordering.
+  `routes.json` covers passes 1–2 only — the board file is the source of truth.
+
+### 2026-08-23 — Review of the autorouted nets, sourcing fields, J1 drill, silk tidy
+
+- **Baseline.** Routed board: DRC 0 errors / 8 warnings (6 × silk_edge_clearance
+  on U1/J1/J2, 1 × lib_footprint_mismatch U1, 1 × silk_overlap R13/R21 refs),
+  0 unconnected, parity clean + 4 holes. Live GUI board = file (460 tracks,
+  83 vias, 65 footprints). ERC 0 errors / 1 cosmetic.
+- **Review of the Freerouting nets, by eye** (F.Cu and B.Cu exported with the
+  zones unfilled, MCU cluster at 50 px/mm). F.Cu: three signal tracks cross under
+  U1's body between the pin rows and the GND paddle, plus one long diagonal from
+  the module's right-hand column down to the USB corner; none enters the antenna
+  area (off-board) and DRC clearance holds. B.Cu: a three-track bundle runs along
+  the top edge at 1.3–3 mm under the western part of the module and under
+  C10/C11, cutting the B.Cu pour there; the decoupling return for C10/C11 is on
+  F.Cu to the adjacent module GND pins, so it was left. Legal, not pretty —
+  recorded, not reworked for rev A.
+- **Changes.** Schematic: Manufacturer/MPN/LCSC on all 56 lines that lacked them
+  (new workspace script `kicad-sch-set-fields.py` from `docs/parts-revA.csv`),
+  `dnp yes` on R5/R6/R7, title block comment 4 "Power stage confirmed by M1/M2a",
+  date 2026-08-23. Board (file route, KiCad closed): J1 pads drill 1.3 → 1.6 mm
+  (DB128V pin, see decisions); R13 reference from above the part (overlapping
+  R21's) to below it at (89.2, 29.6); D3 reference from (89.5, 29.7) to the left
+  of the diode at (84.9, 33.2) so R13's could take its place; footprint fields and
+  DNP synced from the same CSV (so F8 has nothing left to change but confirm);
+  title block comment 4 "Routed rev A …", date 2026-08-23.
+- **Measured.** J1: pin 0.80 × 1.00 mm → diagonal 1.28 mm; old drill 1.3, new 1.6
+  (datasheet value), annular ring 0.5 mm. D3 ref first try at (85.5, 32.4) hit
+  D3's own silk outline; (84.9, 33.2) is clear of J3's courtyard (ends at
+  y 32.025) and of the diode silk.
+- **Did not work.** MCP `lib_search_components` cannot parse value queries
+  ("10k 0603" matched 510 kΩ; "10kΩ" returned nothing) — the jlcsearch JSON
+  endpoint (`/resistors/list?resistance=…&package=…&json=true`, with a
+  User-Agent header) answers correctly. MCP `lib_get_component_details` reported
+  C25804 as stock 0 / not Basic while the same source's list shows 37 M / Basic.
+  The MCP LED list caps at 100 rows and its colour filter returns nothing.
+- **Result.** `kicad-cli pcb drc --severity-all --schematic-parity`: 0 errors,
+  8 warnings — 6 × silk_edge_clearance, 2 × lib_footprint_mismatch (U1 known, J1
+  new and intentional), silk_overlap gone; 0 unconnected; parity clean + 4 holes.
+  ERC unchanged 0 / 1, 47 nets, same four single-node nets. BOM export: 57/57
+  lines with MPN and LCSC, DNP attribute on R5–R7. Top view read: refs clear.
+- **Open.** GUI F8 once (expect: no changes); GUI DRC with the project's
+  `.kicad_dru`; stock re-check at order (SW1–4, U1, J3); LED brightness at
+  bring-up; J1 silkscreen still draws the MKDS outline (0.4 mm narrower than the
+  DB128V body) — cosmetic; the display-tail ohmmeter check before backlight power;
+  `hardware/routing/routes.json` still covers passes 1–2 only.

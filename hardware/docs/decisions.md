@@ -878,3 +878,221 @@ J1 and U4 are mirrored (`mirror y`) so that field wiring enters from the left
 and bus pins face the terminal. The MCP's pin-position tool reports rotation 90
 mirrored relative to KiCad; the netlist, not the tool, is what was checked.
 Details in `layout-notes.md`.
+
+---
+
+### 2026-08-22 — Board floor plan: UI left, I/O right, antenna over the top edge
+
+**Context.** Placement had to start before the enclosure exists (Miro's order:
+parts → layout → enclosure), so the board itself fixes what the enclosure must
+respect: wire entry, display position, button row, antenna clearance.
+
+**Options.** Antenna flush with the edge on a copper-free area, or over the edge
+as Espressif prefers; terminal block on the bottom edge under the buttons or on
+the right edge; display glass resting on the board or held only by the front
+panel.
+
+**Decision.** 104 × 66 mm, single-sided assembly. Display glass area reserved on
+the top side (component-free, the glass may rest on the board), four buttons
+centred under it, LEDs beside it, FPC connector on the glass's short edge. The
+module sits top-right with its antenna 6 mm over the top edge. Terminal block and
+USB-C on the right edge, wire entry and plug from the right. Buck in the
+bottom-right corner, RS-485 front end between terminal and module.
+
+**Reasoning.** The Espressif hardware design guide marks the over-the-edge
+antenna as the strongly recommended position and asks for ≥ 15 mm to metal in
+the housing; putting the module in a corner with the display on the far side
+keeps the glass's metal frame and every connector ≥ 20 mm away. One edge for all
+field wiring keeps the enclosure's cable path to one wall and leaves the front
+free for the user interface only. Single-sided assembly is the cheaper PCBWay
+order and the board has the area for it; the original panel was 90 × 110 mm, so
+104 × 66 mm is no regression in size.
+
+**Consequences.** The enclosure brief inherits: display window centred on
+(33.9, 26.1) from the board's top-left corner, button centres at y = 52, LED
+column at x = 63.8, cable entry on the right wall, ≥ 15 mm of non-metal around
+the antenna above the top edge, and a panel gap beside U1 for assembly. If the
+display tail turns out to exit another edge, J3 moves and nothing else does.
+
+---
+
+### 2026-08-22 — Display tail contacts face the viewer: tail folds over J3, J3 entry faces away from the glass
+
+**Context.** The FH12-12S-0.5SH is bottom-contact. Which face of the HS20HS072RX
+tail carries the contacts decides whether the tail goes straight into a connector
+facing the glass or folds over a connector facing away from it. The drawing
+suggested the viewer side; a third-party model said the back.
+
+**Evidence.** LCSC's two part photographs (C5329582 front and back): the front
+photo shows the gold contact fingers and the LED test pads on the viewer-side
+face of the tail; the back photo shows a black stiffener at the same spot and no
+metal. Two independent photos agree with the drawing's front view.
+
+**Decision.** Contacts face the viewer. The tail leaves the glass over J3, rises
+over the connector body, folds 180° and enters J3 from the side away from the
+glass. J3 is therefore rotated 180° from the first placement: insertion face
+toward +x, 9.5 mm from the glass edge (pads at x = 63.05, centre y = 25.92 so that
+connector pin 1 meets tail contact 1 at y = 28.67). Fold arithmetic: tail 20.7,
+insertion 3.8, bend radius 0.6 → fold axis 12.26 mm from the glass edge; entry
+distances between 8.2 and 10.8 mm keep the fold in the tongue and clear of the
+connector. Both poses are modelled in mironet-hw-lib; the board carries the
+`_TailFolded` variant so the enclosure fit check sees the loop (outer extent
+12.3 mm from the glass edge, top of the loop at z ≈ 1.7 mm).
+
+**Consequences.** Nothing may stand taller than about 1.2 mm under the tail
+root between the glass and J3, and the R10/C9/R21 column moved 2 mm right to sit
+beside the loop rather than under it. The straight-pose footprint stays in the
+library for incoming inspection; it is not what goes on a board with an FH12.
+
+---
+
+### 2026-08-22 — Straight tail into a top-contact FH12A; J3 mirrored in the schematic
+
+**Supersedes the fold decision above.** The fold works, but with the FH12's 2.0 mm
+body the loop rises above the glass plane and every unit needs a manual fold.
+Miro's call: run the tail straight and move the connector east; the glass stays.
+
+**Evidence.** Hirose FH12 catalogue p. 10: one land/metal-mask table serves both the
+bottom-contact FH12 and the top-contact FH12A (12 P: A 5.5, B 11.1, C 7.5), so
+KiCad's `Hirose_FH12-12S-0.5SH` footprint and model serve the FH12A unchanged.
+JLCPCB C596811 FH12A-12S-0.5SH(55), $1.65, 366 in stock (FH12 was $0.44).
+Hirose's FPC spec for the family (0.3 ± 0.03 thick at the contacts, stiffener
+≥ 0.188, 3.5 mm contacts, 6.5 mm wide for 12 P) matches the HS20HS072RX tail.
+
+**Decision.** J3 = FH12A-12S-0.5SH(55), entry face toward the glass, 16.9 mm from
+the glass edge (footprint at (72.3, 25.92) rot 270, pads at x 74.15), tail
+straight with its contacts up. DS1 carries the straight-tail model.
+
+**Pin order — decided by coordinates, not by numbering.** Tail contact 1 (15.28 mm
+from the glass left edge in the portrait front view) sits at board y 28.67 and
+contact 12 at 23.17 (DS1 rot 90). Facing the glass, the footprint's pad 1 is at
+y 23.17 and pad 12 at 28.67. A straight insertion therefore puts tail contact k
+on pad 13−k; the earlier fold restored k↔k because the fold flips the tail. The
+schematic J3 symbol is mirrored (`mirror x`, moved 2.54 mm so every wire meets
+the pin that now sits where the old one was): J3 pin 1 = display 12 (GND), 2 =
+LEDK, 3 = LEDA, 4 = VCC, 5 = IOVCC, 6 = NC, 7 = RST, 8 = MOSI, 9 = SCK, 10 = DC,
+11 = CS, 12 = GND. Verified from the netlist pin-by-pin and by coordinates on the
+board: pad 11 (y 28.17) carries TFT_CS and meets contact 2 (CS) at y 28.17.
+
+**Consequences.** +$1.21 per board on the connector, stock 366 to re-check at the
+pre-order gate (Hirose is also at Digi-Key/Mouser/Farnell). The tail lies at
+z ≈ 1.2 → 0.5 mm over x 60–77, y 23–29 (root 20.6 wide over x 60–70): nothing
+taller than ~0.8 mm there — R10/C9/R21 moved to x 78.5, Q1 and R11 down. A wrong
+mirror would put 5 V (LEDA) on the display's RS pin, so the mapping is re-checked
+against a sample with an ohmmeter before the backlight is powered. Verify
+FH12A's "No. 1" marking against the FH12 footprint's pad 1 on the Hirose drawing
+before ordering — the mirror above does not depend on it, but the silkscreen
+pin-1 mark on the board should match the part.
+
+---
+
+### 2026-08-22 — Power stage no longer provisional: TPS54202 stays, rail measured
+
+**Context.** The buck, bulk capacitor and EN divider were drawn provisionally on
+2026-08-22 pending M1/M2a, with the stated trigger "TPS54202 → MP2459 if the rail
+is unregulated or exceeds ~24 V unloaded".
+
+**Evidence.** M2a: the factory panel draws 450 mA continuous, 700 mA momentary at
+~22 V (`docs/measurements/2026-08-22-panel-current.md`). M1 no-load row: 22.8 V
+with the panel disconnected (`docs/measurements/2026-08-22-rail-voltage-no-load.md`).
+Instrument and mains voltage not yet recorded; the margins below do not depend
+on them.
+
+**Decision.** TPS54202 stays; 22 µH, 100k/13.3k feedback, 100k/15k EN divider
+unchanged. The 5 V intermediate rail with the ME6211 LDO stays: the board's 3.3 V
+load is unchanged and the rail-side budget (0.1–0.2 A against a demonstrated
+0.45–0.7 A) is no longer a constraint. Bulk 220 µF stays as calculated; the rail
+is stiff enough that it is now sized for the Wi-Fi burst, not for the source.
+
+**Reasoning.** 22.8 V unloaded × 1.10 for mains at +10 % ≈ 25 V, 3 V under the
+28 V operating maximum (SLVSDJ8 §6.3) and the EN divider then sits at 3.3 V
+against a 7 V absolute maximum. The rail rose only 0.8 V when ~10 W came off it,
+so it is not the soft 14 VA winding the documents describe — which is recorded in
+the research notes, not resolved, and not needed.
+
+**Consequences.** The "provisional" mark comes off the title block at the next
+schematic edit. Routing of the power corner is unblocked. Still open before
+ordering: full-load rail reading (fan 8, heating) for the lower end of the input
+range, and the instrument name for the datasheet.
+
+---
+
+### 2026-08-23 — Signal nets autorouted with Freerouting, power routed by hand
+
+**Context.** After the power stage, RS-485 front end and USB-C were routed by
+hand (file route, coordinates from the board), 44 connections in the MCU cluster
+and display fan-out remained. Blind coordinate routing there was slow and kept
+colliding with the 3V3 trunk and the 0.5 mm-pitch fan-outs.
+
+**Decision.** Keep the hand routing for everything that carries current or
+EMC intent (buck hot loop, 5 V, 3V3 trunk, RS-485 pair, USB), and let
+Freerouting route the remaining 24 low-speed signal nets with the hand copper
+as fixed obstacles. Merge only those nets' tracks and vias.
+
+**Reasoning.** The signal nets are 9600-baud UART, SPI to a display, buttons and
+LEDs: topology does not matter, clearance and connectivity do, and kicad-cli DRC
+is the authority on both. Routing them by hand would have cost hours for no
+electrical benefit. The power corner is where the routing is a design choice, and
+it stays hand-made and documented.
+
+**Consequences.** Java (OpenJDK via Homebrew) and `freerouting.jar` join the
+toolchain; the method lives in the workspace. Autorouted tracks run under the
+module's pin field and along the right margin — legal by DRC, to be reviewed by
+eye before ordering. `routes.json` is no longer the whole truth; the board file is.
+
+---
+
+### 2026-08-23 — Rev A parts locked: every schematic line carries Manufacturer, MPN and LCSC
+
+**Context.** Only J3 had sourcing fields; 56 lines had value and footprint only, and
+the DNP parts R5/R6/R7 were marked in the value text, not the attribute. The order
+gate (`/pcba-order`) reads the schematic, so the schematic has to be the BOM.
+
+**Evidence.** Every code was checked against the JLCPCB catalogue on 2026-08-23
+(MCP `lib_get_component_details` / jlcsearch): MPN, package, stock, Basic/Extended.
+The list is `hardware/docs/parts-revA.csv` (the file the fields were written from).
+Where the MCP detail lookup disagreed with the catalogue list (C25804 reported
+stock 0 / not Basic; the list shows 37 M / Basic) the list was taken and the
+discrepancy noted — re-check at the pre-order gate as the rules require anyway.
+
+**Decisions.**
+- Passives: UNI-ROYAL 0603 1 % resistors, Basic, except R4 13.3 kΩ (C25952,
+  Extended — TI's 5.08 V feedback value kept rather than rounding to a Basic 13 kΩ,
+  which would give 5.18 V and 81 mA in the backlight) and R11 27 Ω 1206
+  (C17946, Extended, 0.25 W for the 0.17 W backlight dissipation). Ceramics:
+  Yageo 100 nF 50 V X7R (C14663), Samsung 10 µF/10 V (C19702), 1 µF/50 V
+  (C15849), 2.2 µF/50 V 0805 (C377773), 22 µF/25 V 0805 (C45783) — all Basic.
+  Bulk C1: Nichicon UCD1V221MNL1GS, 220 µF/35 V, 8 × 10 mm, 300 mA ripple
+  (C136294) — chosen over cheaper no-name SMD cans for the datasheet and the
+  second source; the 35 V rating is 71 % of the 25 V worst-case rail.
+- Semiconductors and modules as in the research notes: U1 C2934560, U2 C191884,
+  U3 ME6211 C82942, U4 THVD1400 C3235232, D1/D3 SS34 C8678, D2 PSM712-LF-T7
+  C32677, Q1 AO3400A C20917, F1/F2 JK-mSMD010-60 C1884489, J2 TYPE-C-31-M-12
+  C165948, SW1–4 PTS645SM43SMTR92LFS C221880. **L1 is the 22 µH FNR6045S220MT
+  (C168080, 2.2 A sat, 116 mΩ)** — the schematic's 22 µH, not the 10 µH the
+  candidates table still lists.
+- **Indicator LEDs** (new decision): the LED sits behind 1 kΩ from a 3.3 V GPIO,
+  so an InGaN "green" (Vf 2.6–3.6 V, e.g. the 19-217/GHC C2986059 in the research
+  notes) would pass 0–0.3 mA and not light. PWR = yellow-green XL-1608SYGC-06
+  (575 nm, Vf 2.2 V, C965805); BUS = yellow NCD0603Y1 (595 nm, Vf 1.6–2.6 V,
+  C84268); FAULT = red KT-0603R (Vf 1.8–2.4 V, C2286, Basic). Drive is 0.9–1.5 mA;
+  brightness in the machine room is judged at bring-up and R20/R26/R27 can go
+  down to 470 Ω without a layout change.
+- **J1 = Dorabo DB128V-5.08-5P-GN-S (C2927513, 19 115 in stock, $0.56).** Screw
+  terminal, side wire entry, 5.08 mm pitch, 2.5 mm² / 22–12 AWG, M2.5 screws.
+  No Phoenix MKDS 1,5/5 exists in the JLCPCB catalogue (only 2-pole). The
+  datasheet (Dorabo customer drawing DB128V-5.08-XXP-C-S, 2022-10-27) gives pin
+  0.80 × 1.00 mm and a recommended PCB hole of Ø1.60 mm; the MKDS footprint on the
+  board had Ø1.3 mm, smaller than the pin's 1.28 mm diagonal. **J1's five pads now
+  drill Ø1.6 mm (pad Ø2.6 kept, 0.5 mm annular ring)** — a board-instance change
+  that DRC reports as `lib_footprint_mismatch` on J1, accepted. Body 10.2 mm deep
+  vs the footprint's 9.92: the wire-entry face sits 0.12 mm inside the board edge
+  and the back 0.4 mm further inboard than the MKDS outline; nothing is within
+  0.4 mm behind J1.
+
+**Consequences.** `kicad-cli sch export bom` now yields 57 lines with MPN and LCSC,
+R5–R7 carry `dnp yes`; the board footprints carry the same fields and the DNP flag
+(file route, what F8 would have done), schematic parity is clean. Extended parts
+(feeder fee each): U1, U2, U3, U4, R4, R11, F1/F2, L1, J1, J2, J3, SW1–4, D4, D6
+and C1 — 16 types. Re-check stock at the pre-order gate: SW1–4 (1 421), U1 (3 702),
+J3 (366 on 2026-08-22).
