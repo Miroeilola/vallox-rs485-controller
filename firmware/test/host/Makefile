@@ -11,7 +11,7 @@ UI      := $(COMP)/panel_ui
 INC     += -I$(UI)/include -I$(UI)
 UI_FONTS := $(UI)/fonts/font_inter_12.c $(UI)/fonts/font_inter_18.c $(UI)/fonts/font_inter_36.c
 
-BINS := run_tests run_tests_hal run_tests_machine run_tests_e2e run_tests_ui_fonts_gfx
+BINS := run_tests run_tests_hal run_tests_machine run_tests_e2e run_tests_ui_fonts_gfx run_tests_ui_buttons_texts
 
 run_tests: $(PROTO)/vallox_protocol.c test_vallox_protocol.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
@@ -26,6 +26,9 @@ run_tests_e2e: $(PROTO)/vallox_protocol.c $(MACH)/vallox_machine.c $(MACH)/vallo
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
 run_tests_ui_fonts_gfx: $(UI)/font.c $(UI)/gfx.c $(UI)/icons.c $(UI_FONTS) hal_host.c test_panel_fonts_gfx.c
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+run_tests_ui_buttons_texts: $(UI)/font.c $(UI_FONTS) $(UI)/texts.c $(UI)/texts_en.c $(UI)/texts_fi.c hal_host.c test_panel_buttons_texts.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
 .PHONY: test clean all
