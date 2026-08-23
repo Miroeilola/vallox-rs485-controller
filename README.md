@@ -50,6 +50,8 @@ device is working again. Keep the original panel in a drawer.
 
 [![simulator](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml)
 
+![Screenshot of the browser simulator: the rev A board rendered from KiCad's 3D export, the panel's dashboard on its display, and the machine side panel. A render, not a photograph.](docs/images/simulator-3q-view.png)
+
 **https://miroeilola.github.io/vallox-rs485-controller/** — the panel firmware's UI
 core and its machine emulator compiled to WebAssembly, drawn on the rev A board's
 3D model. Click the buttons, change the outdoor temperature, inject a fault,
