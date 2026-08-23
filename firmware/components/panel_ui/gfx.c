@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2026 Miro Eilola / Mironet
 #include "gfx.h"
-#include <string.h>
 #include "panel_hal.h"
 #include "theme.h"
 
@@ -36,6 +35,17 @@ static void mark_dirty(int x0, int y0, int x1, int y1)
     s_ndirty++;
 }
 
+static void fill_rect_raw(int x, int y, int w, int h, uint16_t colour)
+{
+    int x0 = x < 0 ? 0 : x, y0 = y < 0 ? 0 : y;
+    int x1 = x + w > W ? W : x + w, y1 = y + h > H ? H : y + h;
+    if (x0 >= x1 || y0 >= y1) return;
+    for (int r = y0; r < y1; r++) {
+        uint16_t *row = &s_fb[r * W];
+        for (int c = x0; c < x1; c++) row[c] = colour;
+    }
+}
+
 void gfx_init(void)
 {
     s_ndirty = 0;
@@ -54,10 +64,7 @@ void gfx_fill_rect(int x, int y, int w, int h, uint16_t colour)
     int x0 = x < 0 ? 0 : x, y0 = y < 0 ? 0 : y;
     int x1 = x + w > W ? W : x + w, y1 = y + h > H ? H : y + h;
     if (x0 >= x1 || y0 >= y1) return;
-    for (int r = y0; r < y1; r++) {
-        uint16_t *row = &s_fb[r * W];
-        for (int c = x0; c < x1; c++) row[c] = colour;
-    }
+    fill_rect_raw(x, y, w, h, colour);
     mark_dirty(x0, y0, x1, y1);
 }
 
@@ -71,20 +78,21 @@ void gfx_round_rect(int x, int y, int w, int h, int r, uint16_t colour)
     if (r * 2 > h) r = h / 2;
     if (r <= 0) { gfx_fill_rect(x, y, w, h, colour); return; }
     // middle band and the two side bands between the corners
-    gfx_fill_rect(x + r, y, w - 2 * r, h, colour);
+    fill_rect_raw(x + r, y, w - 2 * r, h, colour);
     // corner rows: for each row inside the corner, the inset is r - sqrt(r^2 - dy^2), integer
     for (int i = 0; i < r; i++) {
         int dy = r - i;                     // 1..r from the straight edge, top row is i = 0
         int dx = 0;
         while ((dx + 1) * (dx + 1) + (dy - 1) * (dy - 1) <= r * r) dx++;   // widest column still inside the circle
         int inset = r - dx;
-        gfx_fill_rect(x + inset, y + i, r - inset, 1, colour);                 // top-left
-        gfx_fill_rect(x + w - r, y + i, r - inset, 1, colour);                 // top-right
-        gfx_fill_rect(x + inset, y + h - 1 - i, r - inset, 1, colour);         // bottom-left
-        gfx_fill_rect(x + w - r, y + h - 1 - i, r - inset, 1, colour);         // bottom-right
+        fill_rect_raw(x + inset, y + i, r - inset, 1, colour);                 // top-left
+        fill_rect_raw(x + w - r, y + i, r - inset, 1, colour);                 // top-right
+        fill_rect_raw(x + inset, y + h - 1 - i, r - inset, 1, colour);         // bottom-left
+        fill_rect_raw(x + w - r, y + h - 1 - i, r - inset, 1, colour);         // bottom-right
     }
-    gfx_fill_rect(x, y + r, r, h - 2 * r, colour);             // left band
-    gfx_fill_rect(x + w - r, y + r, r, h - 2 * r, colour);     // right band
+    fill_rect_raw(x, y + r, r, h - 2 * r, colour);             // left band
+    fill_rect_raw(x + w - r, y + r, r, h - 2 * r, colour);     // right band
+    mark_dirty(x, y, x + w, y + h);
 }
 
 uint16_t gfx_blend(uint16_t bg, uint16_t fg, uint8_t a)

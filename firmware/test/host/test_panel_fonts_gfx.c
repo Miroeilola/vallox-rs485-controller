@@ -170,6 +170,7 @@ static void test_round_rect_corners_are_rounded(void)
     CHECK_EQ(px(40, 35), 0x07E0);              // centre filled
     CHECK_EQ(px(20, 35), 0x07E0);              // left edge mid filled
     CHECK_EQ(px(59, 49), THEME_BG);            // bottom-right corner cut
+    CHECK_EQ(gfx_dirty_count(), 1);            // one dirty rectangle for the whole rounded box
 }
 
 static void test_icon_draws_set_bits_only(void)
