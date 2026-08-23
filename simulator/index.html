@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vallox RS-485 Controller — panel simulator</title>
+  <meta name="description" content="The controller's panel firmware running in the browser against a simulated Vallox machine, on the rev A board's 3D model.">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <main id="app">
+    <section id="view-wrap">
+      <canvas id="view" aria-label="3D view of the board"></canvas>
+      <div id="view-tools">
+        <button id="btn-front" type="button" title="Front view (F)">Front view</button>
+        <button id="btn-3q" type="button" title="¾ view (V)">¾ view</button>
+        <label title="Reserved: the enclosure's STEP does not exist yet"><input id="chk-enclosure" type="checkbox" disabled> Enclosure</label>
+        <span id="status-line" aria-live="polite">loading…</span>
+      </div>
+      <p id="view-hint">Click the buttons on the board, or use the keys ← → Enter Backspace. Drag to orbit, wheel to zoom.</p>
+    </section>
+    <aside id="panel">
+      <h1>Vallox RS-485 Controller <small>panel simulator</small></h1>
+      <p class="note">This is the firmware's UI core (<code>panel_ui</code>) and its machine emulator (<code>vallox_machine</code>) compiled to WebAssembly — the same C that runs on the device. The machine is <strong>simulated</strong> from <code>docs/research/protocol.md</code>; nothing here has been verified against a real unit yet.</p>
+
+      <h2>Machine</h2>
+      <table id="machine-state" class="kv">
+        <tr><th>Fan speed</th><td id="ms-speed">–</td></tr>
+        <tr><th>Outdoor</th><td id="ms-t0">–</td></tr>
+        <tr><th>Supply</th><td id="ms-t1">–</td></tr>
+        <tr><th>Extract</th><td id="ms-t2">–</td></tr>
+        <tr><th>Exhaust</th><td id="ms-t3">–</td></tr>
+        <tr><th>Heater</th><td id="ms-heater">–</td></tr>
+        <tr><th>Bypass</th><td id="ms-bypass">–</td></tr>
+        <tr><th>Frost stop</th><td id="ms-frost">–</td></tr>
+        <tr><th>Fault</th><td id="ms-fault">–</td></tr>
+      </table>
+
+      <h2>Controls</h2>
+      <div class="controls">
+        <label>Outdoor temperature <output id="out-outdoor">5 °C</output>
+          <input id="in-outdoor" type="range" min="-25" max="30" step="1" value="5"></label>
+        <label>Time scale
+          <select id="in-timescale"><option value="1">1×</option><option value="10">10×</option><option value="60">60×</option></select></label>
+        <label>Machine response delay
+          <select id="in-delay"><option value="0">0 ms</option><option value="10">10 ms</option><option value="200">200 ms</option><option value="-1">never (bus fault)</option></select></label>
+        <label>Panel language
+          <select id="in-lang"><option value="0">English</option><option value="1">Suomi</option></select></label>
+        <label>Inject fault
+          <select id="in-fault">
+            <option value="0">none</option><option value="5">0x05 supply air sensor</option><option value="6">0x06 CO₂ alarm</option>
+            <option value="7">0x07 outdoor air sensor</option><option value="8">0x08 extract air sensor</option>
+            <option value="9">0x09 water coil frost</option><option value="10">0x0A exhaust air sensor</option>
+          </select></label>
+        <button id="btn-reset" type="button" title="Power-cycle the panel (settings survive, like NVS)">Restart panel</button>
+      </div>
+
+      <h2>Panel</h2>
+      <table class="kv">
+        <tr><th>Display</th><td><canvas id="display2d" width="320" height="240" aria-label="The panel's display, flat"></canvas></td></tr>
+        <tr><th>LEDs</th><td id="leds"><span class="led" id="led-pwr" title="D4 PWR">PWR</span> <span class="led" id="led-bus" title="D6 BUS">BUS</span> <span class="led" id="led-fault" title="D5 FAULT">FAULT</span></td></tr>
+        <tr><th>Backlight</th><td id="ms-backlight">–</td></tr>
+        <tr><th>Firmware</th><td id="ms-version">–</td></tr>
+      </table>
+
+      <h2>Bus log <small id="log-count"></small></h2>
+      <pre id="bus-log" aria-live="off"></pre>
+
+      <p class="note">Source and hardware: <a href="https://github.com/Miroeilola/vallox-rs485-controller">github.com/Miroeilola/vallox-rs485-controller</a>. three.js (MIT), Inter (OFL 1.1). Rendering is KiCad's GLB export of rev A; the enclosure arrives with its STEP.</p>
+    </aside>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

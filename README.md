@@ -6,6 +6,7 @@ Replacement bus controller for legacy Vallox ventilation units.
 
 [![hardware](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/hardware.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/hardware.yml)
 [![firmware](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/firmware.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/firmware.yml)
+[![simulator](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml)
 ![hardware revision](https://img.shields.io/badge/hardware-rev%20A-blue)
 ![license](https://img.shields.io/badge/license-MIT%20%2F%20CERN--OHL--S%20%2F%20CC--BY--SA-green)
 
@@ -44,6 +45,23 @@ keeps running at its last setting if the device fails, and every safety function
 frost protection, over-temperature, defrost — stays in the machine's own firmware
 where this device cannot reach it. But nothing changes the fan speed until the
 device is working again. Keep the original panel in a drawer.
+
+## Try it in the browser
+
+[![simulator](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml/badge.svg)](https://github.com/Miroeilola/vallox-rs485-controller/actions/workflows/simulator.yml)
+
+![Screenshot of the browser simulator: the rev A board rendered from KiCad's 3D export, the panel's dashboard on its display, and the machine side panel. A render, not a photograph.](docs/images/simulator-3q-view.png)
+
+**https://miroeilola.github.io/vallox-rs485-controller/** — the panel firmware's UI
+core and its machine emulator compiled to WebAssembly, drawn on the rev A board's
+3D model. Click the buttons, change the outdoor temperature, inject a fault,
+watch the bus log. It is the same C that will run on the device
+(`firmware/components/panel_ui`), not a look-alike.
+
+The machine behind it is **simulated** from [`docs/research/protocol.md`](docs/research/protocol.md)
+and nothing in it has been verified against a real unit yet; the first bus capture
+(M3) corrects the document, then the emulator, then the UI. Details and the build
+in [`simulator/README.md`](simulator/README.md).
 
 ### This is not the first attempt, and that is worth saying
 
@@ -88,6 +106,7 @@ Values still marked `—` have not been measured yet.
 | `hardware/` | KiCad 10 project, manufacturing outputs, order packages |
 | `firmware/` | ESP-IDF application and reusable components |
 | `esphome/` | ESPHome external component (Home Assistant users start here) |
+| `simulator/` | Browser simulator: the UI core and machine model in WebAssembly on the board's 3D model |
 | `mechanical/` | Enclosure: STEP source, STL for printing, drawings, print profiles |
 | `docs/` | Research, measurements, datasheet, images |
 
@@ -205,7 +224,7 @@ prices.
 
 | Path | License |
 |---|---|
-| `firmware/`, `esphome/`, `scripts/` | [MIT](LICENSES/MIT.txt) |
+| `firmware/`, `esphome/`, `scripts/`, `simulator/` | [MIT](LICENSES/MIT.txt) |
 | `hardware/`, `mechanical/` | [CERN-OHL-S-2.0](LICENSES/CERN-OHL-S-2.0.txt) |
 | `docs/`, README, images | [CC-BY-SA-4.0](LICENSES/CC-BY-SA-4.0.txt) |
 

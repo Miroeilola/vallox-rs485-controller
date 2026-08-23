@@ -4,7 +4,7 @@ This project is released under three licenses, each covering a different kind of
 
 | Path | License | SPDX identifier |
 |---|---|---|
-| `firmware/`, `esphome/`, `scripts/` | MIT License | `MIT` |
+| `firmware/`, `esphome/`, `scripts/`, `simulator/` | MIT License | `MIT` |
 | `hardware/`, `mechanical/` | CERN Open Hardware Licence Version 2 – Strongly Reciprocal | `CERN-OHL-S-2.0` |
 | `docs/`, `README.md`, images | Creative Commons Attribution-ShareAlike 4.0 International | `CC-BY-SA-4.0` |
 
@@ -30,3 +30,4 @@ licenses where they originate from third parties; see that repository. Manufactu
 SPICE models and datasheets are **not** redistributed here — the sources are cited in
 the documentation instead.
 - **Inter** (firmware/components/panel_ui/fonts/): © The Inter Project Authors, SIL Open Font License 1.1 — see fonts/OFL.txt.
+- **three.js** (simulator/, via npm): © three.js authors, MIT — https://github.com/mrdoob/three.js/blob/dev/LICENSE. Not vendored; fetched by `npm ci`.
