@@ -250,3 +250,37 @@ of every `/kicad-layout` session. Its value is in the numbers and in the dead en
 - **Result.** DRC 0 errors, 8 warnings (the 7 known + 1 silk_overlap of two
   reference texts in the relocated column, cosmetic), parity clean + 4 holes,
   138 unconnected. Render read: tail straight from the glass into J3.
+
+### 2026-08-23 — Rev A routed: power, RS-485 and USB by hand, the 24 signal nets by Freerouting
+
+- **Baseline.** Placement entry: DRC 0 errors / 8 warnings, 138 unconnected.
+- **Method.** Three passes. (1) Power stage, 3V3 trunk and GND pour by hand as a
+  file route (`hardware/routing/build_routes.py` → `routes.json`, applied with the
+  workspace `scripts/kicad-pcb-route.py`, KiCad closed): 21 V input, buck hot loop
+  (SW over the top of C2, BOOT, EN/FB dividers with R1/R3 turned 180°), 5 V to the
+  LDO / backlight / USB OR-diode with two short B.Cu jumpers, 3V3 trunk west of J3
+  then x 78.6 in the MCU cluster, GND pour F+B with 38 stitch vias. (2) RS-485
+  front end and USB-C by hand, JP1 turned 180°. (3) The remaining 24 signal nets
+  (display SPI, UART to the transceiver, buttons, LEDs, EN/BOOT, backlight) by
+  **Freerouting 2.3.0**: DSN exported from a copy with zones and tracks removed
+  (`routing/bare.dsn`), session `routing/board3.ses` routed with the hand routes
+  present as fixed obstacles, and only those 24 nets' tracks and vias copied onto
+  the hand-routed board (pcbnew Python). Freerouting's 0.15 mm neck-downs widened
+  to the 0.20 mm minimum before DRC.
+- **Measured.** kicad-cli DRC `--severity-all --schematic-parity`: **0 errors, 8
+  warnings (the baseline set), 0 unconnected**, parity clean + 4 holes. Tracks
+  ≈ 500, vias ≈ 83. Render read: hand-routed corner as designed; autorouted signal
+  tracks are diagonal and pass under the module's pin field and along the right
+  margin — legal, not pretty.
+- **Did not work.** Freerouting does not recognise T-junctions in pre-routed
+  copper as connected, so a DSN with the hand routes reports them "unrouted", and
+  importing the resulting SES back loses vias (55 unconnected). The working
+  hybrid is to import the session into a scratch copy and copy only the new nets'
+  items. A session from a bare board merged blind onto the hand routing gave ~70
+  crossings (it never saw the obstacles). Fully autorouted board (`cand`) was DRC
+  clean but discarded the hot-loop design — not taken.
+- **Open.** Hand review of the autorouted nets: tracks under U1's pin field on
+  F.Cu (keep or pull to B.Cu), B.Cu view not yet inspected; silkscreen tidy
+  (R13/R21 refs overlap, J1/U1/J2 edge clips are the placement's); GUI F8 pass
+  once; "provisional" mark off the title block; GUI-DRC before ordering.
+  `routes.json` covers passes 1–2 only — the board file is the source of truth.

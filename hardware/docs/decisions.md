@@ -1014,3 +1014,28 @@ the research notes, not resolved, and not needed.
 schematic edit. Routing of the power corner is unblocked. Still open before
 ordering: full-load rail reading (fan 8, heating) for the lower end of the input
 range, and the instrument name for the datasheet.
+
+---
+
+### 2026-08-23 — Signal nets autorouted with Freerouting, power routed by hand
+
+**Context.** After the power stage, RS-485 front end and USB-C were routed by
+hand (file route, coordinates from the board), 44 connections in the MCU cluster
+and display fan-out remained. Blind coordinate routing there was slow and kept
+colliding with the 3V3 trunk and the 0.5 mm-pitch fan-outs.
+
+**Decision.** Keep the hand routing for everything that carries current or
+EMC intent (buck hot loop, 5 V, 3V3 trunk, RS-485 pair, USB), and let
+Freerouting route the remaining 24 low-speed signal nets with the hand copper
+as fixed obstacles. Merge only those nets' tracks and vias.
+
+**Reasoning.** The signal nets are 9600-baud UART, SPI to a display, buttons and
+LEDs: topology does not matter, clearance and connectivity do, and kicad-cli DRC
+is the authority on both. Routing them by hand would have cost hours for no
+electrical benefit. The power corner is where the routing is a design choice, and
+it stays hand-made and documented.
+
+**Consequences.** Java (OpenJDK via Homebrew) and `freerouting.jar` join the
+toolchain; the method lives in the workspace. Autorouted tracks run under the
+module's pin field and along the right margin — legal by DRC, to be reviewed by
+eye before ordering. `routes.json` is no longer the whole truth; the board file is.
