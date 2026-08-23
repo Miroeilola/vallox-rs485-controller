@@ -25,7 +25,7 @@ run_tests_machine: $(PROTO)/vallox_protocol.c $(MACH)/vallox_machine.c $(MACH)/v
 run_tests_e2e: $(PROTO)/vallox_protocol.c $(MACH)/vallox_machine.c $(MACH)/vallox_machine_physics.c hal_host.c test_e2e_membus.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
-run_tests_ui_fonts_gfx: $(UI)/font.c $(UI_FONTS) test_panel_fonts_gfx.c
+run_tests_ui_fonts_gfx: $(UI)/font.c $(UI)/gfx.c $(UI)/icons.c $(UI_FONTS) hal_host.c test_panel_fonts_gfx.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
 .PHONY: test clean all
