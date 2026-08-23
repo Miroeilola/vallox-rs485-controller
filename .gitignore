@@ -63,6 +63,7 @@ simulator/src/wasm/
 simulator/public/board.glb
 simulator/public/board-raw.glb
 simulator/public/enclosure.glb
+simulator/.kicad-3d/
 simulator/test_hal_web
 simulator/test-results/
 simulator/playwright-report/

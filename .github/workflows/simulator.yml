@@ -29,7 +29,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      # The container has kicad-cli but not the packages3D library, so without
+      # this step the export silently leaves every footprint body out (found on
+      # the first deploy: a bare board with only the display module, which comes
+      # from lib/). Only the models the board references are fetched, from the
+      # kicad-packages3D tag below; they stay in the runner cache, never in git.
+      - uses: actions/cache@v4
+        with:
+          path: simulator/.kicad-3d
+          key: kicad-3d-10.0.5-${{ hashFiles('hardware/vallox-rs485-controller.kicad_pcb') }}
+          restore-keys: kicad-3d-10.0.5-
+      - name: Fetch the KiCad 3D models the board references
+        run: python3 simulator/tools/fetch-3d-models.py hardware/vallox-rs485-controller.kicad_pcb simulator/.kicad-3d --tag 10.0.5
       - name: Export GLB with tracks, zones, pads, silkscreen and mask
+        env:
+          KICAD10_3DMODEL_DIR: ${{ github.workspace }}/simulator/.kicad-3d
         run: |
           mkdir -p simulator/public
           kicad-cli pcb export glb --force --subst-models --no-dnp \

@@ -36,6 +36,14 @@ front; 0.1275 mm per pixel.
 
 ## Build
 
+The board's GLB needs KiCad's 3D library (`KICAD10_3DMODEL_DIR`): a desktop KiCad
+has it; the `kicad/kicad:10.0` container does not, so CI runs
+`tools/fetch-3d-models.py` first — it downloads only the models the board
+references from kicad-packages3D (tag 10.0.5, CC-BY-SA 4.0 with the KiCad
+library exception; fetched, not redistributed) and points kicad-cli at them.
+Two referenced models do not exist in that library (the HRO USB-C receptacle
+and the 1812 fuse) and are drawn without a body, on the desktop too.
+
 ```
 git submodule update --init   # lib/mironet-hw-lib holds the DS1 display model the GLB export needs
 make glb      # public/board.glb from ../hardware (kicad-cli; CI does this in the kicad/kicad:10.0 container)
