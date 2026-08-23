@@ -46,7 +46,15 @@ void vlx_client_set_poll_list(vlx_client_t *c, const uint8_t *regs, uint8_t n)
     c->poll_idx = 0;
 }
 
-void vlx_client_set_tx_enabled(vlx_client_t *c, bool en) { c->tx_enabled = en; }
+void vlx_client_set_tx_enabled(vlx_client_t *c, bool en)
+{
+    c->tx_enabled = en;
+    if (!en && (c->write_state == VLX_WRITE_PENDING || c->write_queued)) {
+        c->write_state = VLX_WRITE_FAILED;
+        c->write_queued = false;
+        c->poll_pending = false;      // a stale poll must not be "answered" by a late reply
+    }
+}
 
 static void send_write(vlx_client_t *c, uint32_t now_ms)
 {

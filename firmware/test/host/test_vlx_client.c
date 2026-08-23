@@ -144,6 +144,26 @@ static void test_tx_disabled_listens_but_never_sends(void)
     CHECK_EQ(vlx_client_write(&s_c, VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(2)), VLX_WRITE_REFUSED);
 }
 
+static void test_disabling_tx_drops_the_inflight_write(void)
+{
+    setup();
+    s_m.reply_delay_ms = VLX_MACHINE_NEVER;          // the write can never be acked
+    CHECK_EQ(vlx_client_write(&s_c, VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(5)), VLX_WRITE_QUEUED);
+    // Disabled before the queued write ever reaches the wire (send happens only on
+    // the next tick): this is the case the bug loses track of — without the fix,
+    // write_queued stays true across the disabled span and the stale write is
+    // replayed the instant tx is re-enabled.
+    vlx_client_set_tx_enabled(&s_c, false);
+    CHECK_EQ(vlx_client_write_state(&s_c), VLX_WRITE_FAILED);
+    s_m.reply_delay_ms = 0;
+    run_ms(1000);
+    vlx_client_set_tx_enabled(&s_c, true);
+    run_ms(4000);
+    // the old command was NOT replayed once tx re-enabled; default speed 3 unchanged
+    CHECK_EQ(vlx_machine_reg_get(&s_m, VLX_REG_FAN_SPEED), vlx_fan_speed_to_raw(3));
+    CHECK(vlx_client_bus_ok(&s_c, hal_time_ms()));   // polling resumed
+}
+
 int main(void)
 {
     test_polls_fill_the_shadow_within_three_seconds();
@@ -154,5 +174,6 @@ int main(void)
     test_silent_machine_leads_to_bus_fault_and_recovery();
     test_write_without_acknowledge_fails_after_three_tries();
     test_tx_disabled_listens_but_never_sends();
+    test_disabling_tx_drops_the_inflight_write();
     return REPORT();
 }

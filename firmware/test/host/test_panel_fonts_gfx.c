@@ -140,6 +140,13 @@ static void test_text_draws_glyph_pixels_and_advances(void)
     CHECK(gfx_dirty_count() == 1);
 }
 
+static void test_text_marks_one_dirty_rect_for_the_whole_string(void)
+{
+    hal_host_reset(); gfx_init(); gfx_flush();
+    gfx_text(10, 10, &font_inter_18, 0xFFFF, "Hello world");
+    CHECK_EQ(gfx_dirty_count(), 1);
+}
+
 static void test_text_clips_at_the_right_edge_without_crashing(void)
 {
     hal_host_reset(); gfx_init(); gfx_flush();
@@ -196,6 +203,7 @@ int main(void)
     test_dirty_list_overflow_merges();
     test_blend();
     test_text_draws_glyph_pixels_and_advances();
+    test_text_marks_one_dirty_rect_for_the_whole_string();
     test_text_clips_at_the_right_edge_without_crashing();
     test_text_alignment_helpers();
     test_round_rect_corners_are_rounded();

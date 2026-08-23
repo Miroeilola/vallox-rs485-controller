@@ -125,12 +125,12 @@ static void draw_glyph(int pen_x, int baseline, const font_t *f, const glyph_t *
             if (a) dst[xx] = gfx_blend(dst[xx], colour, a);
         }
     }
-    mark_dirty(x0, y0, x1, y1);
 }
 
 void gfx_text(int x, int y, const font_t *f, uint16_t colour, const char *utf8)
 {
     int pen = x, baseline = y + f->ascent;
+    int pen_end = x;                       // widest right edge reached, for the one dirty rect
     const char *s = utf8;
     for (;;) {
         uint16_t cp = font_utf8_next(&s);
@@ -139,9 +139,13 @@ void gfx_text(int x, int y, const font_t *f, uint16_t colour, const char *utf8)
         if (!g) g = font_find_glyph(f, '?');
         if (!g) continue;
         draw_glyph(pen, baseline, f, g, colour);
+        int glyph_right = pen + g->xoff + g->w;   // may exceed the advance (italics, overhang)
+        if (glyph_right > pen_end) pen_end = glyph_right;
         pen += g->adv;
+        if (pen > pen_end) pen_end = pen;
         if (pen >= W) break;
     }
+    mark_dirty(x, y, pen_end, y + f->line_h);
 }
 
 void gfx_text_centred(int cx, int y, const font_t *f, uint16_t colour, const char *utf8)

@@ -62,7 +62,16 @@ the same PR). `panel_host` renders any state to a PNG from the command line.
 - The acknowledge byte is matched by value within the 50 ms window; a
   broadcast byte equal to it would be mistaken for the ack (re-polled right
   after, so the shadow self-corrects).
-- Full-page redraw at ≤ 5 Hz; the ESP-IDF host may batch rows (S4).
+- Full-page redraw at ≤ 5 Hz: the dashboard costs 500 `hal_display_flush` calls
+  and 85 709 pixels per render (measured on the host, 2026-08-23; text drawing
+  was 327 calls / 77 582 px before this change started marking one dirty
+  rectangle per string instead of one per glyph — merging narrow per-glyph
+  rects had let the pre-existing dirty-list overflow merge coalesce them into
+  the same bounding boxes as the surrounding fills, for free; the now-correct
+  per-string rects are separate instead, so `gfx_flush`'s one-call-per-scanline-
+  per-rectangle design pushes the row total up, not down); flush is one call
+  per scanline per dirty rectangle, so the ESP-IDF host should batch rows or
+  push the frame whole (S4 decides with a measured heap/SPI figure).
 - No scrolling lists (every list fits the screen), no boost/bypass controls,
   no installer menu — option-A scope, the table grows when the M3 capture
   confirms registers.
