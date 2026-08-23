@@ -6,7 +6,6 @@
 // order lags, no heat capacity of the house, no defrost cycle — see README.
 #include "vallox_machine.h"
 
-#define FROST_LIMIT_C (-2.0f)
 #define MONTH_MS (30u * 24u * 3600u * 1000u)
 
 static float lag(float x, float target, float alpha) { return x + alpha * (target - x); }
@@ -28,11 +27,15 @@ void vlx_machine_physics_step(vlx_machine_t *m, float dt_s)
     float exhaust_target = m->t_extract - m->p.efficiency * (m->t_extract - m->p.t_outdoor);
     m->t_exhaust = lag(m->t_exhaust, exhaust_target, alpha);
 
-    // frost protection with hysteresis (0xB2 is in degrees: implementations-class claim)
-    float hyst = (float)vlx_temp_table(m->regs[VLX_REG_DEFROST_HYSTERESIS]);
+    // Frost protection: 0xA8 is the threshold INPUT (NTC table, a user
+    // setting), never written by physics; the OUTPUT is bit 3 of 0x08
+    // (IO_MULTI_2, VLX_IO2_SUPPLY_FAN_OFF). 0xB2 is x/3 degrees per
+    // protocol.md, so 0x09 = 3 °C (implementations-class claim).
+    float limit = (float)vlx_temp_table(m->regs[VLX_REG_SUPPLY_FAN_STOP]);
+    float hyst = (float)m->regs[VLX_REG_DEFROST_HYSTERESIS] / 3.0f;
     if (hyst < 1.0f) hyst = 1.0f;
-    if (m->t_exhaust < FROST_LIMIT_C) m->regs[VLX_REG_SUPPLY_FAN_STOP] = 1;
-    else if (m->t_exhaust > FROST_LIMIT_C + hyst) m->regs[VLX_REG_SUPPLY_FAN_STOP] = 0;
+    if (m->t_exhaust < limit) m->regs[VLX_REG_IO_MULTI_2] |= VLX_IO2_SUPPLY_FAN_OFF;
+    else if (m->t_exhaust > limit + hyst) m->regs[VLX_REG_IO_MULTI_2] &= (uint8_t)~VLX_IO2_SUPPLY_FAN_OFF;
 
     // service counter
     m->service_elapsed_ms += (uint32_t)(dt_s * m->p.time_scale * 1000.0f);

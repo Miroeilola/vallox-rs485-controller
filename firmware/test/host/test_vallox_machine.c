@@ -90,6 +90,14 @@ static void test_defaults_are_a_plausible_machine(void)
     CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_CO2_SENSORS_FITTED), 0);
 }
 
+static void test_reg_conf_reports_the_confidence_class(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    CHECK_EQ(vlx_machine_reg_conf(&m, VLX_REG_FAN_SPEED), VLX_CONF_IMPLEMENTATIONS);
+    CHECK_EQ(vlx_machine_reg_conf(&m, 0xC1), VLX_CONF_ASSUMED);
+}
+
 static void test_write_updates_register_and_is_acknowledged_with_checksum(void)
 {
     vlx_machine_t m;
@@ -123,6 +131,17 @@ static void test_write_to_unknown_register_is_ignored_silently(void)
     CHECK(!vlx_machine_reg_known(&m, 0xC1));
 }
 
+static void test_reg_set_does_not_teach_unknown_registers(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    vlx_machine_reg_set(&m, 0xC1, 1);
+    CHECK(!vlx_machine_reg_known(&m, 0xC1));
+    uint8_t poll[VLX_FRAME_LEN], out[32];
+    vlx_make_poll(PANEL, MACHINE, 0xC1, poll);
+    CHECK_EQ(send_and_tick(&m, poll, 0, out, sizeof out), 0);
+}
+
 static void test_write_then_poll_reads_back(void)
 {
     vlx_machine_t m;
@@ -135,6 +154,20 @@ static void test_write_then_poll_reads_back(void)
     vlx_frame_t f;
     CHECK(vlx_frame_decode(out, &f));
     CHECK_EQ(vlx_fan_speed_from_raw(f.value), 5);
+}
+
+static void test_write_fan_speed_then_poll_reads_back(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    uint8_t w[VLX_FRAME_LEN], p[VLX_FRAME_LEN], out[32];
+    vlx_make_write(PANEL, MACHINE, VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(4), w);
+    CHECK_EQ(send_and_tick(&m, w, 0, out, sizeof out), 1);    // acknowledged
+    vlx_make_poll(PANEL, MACHINE, VLX_REG_FAN_SPEED, p);
+    CHECK_EQ(send_and_tick(&m, p, 1, out, sizeof out), VLX_FRAME_LEN);
+    vlx_frame_t f;
+    CHECK(vlx_frame_decode(out, &f));
+    CHECK_EQ(vlx_fan_speed_from_raw(f.value), 4);
 }
 
 static void test_reply_never_also_suppresses_the_acknowledge(void)
@@ -170,6 +203,19 @@ static void test_reply_delay_holds_the_answer_until_due(void)
     CHECK_EQ(vlx_machine_tick(&m, 100, out, sizeof out), 0);    // queued at 100, due 110
     CHECK_EQ(vlx_machine_tick(&m, 105, out, sizeof out), 0);
     CHECK_EQ(vlx_machine_tick(&m, 110, out, sizeof out), VLX_FRAME_LEN);
+}
+
+static void test_reply_delay_200_ms(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    m.reply_delay_ms = 200;
+    uint8_t poll[VLX_FRAME_LEN], out[32];
+    vlx_make_poll(PANEL, MACHINE, VLX_REG_STATUS, poll);
+    vlx_machine_feed(&m, poll, VLX_FRAME_LEN);
+    CHECK_EQ(vlx_machine_tick(&m, 100, out, sizeof out), 0);    // queued at 100, due 300
+    CHECK_EQ(vlx_machine_tick(&m, 299, out, sizeof out), 0);
+    CHECK_EQ(vlx_machine_tick(&m, 300, out, sizeof out), VLX_FRAME_LEN);
 }
 
 static void test_reply_never_means_silence(void)
@@ -264,10 +310,23 @@ static void test_frost_protection_stops_supply_fan_and_releases_with_hysteresis(
     vlx_machine_init(&m);
     m.p.t_outdoor = -30.0f;
     run_physics(&m, 7200.0f, 1.0f);
-    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_SUPPLY_FAN_STOP), 1);
+    CHECK(vlx_machine_reg_get(&m, VLX_REG_IO_MULTI_2) & VLX_IO2_SUPPLY_FAN_OFF);
     m.p.t_outdoor = 10.0f;
     run_physics(&m, 7200.0f, 1.0f);
-    CHECK_EQ(vlx_machine_reg_get(&m, VLX_REG_SUPPLY_FAN_STOP), 0);
+    CHECK(!(vlx_machine_reg_get(&m, VLX_REG_IO_MULTI_2) & VLX_IO2_SUPPLY_FAN_OFF));
+}
+
+static void test_supply_fan_stop_setpoint_survives_physics_and_moves_the_limit(void)
+{
+    vlx_machine_t m;
+    vlx_machine_init(&m);
+    vlx_machine_reg_set(&m, VLX_REG_SUPPLY_FAN_STOP, vlx_temp_to_raw(10));
+    m.p.t_outdoor = -5.0f;
+    run_physics(&m, 3600.0f, 1.0f);
+    // the setting is never overwritten by physics
+    CHECK_EQ(vlx_temp_table(vlx_machine_reg_get(&m, VLX_REG_SUPPLY_FAN_STOP)), 10);
+    // and it actually moved the limit: exhaust settles at 21 - 0.6*26 = 5.4 < 10
+    CHECK(vlx_machine_reg_get(&m, VLX_REG_IO_MULTI_2) & VLX_IO2_SUPPLY_FAN_OFF);
 }
 
 static void test_time_scale_speeds_everything_up(void)
@@ -329,12 +388,16 @@ int main(void)
     test_poll_to_mainboard_broadcast_is_answered();
     test_feed_survives_garbage_and_chunking();
     test_defaults_are_a_plausible_machine();
+    test_reg_conf_reports_the_confidence_class();
     test_write_updates_register_and_is_acknowledged_with_checksum();
     test_write_to_read_only_register_is_ignored_silently();
     test_write_to_unknown_register_is_ignored_silently();
+    test_reg_set_does_not_teach_unknown_registers();
     test_write_then_poll_reads_back();
+    test_write_fan_speed_then_poll_reads_back();
     test_reply_never_also_suppresses_the_acknowledge();
     test_reply_delay_holds_the_answer_until_due();
+    test_reply_delay_200_ms();
     test_reply_never_means_silence();
     test_broadcast_round_every_12_s_in_documented_order();
     test_broadcast_frames_are_spaced_130_ms();
@@ -342,6 +405,7 @@ int main(void)
     test_mild_outdoor_keeps_heater_off_and_supply_below_setpoint();
     test_higher_fan_speed_settles_faster();
     test_frost_protection_stops_supply_fan_and_releases_with_hysteresis();
+    test_supply_fan_stop_setpoint_survives_physics_and_moves_the_limit();
     test_time_scale_speeds_everything_up();
     test_tick_runs_physics_and_updates_registers();
     test_fault_sets_register_and_status_bit();

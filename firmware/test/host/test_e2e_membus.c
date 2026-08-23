@@ -111,11 +111,9 @@ static void test_panel_sets_speed_and_reads_it_back(void)
 {
     hal_host_reset();
     vlx_machine_init(&s_m);
-    // 0x29 is read-only on the real machine (speed is set through 0xA9 default / status); the
-    // machine table marks 0x29 read-only, so set it through the writable default-speed register
-    CHECK(panel_write(VLX_REG_FAN_SPEED_DEFAULT, vlx_fan_speed_to_raw(5), 50));
+    CHECK(panel_write(VLX_REG_FAN_SPEED, vlx_fan_speed_to_raw(5), 50));
     uint8_t v = 0;
-    CHECK(panel_read(VLX_REG_FAN_SPEED_DEFAULT, &v, 50));
+    CHECK(panel_read(VLX_REG_FAN_SPEED, &v, 50));
     CHECK_EQ(vlx_fan_speed_from_raw(v), 5);
 }
 

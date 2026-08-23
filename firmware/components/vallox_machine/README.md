@@ -11,13 +11,13 @@ first, then this model and the panel in the same PR.
 
 | Behaviour | Source | Confidence |
 |---|---|---|
-| Answers a poll for a known register with its value, to the poller | protocol.md claims 11, 24 | manufacturer |
+| Answers a poll for a known register with its value, to the poller | protocol.md claims 11 (reverse-engineered), 24 (manufacturer) | implementations / manufacturer |
 | Answers a write with one byte, the received checksum | claim 25 | manufacturer |
 | Ignores writes to read-only or unknown registers, without a reply | no NAK is documented | assumed (silence) |
-| Broadcasts `2B 2C 35 34 32 33 2A` to 0x20 every 12 s, 130 ms apart | claim 23 | manufacturer (period) / implementations (set) |
-| Register map and defaults (status defaults to power on + winter mode / heat recovery) | `vallox_machine_regs.h`, each row with its class | per row |
+| Broadcasts `2B 2C 35 34 32 33 2A` to 0x20 every 12 s, 130 ms apart | claim 23 | manufacturer (period) / reverse-engineered (contents) |
+| Register map and defaults (status defaults to power on + winter mode / heat recovery) | `vallox_machine_regs.h`, each row with its class | implementations |
 | Thermal model: lags toward indoor / recovered / setpoint temperatures | own model, parameters | n/a — a model, not a claim |
-| Frost protection: supply fan stop below −2 °C exhaust, hysteresis from 0xB2 | threshold own; 0xB2 encoding | implementations |
+| Frost protection: supply fan stop when exhaust drops below the 0xA8 threshold (NTC table, a writable setting), output is bit 3 of 0x08 (IO_MULTI_2); hysteresis from 0xB2 | threshold 0xA8, output 0x08 bit 3, hysteresis 0xB2 | implementations |
 | Fault injection; cleared by host or by the panel writing 0 to 0x36 | clearing write | **assumed** |
 | Poll-answer delay 0 / 10 / 200 ms / never, counted from the tick that hears the frame; a never-answering machine also withholds the acknowledge | test knob | n/a |
 
@@ -31,7 +31,9 @@ first, then this model and the panel in the same PR.
 - Broadcast writes to 0x10 are applied like unicast writes — assumed.
 - The model does not poll the panel. Whether the real mainboard does is an M3 question.
 - Frost protection raises no fault code: none is documented for exchanger frost (0x09 is
-  the water-coil fault); it only sets the supply-fan-stop register.
+  the water-coil fault); it only sets the supply-fan bit of 0x08 (IO_MULTI_2).
+- The service (bit 7) and filter (bit 4) indicator bits of 0xA3 are never set; the month
+  counter 0xAB decrements but the reminder indicator is not modelled.
 
 ## Using it
 

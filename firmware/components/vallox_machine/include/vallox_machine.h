@@ -90,9 +90,16 @@ void   vlx_machine_feed(vlx_machine_t *m, const uint8_t *bytes, size_t n);
 size_t vlx_machine_tick(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t max);
 
 // Register access for tests and the simulator side panel.
+// vlx_machine_reg_set() only ever changes a register already known from the
+// register table; a write to an unknown register is a no-op and does NOT
+// teach the model that register — the same silence a real write would get.
 bool    vlx_machine_reg_known(const vlx_machine_t *m, uint8_t reg);
 uint8_t vlx_machine_reg_get(const vlx_machine_t *m, uint8_t reg);
 void    vlx_machine_reg_set(vlx_machine_t *m, uint8_t reg, uint8_t value);
+
+// Confidence class of a register's behaviour, from the register table.
+// Returns VLX_CONF_ASSUMED for a register the model does not know.
+vlx_conf_t vlx_machine_reg_conf(const vlx_machine_t *m, uint8_t reg);
 
 // Fault injection: sets VLX_REG_FAULT and the fault bit; cleared by
 // vlx_machine_fault_clear() or by the panel writing 0 to VLX_REG_FAULT

@@ -55,15 +55,18 @@ static const uint8_t k_broadcast_set[] = {0x2B, 0x2C, 0x35, 0x34, 0x32, 0x33, 0x
 // starting broadcast_period_ms after the previous round started.
 static size_t run_broadcasts(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t max)
 {
+    if (max < VLX_FRAME_LEN) return 0;   // a tight buffer must neither start nor skip a round
     if (m->broadcast_idx == 0) {
         if (m->last_broadcast_ms == 0 && !m->have_tick) m->last_broadcast_ms = now_ms;  // first tick anchors the period
         if ((int32_t)(now_ms - (m->last_broadcast_ms + m->broadcast_period_ms)) < 0) return 0;
         m->last_broadcast_ms = now_ms;
         m->next_broadcast_frame_ms = now_ms;
     }
-    if ((int32_t)(now_ms - m->next_broadcast_frame_ms) < 0 || max < VLX_FRAME_LEN) return 0;
+    if ((int32_t)(now_ms - m->next_broadcast_frame_ms) < 0) return 0;
     uint8_t reg = k_broadcast_set[m->broadcast_idx];
-    vlx_make_write(ME, VLX_ADDR_PANELS, reg, m->known[reg] ? m->regs[reg] : 0, out);
+    // k_broadcast_set is a subset of the register table by construction, so
+    // every one of these seven registers is known.
+    vlx_make_write(ME, VLX_ADDR_PANELS, reg, m->regs[reg], out);
     m->broadcast_idx++;
     m->next_broadcast_frame_ms = now_ms + m->broadcast_spacing_ms;
     if (m->broadcast_idx >= BROADCAST_N) m->broadcast_idx = 0;
@@ -117,6 +120,8 @@ size_t vlx_machine_tick(vlx_machine_t *m, uint32_t now_ms, uint8_t *out, size_t 
     m->have_tick = true;
     if (had_tick) {
         uint32_t dt_ms = now_ms - prev_ms;
+        // Ticks more than 10 s apart are skipped, not clamped: a paused
+        // browser tab freezes the house rather than fast-forwarding it.
         if (dt_ms > 0 && dt_ms < 10000) vlx_machine_physics_step(m, (float)dt_ms / 1000.0f);
     }
     if (m->pending_armed && !m->pending_scheduled) {
@@ -137,8 +142,13 @@ bool    vlx_machine_reg_known(const vlx_machine_t *m, uint8_t reg) { return m->k
 uint8_t vlx_machine_reg_get(const vlx_machine_t *m, uint8_t reg)   { return m->regs[reg]; }
 void    vlx_machine_reg_set(vlx_machine_t *m, uint8_t reg, uint8_t value)
 {
+    if (!m->known[reg]) return;   // does not teach unknown registers; see header
     m->regs[reg] = value;
-    m->known[reg] = true;
+}
+
+vlx_conf_t vlx_machine_reg_conf(const vlx_machine_t *m, uint8_t reg)
+{
+    return m->known[reg] ? m->conf[reg] : VLX_CONF_ASSUMED;
 }
 
 void vlx_machine_fault(vlx_machine_t *m, vlx_fault_t code)
