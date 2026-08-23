@@ -1612,7 +1612,7 @@ main().catch((e) => { say(`failed: ${e}`); console.error(e); throw e; });
 Run: `cd simulator && npx vite build && npx playwright test`
 Expected: `1 passed`. The build prints `dist/assets/panel-<hash>.wasm ≈ 68.7 kB` and an `index-<hash>.js` of a few kB (three.js is not in yet). If Playwright reports `http://localhost:4173/ is already used`, a previous preview is still running: `lsof -ti :4173 | xargs kill`.
 
-Also look at it: `npx vite preview` and open http://localhost:4173/ — the side panel shows the dashboard in the flat display, the bus log scrolls, `← → Enter Backspace` work, `Restart panel` restarts, the language selector switches the display's texts and survives a reload.
+Also look at it: `npx vite preview` and open `http://localhost:4173/` — the side panel shows the dashboard in the flat display, the bus log scrolls, `← → Enter Backspace` work, `Restart panel` restarts, the language selector switches the display's texts and survives a reload.
 
 - [ ] **Step 8: Commit**
 
@@ -2007,7 +2007,7 @@ main().catch((e) => { say(`failed: ${e}`); console.error(e); throw e; });
 Run: `cd simulator && npx vite build && npx playwright test`
 Expected: `1 passed` in 10–15 s; the build prints `index-<hash>.js ≈ 681 kB │ gzip: 177 kB` (three.js).
 
-Then look at it — this is visual work and the test does not judge looks: `npx vite preview`, open http://localhost:4173/, and check against the spec: the board in ¾ view with a soft contact shadow; the dashboard on the display, right way up, top-left pixel at the top-left, bottom bar above the four switches; `Front view` gives the straight-down view with the whole board in frame; clicking a switch sinks it and changes the display; LEDs PWR green, BUS yellow when the bus is alive, FAULT red after injecting a fault; dimmed display after 5 min (or `Restart panel`, wait) is ~10 % brightness; orbiting works on touch (Chrome devtools device mode). Take one screenshot of the ¾ view and one of the front view and attach them to the PR description.
+Then look at it — this is visual work and the test does not judge looks: `npx vite preview`, open `http://localhost:4173/`, and check against the spec: the board in ¾ view with a soft contact shadow; the dashboard on the display, right way up, top-left pixel at the top-left, bottom bar above the four switches; `Front view` gives the straight-down view with the whole board in frame; clicking a switch sinks it and changes the display; LEDs PWR green, BUS yellow when the bus is alive, FAULT red after injecting a fault; dimmed display after 5 min (or `Restart panel`, wait) is ~10 % brightness; orbiting works on touch (Chrome devtools device mode). Take one screenshot of the ¾ view and one of the front view and attach them to the PR description.
 
 - [ ] **Step 6: Commit**
 
@@ -2327,7 +2327,7 @@ gh pr create --title "feat(sim): S3 — browser simulator: WASM core on the rev 
 The PR body: what it is (one paragraph), the two screenshots, the deviations table from this plan's decisions (display transport, minimum hold, procedural environment), the measured sizes (GLB 9.7 → 0.88 MB, wasm 69 kB, JS 681 kB), the honesty line (simulated machine, unverified protocol), and what is not in it (enclosure, MQTT mock, graphs — spec §6).
 
 Run: `gh pr checks --watch`
-Expected: `firmware`, `docs`, `simulator / Board GLB`, `simulator / WASM, site, smoke test` green; `simulator / GitHub Pages` skipped (not `main`). After squash-merge: the `simulator` run on `main` deploys and https://miroeilola.github.io/vallox-rs485-controller/ answers with the page; then a follow-up commit may drop the lychee exclusion.
+Expected: `firmware`, `docs`, `simulator / Board GLB`, `simulator / WASM, site, smoke test` green; `simulator / GitHub Pages` skipped (not `main`). After squash-merge: the `simulator` run on `main` deploys and `https://miroeilola.github.io/vallox-rs485-controller/` answers with the page; then a follow-up commit may drop the lychee exclusion.
 
 ---
 
