@@ -1,0 +1,67 @@
+* Q: (a) What current do the three indicator LEDs draw through 1 k from a 3.3 V
+*    GPIO over their Vf windows (PWR yellow-green 2.2 V typ; BUS yellow 1.6-2.6 V;
+*    FAULT red 1.8-2.4 V), and is 1 mA reached at Vf max? (b) What ADC voltages does
+*    the button ladder produce (R22 10 k pull-up, SW2/3/4 through 1.5 k / 3.3 k /
+*    6.8 k, SW1 direct to GND), and what is the smallest step between codes?
+.include models.lib
+VIO io 0 DC 3.3
+* (a) LEDs: nominal models + Vf offset corners
+.param OFF_YG=0 OFF_Y=0 OFF_R=0
+R20 io a4 1k
+D4 a4 k4 LED_YG
+VO4 k4 0 DC {OFF_YG}
+R27 io a6 1k
+D6 a6 k6 LED_Y
+VO6 k6 0 DC {OFF_Y}
+R26 io a5 1k
+D5 a5 k5 LED_R
+VO5 k5 0 DC {OFF_R}
+* (b) button ladder, one switch closed per case: RSW1..4 = 1 mOhm when pressed
+.param S1=1G S2=1G S3=1G S4=1G
+V33 v33 0 DC 3.3
+R22 v33 adc 10k
+RS1 adc 0 {S1}
+RS2 adc n2 {S2}
+R23 n2 0 1.5k
+RS3 adc n3 {S3}
+R24 n3 0 3.3k
+RS4 adc n4 {S4}
+R25 n4 0 6.8k
+.op
+.control
+* LED corners: Vf window halves as series offsets (+-0.2 YG, +-0.5 Y, +-0.3 R)
+foreach o -1 0 1
+  let oo = $o
+  alterparam OFF_YG={0.2*$o}
+  alterparam OFF_Y={0.5*$o}
+  alterparam OFF_R={0.3*$o}
+  reset
+  run
+  let i4 = i(vo4)
+  let i6 = i(vo6)
+  let i5 = i(vo5)
+  echo LED corner $o : PWR(YG) I=$&i4 A Vf=$&v(a4) V, BUS(Y) I=$&i6 A Vf=$&v(a6) V, FAULT(R) I=$&i5 A Vf=$&v(a5) V
+end
+foreach sw none 1 2 3 4
+  alterparam S1=1G
+  alterparam S2=1G
+  alterparam S3=1G
+  alterparam S4=1G
+  if $sw = 1
+    alterparam S1=1m
+  end
+  if $sw = 2
+    alterparam S2=1m
+  end
+  if $sw = 3
+    alterparam S3=1m
+  end
+  if $sw = 4
+    alterparam S4=1m
+  end
+  reset
+  run
+  echo BTN $sw : V(ADC)=$&v(adc) V
+end
+.endc
+.end

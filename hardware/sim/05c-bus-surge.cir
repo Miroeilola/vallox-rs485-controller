@@ -1,0 +1,36 @@
+* Q: With an IEC 61000-4-5 combination-wave surge (1.2/50 us open-circuit 1 kV,
+*    8/20 us short-circuit, 42 ohm effective source for line-to-ground coupling)
+*    applied to the A terminal, what voltage reaches U4's A pin (THVD1400 abs max
+*    +-16 V, table 5.1) behind F1 (PTC cold 0.75 / 3 ohm) and the SM712 clamp D2?
+*    Both polarities: +1 kV hits the +12 V side, -1 kV the -7 V side.
+* The 8/20 us current wave is approximated by a double exponential; the 42 ohm
+* source plus the PTC set the current, the clamp sets the voltage.
+.include models.lib
+.param RPTC=3 VPK=1000
+* surge generator: open-circuit double exponential ~1.2/50 us, 42 ohm source
+VSURGE gen 0 EXP(0 {VPK*1.05} 1u 0.6u 2u 60u)
+RGEN gen pan 42
+RPTC pan a RPTC
+X1 a 0 SM712_LINE
+RU4 a mid 96k
+VMID mid 0 DC 1.65
+.tran 20n 200u
+.control
+foreach vp 1000 500 -1000
+  foreach r 0.75 3
+    alterparam VPK=$vp
+    alterparam RPTC=$r
+    reset
+    run
+    let ia = i(vsurge)
+    meas tran vmax MAX v(a)
+    meas tran vmin MIN v(a)
+    meas tran imax MAX ia
+    meas tran imin MIN ia
+    let pd = v(a)*(-ia)
+    meas tran ed INTEG pd from=0 to=200u
+    echo VPK=$vp RPTC=$r : V(A) max=$&vmax min=$&vmin V, I max=$&imax min=$&imin A, E(D2)=$&ed J
+  end
+end
+.endc
+.end

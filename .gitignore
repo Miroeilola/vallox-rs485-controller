@@ -47,3 +47,4 @@ hardware/output/schematic-renders/
 hardware/output/netlist.net
 hardware/output/board-*.png
 hardware/output/board-*.svg
+hardware/sim/vendor/

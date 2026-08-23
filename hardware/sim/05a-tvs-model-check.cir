@@ -1,0 +1,17 @@
+* Q: Does the SM712 model built in models.lib reproduce the datasheet points
+*    (VBR +13.3 / -8.3 V at 1 mA, VC +19 / -12 V at 17 A)? Validation only.
+* Note: ngspice 'meas dc ... AT=' mis-scales a current sweep; values are read by index.
+.include models.lib
+ILINE 0 line DC 0
+X1 line 0 SM712_LINE
+.dc ILINE -17 17 0.001
+.control
+run
+let vp1m = v(line)[17001]
+let vp17 = v(line)[34000]
+let vn1m = v(line)[16999]
+let vn17 = v(line)[0]
+let vp10u = v(line)[17000]
+echo SM712 model : V(+1mA)=$&vp1m V (ds 13.3), V(+17A)=$&vp17 V (ds 19), V(-1mA)=$&vn1m V (ds -8.3), V(-17A)=$&vn17 V (ds -12), V(0)=$&vp10u
+.endc
+.end

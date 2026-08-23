@@ -1,0 +1,43 @@
+* Shared models for the vallox rev A simulations. Every model states its source.
+* Substitutions are marked SUBSTITUTE; datasheet-built models are marked BUILT and
+* were validated against the datasheet point named in the comment (see README).
+
+* D1/D3 SS34 (MDD, C8678). SUBSTITUTE: ON Semiconductor MBRS340 (3 A / 40 V Schottky)
+* model parameters as published in the LTspice standard diode library. Gives
+* Vf 0.30 V @ 0.45 A, 0.46 V @ 3 A; SS34 datasheet max 0.55 V @ 3 A.
+.model SS34 D(Is=22.7u Rs=0.042 N=1.094 Cjo=480p M=0.3 Eg=0.69 Xti=2 BV=40 IBV=0.5m)
+
+* D2 SM712 / PSM712-LF-T7 (ProTek, C32677). BUILT from the datasheet table:
+* per line to GND an asymmetric bidirectional clamp, VRWM +12 V / -7 V,
+* VBR +13.3 V / -8.3 V at 1 mA, VC +19 V / -12 V at IPP 17 A (8/20 us).
+* Structure: forward diode in series with a breakdown diode, one pair per polarity,
+* so neither pair conducts forward across the other. Validated in 05a (DC sweep).
+.model TVS_FWD D(Is=1e-12 N=1.0 Rs=0.03)
+.model TVS_Z12 D(Is=1e-12 N=1.0 BV=12.6 IBV=1m Rs=0.30)
+.model TVS_Z7  D(Is=1e-12 N=1.0 BV=7.6  IBV=1m Rs=0.17)
+.subckt SM712_LINE line gnd
+D1 line  n1  TVS_FWD
+D2 gnd   n1  TVS_Z12
+D3 gnd   n2  TVS_FWD
+D4 line  n2  TVS_Z7
+.ends
+
+* Q1 AO3400A (AOS, C20917). BUILT: VDMOS with Rds(on) ~40 mOhm at Vgs 3.3 V
+* (datasheet 48 mOhm max at 2.5 V, 33 mOhm at 4.5 V), Vth 1.0-1.45 V, Ciss 630 pF.
+* Only the on-resistance and the gate charge matter for the backlight question.
+.model AO3400A VDMOS(Rg=3 Vto=1.1 Kp=11.4 Lambda=0.005 Rd=0.02 Cgdmax=60p Cgdmin=10p Cgs=550p Cjo=100p Rds=1e7)
+
+* Display backlight string, HS20HS072RX: 4 white LEDs in parallel, Vf 2.8-3.2 V
+* at IF 80 mA total (HSD spec sheet 3.2). BUILT: one exponential diode for the
+* string, nominal 3.0 V at 80 mA; the Vf corners are applied as a series offset
+* VFOFF in the testbench (-0.2 / 0 / +0.2 V).
+.model BL_LED D(Is=8.8e-10 N=6 Rs=2.0)
+
+* Indicator LEDs, BUILT from the catalogue Vf windows at 20 mA, 1 k from 3.3 V:
+*   D4 PWR  XL-1608SYGC-06 yellow-green, 2.2 V typ (C965805)
+*   D6 BUS  NCD0603Y1 yellow, 1.6-2.6 V (C84268)
+*   D5 FAULT KT-0603R red, 1.8-2.4 V (C2286)
+* Modelled as N=2.5 exponentials hitting Vf_typ at 20 mA; corners via offset.
+.model LED_YG  D(Is=1.8e-17 N=2.5 Rs=3)
+.model LED_Y   D(Is=4.0e-16 N=2.5 Rs=3)
+.model LED_R   D(Is=4.0e-16 N=2.5 Rs=3)

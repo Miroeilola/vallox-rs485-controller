@@ -1,0 +1,21 @@
+* Q: At what rail voltage does the buck enable and disable through R1/R2
+*    (100 k / 15 k), and how far is the EN pin from its 7 V absolute maximum at the
+*    25 V worst-case rail (22.8 V x 1.10 mains)? TPS54202 EN thresholds from the
+*    datasheet (SLVSDJ8 6.5): rising 1.21 V typ (1.16-1.26), falling ~1.11 V
+*    (hysteresis ~0.1 V); EN pin sources/sinks no current below abs max.
+.include models.lib
+VIN vin 0 DC 0
+R1 vin en 100k
+R2 en 0 15k
+.dc VIN 0 28.5 0.05
+.control
+run
+meas dc vstart_typ WHEN v(en)=1.21 RISE=1
+meas dc vstart_max WHEN v(en)=1.26 RISE=1
+meas dc vstart_min WHEN v(en)=1.16 RISE=1
+meas dc vstop_typ  WHEN v(en)=1.11 RISE=1
+meas dc ven25 FIND v(en) AT=25
+meas dc ven28 FIND v(en) AT=28
+echo EN start typ=$&vstart_typ V (min $&vstart_min, max $&vstart_max), stop ~$&vstop_typ V, V(EN)@25V=$&ven25 V, @28V=$&ven28 V (abs max 7 V)
+.endc
+.end

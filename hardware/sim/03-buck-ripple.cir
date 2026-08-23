@@ -1,0 +1,63 @@
+* Q: With L1 = 22 uH (FNR6045S220MT, 116 mOhm) and C4/C5 = 2 x 22 uF X5R (derated
+*    to ~17 uF each at 5 V bias), what are the 5 V output ripple, the inductor ripple
+*    current, and the RMS ripple current in the input capacitors C1 (Nichicon UCD,
+*    300 mA rated) and C2 at 22.8 V in, 0.15 / 0.25 / 0.45 A load, 500 kHz?
+* TESTBENCH, not the TI model: TI's "unencrypted" PSpice package (SLVMBJ5) is
+* Cadence-encrypted and unusable in ngspice. Open-loop synchronous buck with ideal
+* switches (Ron from the datasheet typ: HS 0.19, LS 0.10 ohm) at a fixed duty; the
+* ripple is L/C physics and does not depend on the control loop. Load-step response
+* is NOT simulated here (it would be a guess at TI's internal compensation).
+.include models.lib
+.param VIN=22.8 FSW=500k IL=0.25
+.param D={5.3/VIN}
+.param TON={D/FSW} TP={1/FSW}
+VSRC src 0 DC {VIN}
+RSRC src pan 1.8
+D1 pan vin SS34
+C1 vin c1e 220u
+RESR1 c1e c1m 0.30
+VC1 c1m 0 0
+C2 vin c2e 1.2u
+RESR2 c2e c2m 0.005
+VC2 c2m 0 0
+* gate drives: VHS high for TON, VLS complementary with 20 ns dead time
+VHS ghs 0 PULSE(0 1 0 5n 5n {TON} {TP})
+VLS gls 0 PULSE(1 0 0 5n 5n {TON+40n} {TP} ) 
+* LS on while HS off, 40 ns dead time covered by the body diodes
+SHS vin sw ghs 0 SWHS
+DHS sw vin DBODY
+SLS sw 0 gls 0 SWLS
+DLS 0 sw DBODY
+.model DBODY D(Is=1e-9 N=1.2 Rs=0.05)
+.model SWHS SW(Ron=0.19 Roff=1e6 Vt=0.5 Vh=0.1)
+.model SWLS SW(Ron=0.10 Roff=1e6 Vt=0.5 Vh=0.1)
+L1 sw lx 22u
+RDCR lx lm 0.116
+VL lm vout 0
+C4 vout c4e 17u
+RC4 c4e 0 0.005
+C5 vout c5e 17u
+RC5 c5e 0 0.005
+ILOAD vout 0 DC {IL}
+.tran 10n 8m uic
+.control
+set wr_vecnames
+foreach il 0.15 0.25 0.45
+  alterparam IL=$il
+  reset
+  run
+  let ic1 = vc1#branch
+  let ic2 = vc2#branch
+  let il1 = vl#branch
+  meas tran vo_avg AVG v(vout) from=7.0m to=8.0m
+  meas tran vo_pp  PP  v(vout) from=7.996m to=8.0m
+  meas tran vo_pp1ms PP v(vout) from=7.0m to=8.0m
+  meas tran il_pp  PP  il1 from=7.0m to=8.0m
+  meas tran ic1rms RMS ic1 from=7.0m to=8.0m
+  meas tran ic2rms RMS ic2 from=7.0m to=8.0m
+  meas tran vin_pp PP v(vin) from=7.0m to=8.0m
+  meas tran vin_avg AVG v(vin) from=7.0m to=8.0m
+  echo IL=$il A : Vout=$&vo_avg V ripple(fsw)=$&vo_pp Vpp (1 ms window $&vo_pp1ms incl. open-loop LC ring), IL pp=$&il_pp A, C1 rms=$&ic1rms A, C2 rms=$&ic2rms A, Vin=$&vin_avg V ripple $&vin_pp Vpp
+end
+.endc
+.end
