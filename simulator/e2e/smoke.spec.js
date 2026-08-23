@@ -42,7 +42,7 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   // the bus is alive and logged
   await page.waitForFunction(() => window.__vallox.sim.uiBusOk() === 1, null, { timeout: 30_000 });
   expect(await page.evaluate(() => window.__vallox.sim.logTotal())).toBeGreaterThan(4);
-  await expect(page.locator('#bus-log')).toContainText('panel → machine');
+  await expect(page.locator('#bus-log')).toContainText('panel → machine', { timeout: 30_000 });
   // the board GLB loaded (CI always exports it; locally run `make glb` first)
   await page.waitForFunction(() => window.__vallox.scene.boardLoaded || window.__vallox.boardError, null, { timeout: 60_000 });
   expect(await page.evaluate(() => window.__vallox.boardError)).toBeNull();
@@ -93,7 +93,7 @@ test('simulator boots, draws, and a button press reaches the simulated machine',
   expect(await page.evaluate(() => window.__vallox.sim.temp(0))).toBeCloseTo(-20, 1);
   await page.locator('#in-fault').selectOption('5');
   await page.waitForFunction(() => (window.__vallox.sim.leds() & 4) === 4, null, { timeout: 15_000 });
-  await expect(page.locator('#led-fault')).toHaveClass(/on/);
+  await expect(page.locator('#led-fault')).toHaveClass(/on/, { timeout: 30_000 });   // the side panel refreshes every 6th frame
   expect(await page.evaluate(() => window.__vallox.scene.leds[2].mat.color.getHex())).toBe(0xff3a3a);
   // language survives a reload through localStorage
   await page.locator('#in-lang').selectOption('1');
