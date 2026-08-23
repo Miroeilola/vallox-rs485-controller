@@ -29,3 +29,4 @@ Component symbols, footprints and 3D models from `lib/mironet-hw-lib/` carry the
 licenses where they originate from third parties; see that repository. Manufacturer
 SPICE models and datasheets are **not** redistributed here — the sources are cited in
 the documentation instead.
+- **Inter** (firmware/components/panel_ui/fonts/): © The Inter Project Authors, SIL Open Font License 1.1 — see fonts/OFL.txt.
